@@ -40,6 +40,7 @@ AM_CONDITIONAL([TARGET_ARM], [test $target_cpu = arm])
 
 # Automake
 AM_INIT_AUTOMAKE([1.11 foreign subdir-objects silent-rules])
+AM_MAINTAINER_MODE
 
 # Options
 AC_ARG_WITH(
