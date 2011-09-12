@@ -56,11 +56,11 @@ extern char version_string[];
  */
 #undef SUSPECT
 
-/* These #imports are for type definitions etc. */
+/* These #includes are for type definitions etc. */
 #include <stdint.h>
-#import <stdio.h>
-#import <assert.h>
-#import <mach/machine.h>
+#include <stdio.h>
+#include <assert.h>
+#include <mach/machine.h>
 
 /* These defines are potentially useful */
 #undef FALSE

@@ -24,7 +24,7 @@
 #define __private_extern__ __declspec(private_extern)
 #endif
 
-#import "stuff/ofile.h"
+#include "stuff/ofile.h"
 
 /*
  * This is used to build the table of contents of an archive.  Each toc_entry

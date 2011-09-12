@@ -71,8 +71,8 @@
 #define __vrsave vrsave
 #define __xer xer
 
-#import <mach-o/ppc/swap.h>
-#import <architecture/nrw/reg_help.h>
+#include <mach-o/ppc/swap.h>
+#include <architecture/nrw/reg_help.h>
 
 void
 swap_ppc_thread_state_t(

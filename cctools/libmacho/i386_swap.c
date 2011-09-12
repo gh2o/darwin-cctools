@@ -133,7 +133,7 @@
 
 #include <string.h>
 #include <libkern/OSByteOrder.h>
-#import <mach-o/i386/swap.h>
+#include <mach-o/i386/swap.h>
 
 void
 swap_i386_thread_state(

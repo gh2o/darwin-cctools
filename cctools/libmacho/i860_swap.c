@@ -21,7 +21,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
-#import <mach-o/i860/swap.h>
+#include <mach-o/i860/swap.h>
 
 void
 swap_i860_thread_state_regs(

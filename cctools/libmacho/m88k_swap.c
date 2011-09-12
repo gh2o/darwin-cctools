@@ -22,8 +22,8 @@
  */
 #ifndef RLD
 #include <string.h>
-#import <mach-o/m88k/swap.h>
-#import <architecture/nrw/reg_help.h>
+#include <mach-o/m88k/swap.h>
+#include <architecture/nrw/reg_help.h>
 
 void
 swap_m88k_thread_state_grf_t(

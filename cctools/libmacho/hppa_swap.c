@@ -21,7 +21,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
-#import <mach-o/hppa/swap.h>
+#include <mach-o/hppa/swap.h>
 
 void
 swap_hppa_integer_thread_state(

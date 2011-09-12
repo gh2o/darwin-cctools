@@ -22,8 +22,8 @@
  */
 #ifndef RLD
 #include <string.h>
-#import <mach-o/sparc/swap.h>
-#import <architecture/nrw/reg_help.h>
+#include <mach-o/sparc/swap.h>
+#include <architecture/nrw/reg_help.h>
 
 void
 swap_sparc_thread_state_regs(

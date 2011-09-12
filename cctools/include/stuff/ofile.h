@@ -28,17 +28,17 @@
 #define __private_extern__ __declspec(private_extern)
 #endif
 
-#import <ar.h>
+#include <ar.h>
 #ifndef AR_EFMT1
 #define	AR_EFMT1	"#1/"		/* extended format #1 */
 #endif
-#import <mach-o/loader.h>
+#include <mach-o/loader.h>
 #ifdef OFI
-#import <mach-o/dyld.h>
+#include <mach-o/dyld.h>
 #endif
-#import "stuff/bytesex.h"
-#import "stuff/bool.h"
-#import "stuff/arch.h"
+#include "stuff/bytesex.h"
+#include "stuff/bool.h"
+#include "stuff/arch.h"
 
 enum ofile_type {
     OFILE_UNKNOWN,

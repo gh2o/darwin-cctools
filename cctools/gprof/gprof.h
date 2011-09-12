@@ -57,17 +57,17 @@
  *
  *	@(#)gprof.h	8.1 (Berkeley) 6/6/93
  */
-#import <stdio.h>
-#import <sys/types.h>
-#import <sys/stat.h>
-#import <gnu/a.out.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <gnu/a.out.h>
 #ifdef __OPENSTEP__
-#import <mach-o/rld_state.h>
-#import <mach-o/gmon.h>
+#include <mach-o/rld_state.h>
+#include <mach-o/gmon.h>
 #else
-#import <sys/gmon.h>
+#include <sys/gmon.h>
 #endif
-#import "stuff/bool.h"
+#include "stuff/bool.h"
 
 /*
  * Used for comparison routine return values.

@@ -21,7 +21,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 #ifndef RLD
-#import <mach-o/m68k/swap.h>
+#include <mach-o/m68k/swap.h>
 
 void
 swap_m68k_thread_state_regs(
