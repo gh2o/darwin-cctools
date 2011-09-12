@@ -4576,9 +4576,9 @@ LLVM_INCLUDEDIR=`$llvm_config --includedir`
 
 # Checks for libraries.
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MD5 in -lssl" >&5
-$as_echo_n "checking for MD5 in -lssl... " >&6; }
-if ${ac_cv_lib_ssl_MD5+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MD5_Init in -lssl" >&5
+$as_echo_n "checking for MD5_Init in -lssl... " >&6; }
+if ${ac_cv_lib_ssl_MD5_Init+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -4592,27 +4592,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char MD5 ();
+char MD5_Init ();
 int
 main ()
 {
-return MD5 ();
+return MD5_Init ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_ssl_MD5=yes
+  ac_cv_lib_ssl_MD5_Init=yes
 else
-  ac_cv_lib_ssl_MD5=no
+  ac_cv_lib_ssl_MD5_Init=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_MD5" >&5
-$as_echo "$ac_cv_lib_ssl_MD5" >&6; }
-if test "x$ac_cv_lib_ssl_MD5" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_MD5_Init" >&5
+$as_echo "$ac_cv_lib_ssl_MD5_Init" >&6; }
+if test "x$ac_cv_lib_ssl_MD5_Init" = xyes; then :
   true
 else
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5

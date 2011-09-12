@@ -75,7 +75,7 @@ AC_SUBST([LLVM_INCLUDEDIR], [`$llvm_config --includedir`])
 
 # Checks for libraries.
 AC_CHECK_LIB(
-	[ssl], [MD5],
+	[ssl], [MD5_Init],
 	[true],
 	[AC_MSG_FAILURE([SSL library not found.])]
 )
