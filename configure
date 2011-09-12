@@ -4576,13 +4576,12 @@ LLVM_INCLUDEDIR=`$llvm_config --includedir`
 
 # Checks for libraries.
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MD5_Init in -lssl" >&5
-$as_echo_n "checking for MD5_Init in -lssl... " >&6; }
-if ${ac_cv_lib_ssl_MD5_Init+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing MD5_Init" >&5
+$as_echo_n "checking for library containing MD5_Init... " >&6; }
+if ${ac_cv_search_MD5_Init+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lssl  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4601,34 +4600,50 @@ return MD5_Init ();
   return 0;
 }
 _ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_ssl_MD5_Init=yes
-else
-  ac_cv_lib_ssl_MD5_Init=no
+for ac_lib in '' ssl crypto; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_MD5_Init=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+    conftest$ac_exeext
+  if ${ac_cv_search_MD5_Init+:} false; then :
+  break
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_MD5_Init" >&5
-$as_echo "$ac_cv_lib_ssl_MD5_Init" >&6; }
-if test "x$ac_cv_lib_ssl_MD5_Init" = xyes; then :
+done
+if ${ac_cv_search_MD5_Init+:} false; then :
+
+else
+  ac_cv_search_MD5_Init=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_MD5_Init" >&5
+$as_echo "$ac_cv_search_MD5_Init" >&6; }
+ac_res=$ac_cv_search_MD5_Init
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
   true
 else
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "SSL library not found.
+as_fn_error $? "Library for MD5 not found.
 See \`config.log' for more details" "$LINENO" 5; }
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for uuid_generate_random in -luuid" >&5
-$as_echo_n "checking for uuid_generate_random in -luuid... " >&6; }
-if ${ac_cv_lib_uuid_uuid_generate_random+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing uuid_generate_random" >&5
+$as_echo_n "checking for library containing uuid_generate_random... " >&6; }
+if ${ac_cv_search_uuid_generate_random+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-luuid  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4647,18 +4662,35 @@ return uuid_generate_random ();
   return 0;
 }
 _ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_uuid_uuid_generate_random=yes
-else
-  ac_cv_lib_uuid_uuid_generate_random=no
+for ac_lib in '' uuid; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_uuid_generate_random=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+    conftest$ac_exeext
+  if ${ac_cv_search_uuid_generate_random+:} false; then :
+  break
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_uuid_uuid_generate_random" >&5
-$as_echo "$ac_cv_lib_uuid_uuid_generate_random" >&6; }
-if test "x$ac_cv_lib_uuid_uuid_generate_random" = xyes; then :
+done
+if ${ac_cv_search_uuid_generate_random+:} false; then :
+
+else
+  ac_cv_search_uuid_generate_random=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_uuid_generate_random" >&5
+$as_echo "$ac_cv_search_uuid_generate_random" >&6; }
+ac_res=$ac_cv_search_uuid_generate_random
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
   true
 else
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5

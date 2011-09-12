@@ -188,7 +188,7 @@ tools_ld_CPPFLAGS = $(CORE_CPPFLAGS) \
 	-I$(LLVM_INCLUDEDIR)
 
 tools_ld_LDFLAGS = $(AM_LDFLAGS) $(LLVM_LDFLAGS)
-tools_ld_LDADD = $(LDADD) -lssl -luuid \
+tools_ld_LDADD = $(LDADD) \
 	$(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
 
 ########################################

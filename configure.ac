@@ -74,13 +74,13 @@ AC_SUBST([LLVM_LIBDIR], [`$llvm_config --libdir`])
 AC_SUBST([LLVM_INCLUDEDIR], [`$llvm_config --includedir`])
 
 # Checks for libraries.
-AC_CHECK_LIB(
-	[ssl], [MD5_Init],
+AC_SEARCH_LIBS(
+	[MD5_Init], [ssl crypto],
 	[true],
-	[AC_MSG_FAILURE([SSL library not found.])]
+	[AC_MSG_FAILURE([Library for MD5 not found.])]
 )
-AC_CHECK_LIB(
-	[uuid], [uuid_generate_random],
+AC_SEARCH_LIBS(
+	[uuid_generate_random], [uuid],
 	[true],
 	[AC_MSG_FAILURE([UUID library not found.])]
 )
