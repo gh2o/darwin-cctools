@@ -23,11 +23,12 @@
  */
  
 // start temp HACK for cross builds
-extern "C" double log2 ( double );
+//extern "C" double log2 ( double );
 //#define __MATH__
 // end temp HACK for cross builds
 
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -636,6 +637,7 @@ int main(int argc, const char* argv[])
 
 
 #ifndef NDEBUG
+extern "C" {
 // implement assert() function to print out a backtrace before aborting
 void __assert_rtn(const char* func, const char* file, int line, const char* failedexpr)
 {
@@ -659,6 +661,7 @@ void __assert_rtn(const char* func, const char* file, int line, const char* fail
 		fprintf(stderr, "%d  %p  %s + %ld\n", i, callStack[i], symboName, offset);
 	}
 	exit(1);
+}
 }
 #endif
 

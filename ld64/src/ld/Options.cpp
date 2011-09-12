@@ -31,7 +31,6 @@
 
 #include <vector>
 
-#include "configure.h"
 #include "Options.h"
 #include "Architectures.hpp"
 #include "MachOFileAbstraction.hpp"

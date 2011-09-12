@@ -29,6 +29,9 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 *									*
 \***********************************************************************/
 
+#ifndef BIGNUM_H_
+#define BIGNUM_H_
+
 #define	LITTLENUM_NUMBER_OF_BITS	(16)
 #define	LITTLENUM_RADIX			(1 << LITTLENUM_NUMBER_OF_BITS)
 #define	LITTLENUM_MASK			(0xFFFF)
@@ -44,3 +47,5 @@ typedef unsigned short int	LITTLENUM_TYPE;
 /* JF truncated this to get around a problem with GCC */
 #define	LOG_TO_BASE_2_OF_10	(3.3219280948873623478703194294893901758651)
 /* WARNING: I haven't checked that the trailing digits are correct! */
+
+#endif

@@ -998,7 +998,7 @@ private:
 	void											prescanSymbolTable();
 	void											makeSortedSymbolsArray(uint32_t array[]);
 	static int										pointerSorter(const void* l, const void* r);
-	static int										symbolIndexSorter(void* extra, const void* l, const void* r);
+	static int										symbolIndexSorter(const void* l, const void* r, void* extra);
 	void											parseDebugInfo();
 	void											parseStabs();
 	static bool										isConstFunStabs(const char *stabStr);
@@ -1781,7 +1781,7 @@ void Parser<A>::prescanSymbolTable()
 }
 
 template <typename A>
-int Parser<A>::symbolIndexSorter(void* extra, const void* l, const void* r)
+int Parser<A>::symbolIndexSorter(const void* l, const void* r, void* extra)
 {
 	Parser<A>* parser = (Parser<A>*)extra;
 	const uint32_t* left = (uint32_t*)l;
@@ -1847,7 +1847,7 @@ void Parser<A>::makeSortedSymbolsArray(uint32_t array[])
 	assert(p == &array[_symbolsInSections] && "second pass over symbol table yield a different number of symbols");
 	
 	// sort by symbol table address
-	::qsort_r(array, _symbolsInSections, sizeof(uint32_t), this, &symbolIndexSorter);
+	::qsort_r(array, _symbolsInSections, sizeof(uint32_t), &symbolIndexSorter, this);
 	
 	// look for two symbols at same address
 	_overlappingSymbols = false;
@@ -3611,7 +3611,7 @@ bool CFISection<A>::needsRelocating()
 
 template <>
 void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// copy __eh_frame data to buffer
@@ -3673,7 +3673,7 @@ void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<x86>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<x86>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// create ObjectAddressSpace object for use by libunwind
@@ -3692,7 +3692,7 @@ void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer,
 // need to change libunwind parseCFIs() to work for ppc
 template <>
 void CFISection<ppc>::cfiParse(class Parser<ppc>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<ppc>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<ppc>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// create ObjectAddressSpace object for use by libunwind
@@ -3709,7 +3709,7 @@ void CFISection<ppc>::cfiParse(class Parser<ppc>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<ppc64>::cfiParse(class Parser<ppc64>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<ppc64>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<ppc64>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// libunwind does not support ppc64
@@ -3718,7 +3718,7 @@ void CFISection<ppc64>::cfiParse(class Parser<ppc64>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<arm>::cfiParse(class Parser<arm>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<arm>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<arm>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// arm does not use zero cost exceptions

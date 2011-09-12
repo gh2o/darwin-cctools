@@ -22,6 +22,8 @@
  * @APPLE_LICENSE_HEADER_END@
  */
  
+#include <libkern/OSByteOrder.h>
+#include <sys/param.h>
 
 #include <stdlib.h>
 #include <sys/types.h>

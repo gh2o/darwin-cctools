@@ -70,6 +70,7 @@
  * process as object files.  Object files may be of the form "libx.a(x.o)"
  * which refer to an archive member.
  */
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>

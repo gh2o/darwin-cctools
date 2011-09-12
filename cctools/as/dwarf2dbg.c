@@ -56,7 +56,7 @@
 #endif
 
 #include "dwarf2dbg.h"
-#include <filenames.h>
+#include "filenames.h"
 
 #ifdef HAVE_DOS_BASED_FILE_SYSTEM
 /* We need to decide which character to use as a directory separator.
@@ -1981,7 +1981,7 @@ struct frchain *ranges_section)
 #ifdef OLD
   comp_dir = getpwd ();
 #else
-  comp_dir = getwd(xmalloc(MAXPATHLEN + 1));
+  comp_dir = getcwd(xmalloc(MAXPATHLEN), MAXPATHLEN);
 #endif
   len = strlen (comp_dir) + 1;
   p = frag_more (len);

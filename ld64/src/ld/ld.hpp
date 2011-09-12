@@ -26,6 +26,8 @@
 #ifndef __LD_HPP__
 #define __LD_HPP__
 
+#include <time.h>
+#include <string.h>
 #include <stdint.h>
 #include <math.h>
 #include <unistd.h>

@@ -25,6 +25,9 @@
 #ifndef __OPTIONS__
 #define __OPTIONS__
 
+#include <limits.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #include <stdint.h>
 #include <mach/machine.h>

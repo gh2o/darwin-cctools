@@ -321,7 +321,7 @@ put_arobj(cfp, sb)
 		 * things for exact binary equality.
 		 */
 		if (getenv("ZERO_AR_DATE") == NULL)
-			tv_sec = (long int)sb->st_mtimespec.tv_sec;
+			tv_sec = (long int)sb->st_mtime;
 		else
 			tv_sec = (long int)0;
 

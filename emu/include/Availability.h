@@ -1,0 +1,7 @@
+#ifndef _EMU_AVAILABILITY_H_
+#define _EMU_AVAILABILITY_H_
+
+#define __OSX_AVAILABLE_STARTING(...)
+#define __OSX_AVAILABLE_BUT_DEPRECATED(...)
+
+#endif

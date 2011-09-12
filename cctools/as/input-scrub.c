@@ -350,7 +350,7 @@ int *line)
     char *p, *q;
     static char directory_buf[MAXPATHLEN];
 
-	getwd(directory_buf);
+	getcwd(directory_buf, MAXPATHLEN);
 	*fileName = NULL;
 	*directory = directory_buf;
 	*line = 0;
@@ -384,13 +384,13 @@ char *filename)
   fprintf (stderr,"as:file(%s) %s! ",
 	   filename, gripe
 	   );
-  if (errno > sys_nerr)
+  if (0)
     {
       fprintf (stderr, "Unknown error #%d.", errno);
     }
   else
     {
-      fprintf (stderr, "%s.", sys_errlist [errno]);
+      fprintf (stderr, "%s.", strerror(errno));
     }
   (void)putc('\n', stderr);
   errno = 0;			/* After reporting, clear it. */

@@ -50,6 +50,10 @@
 #include <mach-o/prune_trie.h>
 #endif /* TRIE_SUPPORT */
 
+#include <config.h>
+#define mktemp(x) _mktemp(x)
+char *_mktemp (char *x) { mkstemp (x); return x; }
+
 /* These are set from the command line arguments */
 __private_extern__
 char *progname = NULL;	/* name of the program for error messages (argv[0]) */
