@@ -38,6 +38,8 @@ bin_PROGRAMS = \
 	tools/otool \
 	\
 	tools/ranlib \
+	tools/nmedit \
+	\
 	tools/check_dylib \
 	tools/checksyms \
 	tools/cmpdylib \
@@ -234,6 +236,9 @@ tools_otool_SOURCES = \
 ########################################
 tools_ranlib_SOURCES            = cctools/misc/libtool.c
 tools_ranlib_CPPFLAGS           = $(AM_CPPFLAGS) -DLIBTOOL_AS_RANLIB
+
+tools_nmedit_SOURCES            = cctools/misc/strip.c
+tools_nmedit_CPPFLAGS           = $(AM_CPPFLAGS) -DNMEDIT
 
 tools_check_dylib_SOURCES       = cctools/misc/check_dylib.c
 tools_checksyms_SOURCES         = cctools/misc/checksyms.c

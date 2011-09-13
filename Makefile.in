@@ -45,15 +45,16 @@ target_triplet = @target@
 @IS_BIG_ENDIAN_FALSE@am__append_3 = -D__LITTLE_ENDIAN__
 bin_PROGRAMS = tools/ar$(EXEEXT) tools/as$(EXEEXT) tools/ld$(EXEEXT) \
 	tools/otool$(EXEEXT) tools/ranlib$(EXEEXT) \
-	tools/check_dylib$(EXEEXT) tools/checksyms$(EXEEXT) \
-	tools/cmpdylib$(EXEEXT) tools/codesign_allocate$(EXEEXT) \
-	tools/ctf_insert$(EXEEXT) tools/indr$(EXEEXT) \
-	tools/inout$(EXEEXT) tools/install_name_tool$(EXEEXT) \
-	tools/libtool$(EXEEXT) tools/lipo$(EXEEXT) tools/nm$(EXEEXT) \
-	tools/pagestuff$(EXEEXT) tools/redo_prebinding$(EXEEXT) \
-	tools/seg_addr_table$(EXEEXT) tools/segedit$(EXEEXT) \
-	tools/seg_hack$(EXEEXT) tools/size$(EXEEXT) \
-	tools/strings$(EXEEXT) tools/strip$(EXEEXT)
+	tools/nmedit$(EXEEXT) tools/check_dylib$(EXEEXT) \
+	tools/checksyms$(EXEEXT) tools/cmpdylib$(EXEEXT) \
+	tools/codesign_allocate$(EXEEXT) tools/ctf_insert$(EXEEXT) \
+	tools/indr$(EXEEXT) tools/inout$(EXEEXT) \
+	tools/install_name_tool$(EXEEXT) tools/libtool$(EXEEXT) \
+	tools/lipo$(EXEEXT) tools/nm$(EXEEXT) tools/pagestuff$(EXEEXT) \
+	tools/redo_prebinding$(EXEEXT) tools/seg_addr_table$(EXEEXT) \
+	tools/segedit$(EXEEXT) tools/seg_hack$(EXEEXT) \
+	tools/size$(EXEEXT) tools/strings$(EXEEXT) \
+	tools/strip$(EXEEXT)
 @TARGET_ARM_TRUE@am__append_4 = cctools/as/arm.c
 @TARGET_ARM_TRUE@am__append_5 = -DARM
 subdir = .
@@ -252,6 +253,10 @@ am_tools_nm_OBJECTS = cctools/misc/nm.$(OBJEXT)
 tools_nm_OBJECTS = $(am_tools_nm_OBJECTS)
 tools_nm_LDADD = $(LDADD)
 tools_nm_DEPENDENCIES = $(noinst_LIBRARIES)
+am_tools_nmedit_OBJECTS = cctools/misc/tools_nmedit-strip.$(OBJEXT)
+tools_nmedit_OBJECTS = $(am_tools_nmedit_OBJECTS)
+tools_nmedit_LDADD = $(LDADD)
+tools_nmedit_DEPENDENCIES = $(noinst_LIBRARIES)
 am_tools_otool_OBJECTS = cctools/otool/arm_disasm.$(OBJEXT) \
 	cctools/otool/coff_print.$(OBJEXT) \
 	cctools/otool/hppa_disasm.$(OBJEXT) \
@@ -346,8 +351,9 @@ SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_inout_SOURCES) $(tools_install_name_tool_SOURCES) \
 	$(tools_ld_SOURCES) $(tools_libtool_SOURCES) \
 	$(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
-	$(tools_otool_SOURCES) $(tools_pagestuff_SOURCES) \
-	$(tools_ranlib_SOURCES) $(tools_redo_prebinding_SOURCES) \
+	$(tools_nmedit_SOURCES) $(tools_otool_SOURCES) \
+	$(tools_pagestuff_SOURCES) $(tools_ranlib_SOURCES) \
+	$(tools_redo_prebinding_SOURCES) \
 	$(tools_seg_addr_table_SOURCES) $(tools_seg_hack_SOURCES) \
 	$(tools_segedit_SOURCES) $(tools_size_SOURCES) \
 	$(tools_strings_SOURCES) $(tools_strip_SOURCES)
@@ -359,8 +365,9 @@ DIST_SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_inout_SOURCES) $(tools_install_name_tool_SOURCES) \
 	$(tools_ld_SOURCES) $(tools_libtool_SOURCES) \
 	$(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
-	$(tools_otool_SOURCES) $(tools_pagestuff_SOURCES) \
-	$(tools_ranlib_SOURCES) $(tools_redo_prebinding_SOURCES) \
+	$(tools_nmedit_SOURCES) $(tools_otool_SOURCES) \
+	$(tools_pagestuff_SOURCES) $(tools_ranlib_SOURCES) \
+	$(tools_redo_prebinding_SOURCES) \
 	$(tools_seg_addr_table_SOURCES) $(tools_seg_hack_SOURCES) \
 	$(tools_segedit_SOURCES) $(tools_size_SOURCES) \
 	$(tools_strings_SOURCES) $(tools_strip_SOURCES)
@@ -657,6 +664,8 @@ tools_otool_SOURCES = \
 ########################################
 tools_ranlib_SOURCES = cctools/misc/libtool.c
 tools_ranlib_CPPFLAGS = $(AM_CPPFLAGS) -DLIBTOOL_AS_RANLIB
+tools_nmedit_SOURCES = cctools/misc/strip.c
+tools_nmedit_CPPFLAGS = $(AM_CPPFLAGS) -DNMEDIT
 tools_check_dylib_SOURCES = cctools/misc/check_dylib.c
 tools_checksyms_SOURCES = cctools/misc/checksyms.c
 tools_cmpdylib_SOURCES = cctools/misc/cmpdylib.c
@@ -1144,6 +1153,12 @@ cctools/misc/nm.$(OBJEXT): cctools/misc/$(am__dirstamp) \
 tools/nm$(EXEEXT): $(tools_nm_OBJECTS) $(tools_nm_DEPENDENCIES) tools/$(am__dirstamp)
 	@rm -f tools/nm$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tools_nm_OBJECTS) $(tools_nm_LDADD) $(LIBS)
+cctools/misc/tools_nmedit-strip.$(OBJEXT):  \
+	cctools/misc/$(am__dirstamp) \
+	cctools/misc/$(DEPDIR)/$(am__dirstamp)
+tools/nmedit$(EXEEXT): $(tools_nmedit_OBJECTS) $(tools_nmedit_DEPENDENCIES) tools/$(am__dirstamp)
+	@rm -f tools/nmedit$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tools_nmedit_OBJECTS) $(tools_nmedit_LDADD) $(LIBS)
 cctools/otool/$(am__dirstamp):
 	@$(MKDIR_P) cctools/otool
 	@: > cctools/otool/$(am__dirstamp)
@@ -1321,6 +1336,7 @@ mostlyclean-compile:
 	-rm -f cctools/misc/size.$(OBJEXT)
 	-rm -f cctools/misc/strings.$(OBJEXT)
 	-rm -f cctools/misc/strip.$(OBJEXT)
+	-rm -f cctools/misc/tools_nmedit-strip.$(OBJEXT)
 	-rm -f cctools/misc/tools_ranlib-libtool.$(OBJEXT)
 	-rm -f cctools/otool/arm_disasm.$(OBJEXT)
 	-rm -f cctools/otool/coff_print.$(OBJEXT)
@@ -1460,6 +1476,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/size.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/strings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/strip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/tools_nmedit-strip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/otool/$(DEPDIR)/arm_disasm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/otool/$(DEPDIR)/coff_print.Po@am__quote@
@@ -1924,6 +1941,22 @@ ld64/src/ld/tools_ld-debugline.obj: ld64/src/ld/debugline.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ld64/src/ld/debugline.c' object='ld64/src/ld/tools_ld-debugline.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ld64/src/ld/tools_ld-debugline.obj `if test -f 'ld64/src/ld/debugline.c'; then $(CYGPATH_W) 'ld64/src/ld/debugline.c'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/debugline.c'; fi`
+
+cctools/misc/tools_nmedit-strip.o: cctools/misc/strip.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_nmedit_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cctools/misc/tools_nmedit-strip.o -MD -MP -MF cctools/misc/$(DEPDIR)/tools_nmedit-strip.Tpo -c -o cctools/misc/tools_nmedit-strip.o `test -f 'cctools/misc/strip.c' || echo '$(srcdir)/'`cctools/misc/strip.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) cctools/misc/$(DEPDIR)/tools_nmedit-strip.Tpo cctools/misc/$(DEPDIR)/tools_nmedit-strip.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cctools/misc/strip.c' object='cctools/misc/tools_nmedit-strip.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_nmedit_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cctools/misc/tools_nmedit-strip.o `test -f 'cctools/misc/strip.c' || echo '$(srcdir)/'`cctools/misc/strip.c
+
+cctools/misc/tools_nmedit-strip.obj: cctools/misc/strip.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_nmedit_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cctools/misc/tools_nmedit-strip.obj -MD -MP -MF cctools/misc/$(DEPDIR)/tools_nmedit-strip.Tpo -c -o cctools/misc/tools_nmedit-strip.obj `if test -f 'cctools/misc/strip.c'; then $(CYGPATH_W) 'cctools/misc/strip.c'; else $(CYGPATH_W) '$(srcdir)/cctools/misc/strip.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) cctools/misc/$(DEPDIR)/tools_nmedit-strip.Tpo cctools/misc/$(DEPDIR)/tools_nmedit-strip.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cctools/misc/strip.c' object='cctools/misc/tools_nmedit-strip.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_nmedit_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cctools/misc/tools_nmedit-strip.obj `if test -f 'cctools/misc/strip.c'; then $(CYGPATH_W) 'cctools/misc/strip.c'; else $(CYGPATH_W) '$(srcdir)/cctools/misc/strip.c'; fi`
 
 cctools/misc/tools_ranlib-libtool.o: cctools/misc/libtool.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ranlib_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cctools/misc/tools_ranlib-libtool.o -MD -MP -MF cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Tpo -c -o cctools/misc/tools_ranlib-libtool.o `test -f 'cctools/misc/libtool.c' || echo '$(srcdir)/'`cctools/misc/libtool.c
