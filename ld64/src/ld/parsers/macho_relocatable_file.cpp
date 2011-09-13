@@ -31,6 +31,7 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <libc.h>
 
 #include "MachOFileAbstraction.hpp"
 

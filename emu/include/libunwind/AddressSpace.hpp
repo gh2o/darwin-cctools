@@ -270,7 +270,7 @@ inline bool LocalAddressSpace::findUnwindSections(pint_t addr, pint_t& mh, pint_
 
 inline bool	LocalAddressSpace::findFunctionName(pint_t addr, char* buf, size_t bufLen, unw_word_t* offset)
 {
-	dl_info dyldInfo;
+	Dl_info dyldInfo;
 	if ( dladdr((void*)addr, &dyldInfo) ) {
 		if ( dyldInfo.dli_sname != NULL ) {
 			strlcpy(buf, dyldInfo.dli_sname, bufLen);

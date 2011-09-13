@@ -1,6 +1,6 @@
-#include <sys/stat.h>
-
+#include <libc.h>
 #include <config.h>
+
 #ifndef HAVE_STRMODE
 void
 strmode(/* mode_t */ int mode, char *p)

@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "stuff/ofile.h"
 #include "stuff/errors.h"
 #include "stuff/allocate.h"
@@ -229,6 +230,8 @@ char *argv[])
 	    exit(EXIT_SUCCESS);
 
 	if(strcmp(argv[start], "-a") == 0){
+	    vm_size_t vm_page_size = sysconf (_SC_PAGESIZE);
+	    
 	    if(arch_flag == NULL)
 		page_number = (ofile.file_size + vm_page_size - 1) /
 			      vm_page_size;
@@ -1048,6 +1051,8 @@ uint32_t page_number)
     enum bool printed;
     enum bool sections, sections64;
     const char *arch_name;
+    
+    vm_size_t vm_page_size = sysconf (_SC_PAGESIZE);
 
 	offset = page_number * vm_page_size;
 	size = vm_page_size;

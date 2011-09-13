@@ -231,6 +231,8 @@ tools_otool_SOURCES = \
 # misc                                 #
 ########################################
 tools_ranlib_SOURCES            = cctools/misc/libtool.c
+tools_ranlib_CPPFLAGS           = $(AM_CPPFLAGS) -DLIBTOOL_AS_RANLIB
+
 tools_check_dylib_SOURCES       = cctools/misc/check_dylib.c
 tools_checksyms_SOURCES         = cctools/misc/checksyms.c
 tools_cmpdylib_SOURCES          = cctools/misc/cmpdylib.c
@@ -239,6 +241,7 @@ tools_ctf_insert_SOURCES        = cctools/misc/ctf_insert.c
 tools_indr_SOURCES              = cctools/misc/indr.c
 tools_inout_SOURCES             = cctools/misc/inout.c
 tools_install_name_tool_SOURCES = cctools/misc/install_name_tool.c
+tools_libtool_SOURCES           = cctools/misc/libtool.c
 tools_lipo_SOURCES              = cctools/misc/lipo.c
 tools_nm_SOURCES                = cctools/misc/nm.c
 tools_pagestuff_SOURCES         = cctools/misc/pagestuff.c

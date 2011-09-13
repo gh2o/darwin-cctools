@@ -23,7 +23,7 @@ kern_return_t vm_allocate
 		return KERN_FAILURE;
 	}
 	
-	*address = mem;
+	*address = (vm_address_t) mem;
 	return KERN_SUCCESS;
 }
 
@@ -34,6 +34,6 @@ kern_return_t vm_deallocate
 	vm_size_t size
 )
 {
-	free (address);
+	free ((void *) address);
 	return KERN_SUCCESS;
 }

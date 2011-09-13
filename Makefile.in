@@ -268,7 +268,7 @@ am_tools_pagestuff_OBJECTS = cctools/misc/pagestuff.$(OBJEXT)
 tools_pagestuff_OBJECTS = $(am_tools_pagestuff_OBJECTS)
 tools_pagestuff_LDADD = $(LDADD)
 tools_pagestuff_DEPENDENCIES = $(noinst_LIBRARIES)
-am_tools_ranlib_OBJECTS = cctools/misc/libtool.$(OBJEXT)
+am_tools_ranlib_OBJECTS = cctools/misc/tools_ranlib-libtool.$(OBJEXT)
 tools_ranlib_OBJECTS = $(am_tools_ranlib_OBJECTS)
 tools_ranlib_LDADD = $(LDADD)
 tools_ranlib_DEPENDENCIES = $(noinst_LIBRARIES)
@@ -644,6 +644,7 @@ tools_otool_SOURCES = \
 # misc                                 #
 ########################################
 tools_ranlib_SOURCES = cctools/misc/libtool.c
+tools_ranlib_CPPFLAGS = $(AM_CPPFLAGS) -DLIBTOOL_AS_RANLIB
 tools_check_dylib_SOURCES = cctools/misc/check_dylib.c
 tools_checksyms_SOURCES = cctools/misc/checksyms.c
 tools_cmpdylib_SOURCES = cctools/misc/cmpdylib.c
@@ -652,6 +653,7 @@ tools_ctf_insert_SOURCES = cctools/misc/ctf_insert.c
 tools_indr_SOURCES = cctools/misc/indr.c
 tools_inout_SOURCES = cctools/misc/inout.c
 tools_install_name_tool_SOURCES = cctools/misc/install_name_tool.c
+tools_libtool_SOURCES = cctools/misc/libtool.c
 tools_lipo_SOURCES = cctools/misc/lipo.c
 tools_nm_SOURCES = cctools/misc/nm.c
 tools_pagestuff_SOURCES = cctools/misc/pagestuff.c
@@ -1168,7 +1170,8 @@ cctools/misc/pagestuff.$(OBJEXT): cctools/misc/$(am__dirstamp) \
 tools/pagestuff$(EXEEXT): $(tools_pagestuff_OBJECTS) $(tools_pagestuff_DEPENDENCIES) tools/$(am__dirstamp)
 	@rm -f tools/pagestuff$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tools_pagestuff_OBJECTS) $(tools_pagestuff_LDADD) $(LIBS)
-cctools/misc/libtool.$(OBJEXT): cctools/misc/$(am__dirstamp) \
+cctools/misc/tools_ranlib-libtool.$(OBJEXT):  \
+	cctools/misc/$(am__dirstamp) \
 	cctools/misc/$(DEPDIR)/$(am__dirstamp)
 tools/ranlib$(EXEEXT): $(tools_ranlib_OBJECTS) $(tools_ranlib_DEPENDENCIES) tools/$(am__dirstamp)
 	@rm -f tools/ranlib$(EXEEXT)
@@ -1284,7 +1287,6 @@ mostlyclean-compile:
 	-rm -f cctools/misc/indr.$(OBJEXT)
 	-rm -f cctools/misc/inout.$(OBJEXT)
 	-rm -f cctools/misc/install_name_tool.$(OBJEXT)
-	-rm -f cctools/misc/libtool.$(OBJEXT)
 	-rm -f cctools/misc/lipo.$(OBJEXT)
 	-rm -f cctools/misc/nm.$(OBJEXT)
 	-rm -f cctools/misc/pagestuff.$(OBJEXT)
@@ -1294,6 +1296,7 @@ mostlyclean-compile:
 	-rm -f cctools/misc/size.$(OBJEXT)
 	-rm -f cctools/misc/strings.$(OBJEXT)
 	-rm -f cctools/misc/strip.$(OBJEXT)
+	-rm -f cctools/misc/tools_ranlib-libtool.$(OBJEXT)
 	-rm -f cctools/otool/arm_disasm.$(OBJEXT)
 	-rm -f cctools/otool/coff_print.$(OBJEXT)
 	-rm -f cctools/otool/hppa_disasm.$(OBJEXT)
@@ -1421,7 +1424,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/indr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/inout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/install_name_tool.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/libtool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/lipo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/nm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/pagestuff.Po@am__quote@
@@ -1431,6 +1433,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/size.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/strings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/strip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/otool/$(DEPDIR)/arm_disasm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/otool/$(DEPDIR)/coff_print.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/otool/$(DEPDIR)/hppa_disasm.Po@am__quote@
@@ -1894,6 +1897,22 @@ ld64/src/ld/tools_ld-debugline.obj: ld64/src/ld/debugline.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ld64/src/ld/debugline.c' object='ld64/src/ld/tools_ld-debugline.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ld64/src/ld/tools_ld-debugline.obj `if test -f 'ld64/src/ld/debugline.c'; then $(CYGPATH_W) 'ld64/src/ld/debugline.c'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/debugline.c'; fi`
+
+cctools/misc/tools_ranlib-libtool.o: cctools/misc/libtool.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ranlib_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cctools/misc/tools_ranlib-libtool.o -MD -MP -MF cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Tpo -c -o cctools/misc/tools_ranlib-libtool.o `test -f 'cctools/misc/libtool.c' || echo '$(srcdir)/'`cctools/misc/libtool.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Tpo cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cctools/misc/libtool.c' object='cctools/misc/tools_ranlib-libtool.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ranlib_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cctools/misc/tools_ranlib-libtool.o `test -f 'cctools/misc/libtool.c' || echo '$(srcdir)/'`cctools/misc/libtool.c
+
+cctools/misc/tools_ranlib-libtool.obj: cctools/misc/libtool.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ranlib_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cctools/misc/tools_ranlib-libtool.obj -MD -MP -MF cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Tpo -c -o cctools/misc/tools_ranlib-libtool.obj `if test -f 'cctools/misc/libtool.c'; then $(CYGPATH_W) 'cctools/misc/libtool.c'; else $(CYGPATH_W) '$(srcdir)/cctools/misc/libtool.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Tpo cctools/misc/$(DEPDIR)/tools_ranlib-libtool.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cctools/misc/libtool.c' object='cctools/misc/tools_ranlib-libtool.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ranlib_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cctools/misc/tools_ranlib-libtool.obj `if test -f 'cctools/misc/libtool.c'; then $(CYGPATH_W) 'cctools/misc/libtool.c'; else $(CYGPATH_W) '$(srcdir)/cctools/misc/libtool.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

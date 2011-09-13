@@ -1,5 +1,4 @@
-#include <sys/types.h>
-#include <string.h>
+#include <libc.h>
 #include <config.h>
 
 #ifndef HAVE_STRLCPY

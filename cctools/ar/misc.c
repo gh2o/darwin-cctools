@@ -68,6 +68,7 @@ static char rcsid[] = "$OpenBSD: misc.c,v 1.2 1996/06/26 05:31:21 deraadt Exp $"
 
 #include <sys/param.h>
 
+#include <libc.h>
 #include <dirent.h>
 #include <err.h>
 #include <errno.h>

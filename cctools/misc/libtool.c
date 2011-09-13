@@ -53,11 +53,6 @@
 #endif /* LTO_SUPPORT */
 
 #include <mach/mach_init.h>
-#if defined(__OPENSTEP__) || defined(__GONZO_BUNSEN_BEAKER__)
-#include <servers/netname.h>
-#else
-#include <servers/bootstrap.h>
-#endif
 
 /*
  * This is used internally to build the table of contents.
@@ -368,14 +363,9 @@ char **envp)
 	toc_mode = S_IFREG | (0666 & ~oumask);
 	(void)umask(oumask);
 
-	/* see if this is being run as ranlib */
-	p = strrchr(argv[0], '/');
-	if(p != NULL)
-	    p++;
-	else
-	    p = argv[0];
-	if(strncmp(p, "ranlib", sizeof("ranlib") - 1) == 0)
-	    cmd_flags.ranlib = TRUE;
+#ifdef LIBTOOL_AS_RANLIB
+	cmd_flags.ranlib = TRUE;
+#endif
 
 	/* The default is to used long names */
 	cmd_flags.use_long_names = TRUE;
@@ -2554,12 +2544,6 @@ fail_to_update_toc_in_place:
 		}
 		memcpy(p, arch->members[j].object_addr,
 		       arch->members[j].object_size);
-#ifdef VM_SYNC_DEACTIVATE
-		vm_msync(mach_task_self(),
-			 (vm_address_t)arch->members[j].object_addr,
-			 (vm_size_t)arch->members[j].object_size,
-			 VM_SYNC_DEACTIVATE);
-#endif /* VM_SYNC_DEACTIVATE */
 		p += arch->members[j].object_size;
 		pad = rnd(arch->members[j].object_size, 8) -
 		      arch->members[j].object_size;

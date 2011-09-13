@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <sys/sysctl.h>
+#include <libc.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <limits.h>

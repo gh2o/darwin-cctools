@@ -20,6 +20,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #ifndef AS_H_
 #define AS_H_
 
+#include <libc.h>
+
 extern char *apple_flags;
 #define APPLE_INC_VERSION "Apple Inc version"
 /* apple_version is in apple_version.c which is created by the Makefile */

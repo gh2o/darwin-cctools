@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <mach/vm_prot.h>
 #include <mach-o/dyld.h>
+#include <libc.h>
 #include <fcntl.h>
 
 #include <vector>

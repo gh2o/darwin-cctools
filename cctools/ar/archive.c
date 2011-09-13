@@ -69,6 +69,7 @@ static char rcsid[] = "$NetBSD: archive.c,v 1.7 1995/03/26 03:27:46 glass Exp $"
 #include <sys/param.h>
 #include <sys/stat.h>
 
+#include <libc.h>
 #include <ar.h>
 #include <dirent.h>
 #include <err.h>
