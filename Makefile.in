@@ -49,10 +49,11 @@ bin_PROGRAMS = tools/ar$(EXEEXT) tools/as$(EXEEXT) tools/ld$(EXEEXT) \
 	tools/cmpdylib$(EXEEXT) tools/codesign_allocate$(EXEEXT) \
 	tools/ctf_insert$(EXEEXT) tools/indr$(EXEEXT) \
 	tools/inout$(EXEEXT) tools/install_name_tool$(EXEEXT) \
-	tools/lipo$(EXEEXT) tools/nm$(EXEEXT) tools/pagestuff$(EXEEXT) \
-	tools/seg_addr_table$(EXEEXT) tools/segedit$(EXEEXT) \
-	tools/seg_hack$(EXEEXT) tools/size$(EXEEXT) \
-	tools/strings$(EXEEXT) tools/strip$(EXEEXT)
+	tools/libtool$(EXEEXT) tools/lipo$(EXEEXT) tools/nm$(EXEEXT) \
+	tools/pagestuff$(EXEEXT) tools/seg_addr_table$(EXEEXT) \
+	tools/segedit$(EXEEXT) tools/seg_hack$(EXEEXT) \
+	tools/size$(EXEEXT) tools/strings$(EXEEXT) \
+	tools/strip$(EXEEXT)
 @TARGET_ARM_TRUE@am__append_4 = cctools/as/arm.c
 @TARGET_ARM_TRUE@am__append_5 = -DARM
 subdir = .
@@ -239,6 +240,10 @@ tools_ld_DEPENDENCIES = $(LDADD) $(LLVM_LIBDIR)/libLTO.a \
 	$(am__DEPENDENCIES_1)
 tools_ld_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(tools_ld_LDFLAGS) $(LDFLAGS) -o $@
+am_tools_libtool_OBJECTS = cctools/misc/libtool.$(OBJEXT)
+tools_libtool_OBJECTS = $(am_tools_libtool_OBJECTS)
+tools_libtool_LDADD = $(LDADD)
+tools_libtool_DEPENDENCIES = $(noinst_LIBRARIES)
 am_tools_lipo_OBJECTS = cctools/misc/lipo.$(OBJEXT)
 tools_lipo_OBJECTS = $(am_tools_lipo_OBJECTS)
 tools_lipo_LDADD = $(LDADD)
@@ -334,7 +339,8 @@ SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_cmpdylib_SOURCES) $(tools_codesign_allocate_SOURCES) \
 	$(tools_ctf_insert_SOURCES) $(tools_indr_SOURCES) \
 	$(tools_inout_SOURCES) $(tools_install_name_tool_SOURCES) \
-	$(tools_ld_SOURCES) $(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
+	$(tools_ld_SOURCES) $(tools_libtool_SOURCES) \
+	$(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
 	$(tools_otool_SOURCES) $(tools_pagestuff_SOURCES) \
 	$(tools_ranlib_SOURCES) $(tools_seg_addr_table_SOURCES) \
 	$(tools_seg_hack_SOURCES) $(tools_segedit_SOURCES) \
@@ -346,7 +352,8 @@ DIST_SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_cmpdylib_SOURCES) $(tools_codesign_allocate_SOURCES) \
 	$(tools_ctf_insert_SOURCES) $(tools_indr_SOURCES) \
 	$(tools_inout_SOURCES) $(tools_install_name_tool_SOURCES) \
-	$(tools_ld_SOURCES) $(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
+	$(tools_ld_SOURCES) $(tools_libtool_SOURCES) \
+	$(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
 	$(tools_otool_SOURCES) $(tools_pagestuff_SOURCES) \
 	$(tools_ranlib_SOURCES) $(tools_seg_addr_table_SOURCES) \
 	$(tools_seg_hack_SOURCES) $(tools_segedit_SOURCES) \
@@ -1116,6 +1123,11 @@ ld64/src/ld/parsers/tools_ld-opaque_section_file.$(OBJEXT):  \
 tools/ld$(EXEEXT): $(tools_ld_OBJECTS) $(tools_ld_DEPENDENCIES) tools/$(am__dirstamp)
 	@rm -f tools/ld$(EXEEXT)
 	$(AM_V_CXXLD)$(tools_ld_LINK) $(tools_ld_OBJECTS) $(tools_ld_LDADD) $(LIBS)
+cctools/misc/libtool.$(OBJEXT): cctools/misc/$(am__dirstamp) \
+	cctools/misc/$(DEPDIR)/$(am__dirstamp)
+tools/libtool$(EXEEXT): $(tools_libtool_OBJECTS) $(tools_libtool_DEPENDENCIES) tools/$(am__dirstamp)
+	@rm -f tools/libtool$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tools_libtool_OBJECTS) $(tools_libtool_LDADD) $(LIBS)
 cctools/misc/lipo.$(OBJEXT): cctools/misc/$(am__dirstamp) \
 	cctools/misc/$(DEPDIR)/$(am__dirstamp)
 tools/lipo$(EXEEXT): $(tools_lipo_OBJECTS) $(tools_lipo_DEPENDENCIES) tools/$(am__dirstamp)
@@ -1287,6 +1299,7 @@ mostlyclean-compile:
 	-rm -f cctools/misc/indr.$(OBJEXT)
 	-rm -f cctools/misc/inout.$(OBJEXT)
 	-rm -f cctools/misc/install_name_tool.$(OBJEXT)
+	-rm -f cctools/misc/libtool.$(OBJEXT)
 	-rm -f cctools/misc/lipo.$(OBJEXT)
 	-rm -f cctools/misc/nm.$(OBJEXT)
 	-rm -f cctools/misc/pagestuff.$(OBJEXT)
@@ -1424,6 +1437,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/indr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/inout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/install_name_tool.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/libtool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/lipo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/nm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/pagestuff.Po@am__quote@

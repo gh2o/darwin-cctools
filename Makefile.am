@@ -46,6 +46,7 @@ bin_PROGRAMS = \
 	tools/indr \
 	tools/inout \
 	tools/install_name_tool \
+	tools/libtool \
 	tools/lipo \
 	tools/nm \
 	tools/pagestuff \
