@@ -88,7 +88,6 @@
 #include <string.h>
 #include <limits.h>
 #include <libc.h>
-#include <malloc/malloc.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <mach-o/stab.h>
@@ -9819,7 +9818,6 @@ const char *format, ...)
 }
 #endif /* defined(LIBRARY_API) */
 
-#include <sys/attr.h>
 /*
  * Structure defining what's returned from getattrlist.  It returns all the
  * values we want in some order (probably from largest bit representation to
@@ -9849,57 +9847,5 @@ enum bool
 has_resource_fork(
 char *filename)
 {
-    int err;
-    struct attrlist alist;
-    struct fileinfobuf finfo;
-    uint64_t data_length;
-    uint64_t resource_length;
-
-	/*
-	 * Set up the description of what info we want.  We'll want the finder
-	 * info on this file as well as info on the resource fork's length.
-	 */
-	alist.bitmapcount = 5;
-	alist.reserved = 0;
-	alist.commonattr = ATTR_CMN_FNDRINFO;
-	alist.volattr = 0;
-	alist.dirattr = 0;
-	alist.fileattr = ATTR_FILE_DATALENGTH | ATTR_FILE_RSRCLENGTH;
-	alist.forkattr = 0;
-
-	err = getattrlist(filename, &alist, &finfo, sizeof(finfo), 0);
-	if(debug == TRUE){
-	    printf("getattrlist() returned = %d\n", err);
-	    if(err == 0){
-		printf("finfo.info_length = %u\n", finfo.info_length);
-		printf("sizeof(finfo) = %lu\n", sizeof(finfo));
-	    }
-	}
-	/*
-	 * If non-zero either not a file on an HFS disk, file does not exist, 
-	 * or something went wrong.
-	 */
-	if(err != 0)
-	    return(FALSE);
-
-	memcpy(&resource_length, finfo.resource_length, sizeof(uint64_t));
-	memcpy(&data_length, finfo.data_length, sizeof(uint64_t));
-	if(debug == TRUE){
-	    printf("Resource fork len is %llu\n", resource_length);
-	    printf("Data fork len is %llu\n", data_length);
-	}
-
-    	/* see if it has a resource fork */
-	if(resource_length != 0)
-	    return(TRUE);
-
-	/*
-	 * If the type/creator wasn't just zero -- probably has a value.
-	 * type/creator represented by spaces would also count as having a
-	 * value.
-	 */
-	if((finfo.finderinfo[0] != 0) || (finfo.finderinfo[1] != 0))
-	    return(TRUE);
-
-	return(FALSE);
+    return FALSE;
 }

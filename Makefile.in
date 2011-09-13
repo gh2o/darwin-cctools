@@ -50,10 +50,10 @@ bin_PROGRAMS = tools/ar$(EXEEXT) tools/as$(EXEEXT) tools/ld$(EXEEXT) \
 	tools/ctf_insert$(EXEEXT) tools/indr$(EXEEXT) \
 	tools/inout$(EXEEXT) tools/install_name_tool$(EXEEXT) \
 	tools/libtool$(EXEEXT) tools/lipo$(EXEEXT) tools/nm$(EXEEXT) \
-	tools/pagestuff$(EXEEXT) tools/seg_addr_table$(EXEEXT) \
-	tools/segedit$(EXEEXT) tools/seg_hack$(EXEEXT) \
-	tools/size$(EXEEXT) tools/strings$(EXEEXT) \
-	tools/strip$(EXEEXT)
+	tools/pagestuff$(EXEEXT) tools/redo_prebinding$(EXEEXT) \
+	tools/seg_addr_table$(EXEEXT) tools/segedit$(EXEEXT) \
+	tools/seg_hack$(EXEEXT) tools/size$(EXEEXT) \
+	tools/strings$(EXEEXT) tools/strip$(EXEEXT)
 @TARGET_ARM_TRUE@am__append_4 = cctools/as/arm.c
 @TARGET_ARM_TRUE@am__append_5 = -DARM
 subdir = .
@@ -277,6 +277,11 @@ am_tools_ranlib_OBJECTS = cctools/misc/tools_ranlib-libtool.$(OBJEXT)
 tools_ranlib_OBJECTS = $(am_tools_ranlib_OBJECTS)
 tools_ranlib_LDADD = $(LDADD)
 tools_ranlib_DEPENDENCIES = $(noinst_LIBRARIES)
+am_tools_redo_prebinding_OBJECTS =  \
+	cctools/misc/redo_prebinding.$(OBJEXT)
+tools_redo_prebinding_OBJECTS = $(am_tools_redo_prebinding_OBJECTS)
+tools_redo_prebinding_LDADD = $(LDADD)
+tools_redo_prebinding_DEPENDENCIES = $(noinst_LIBRARIES)
 am_tools_seg_addr_table_OBJECTS =  \
 	cctools/misc/seg_addr_table.$(OBJEXT)
 tools_seg_addr_table_OBJECTS = $(am_tools_seg_addr_table_OBJECTS)
@@ -342,10 +347,10 @@ SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_ld_SOURCES) $(tools_libtool_SOURCES) \
 	$(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
 	$(tools_otool_SOURCES) $(tools_pagestuff_SOURCES) \
-	$(tools_ranlib_SOURCES) $(tools_seg_addr_table_SOURCES) \
-	$(tools_seg_hack_SOURCES) $(tools_segedit_SOURCES) \
-	$(tools_size_SOURCES) $(tools_strings_SOURCES) \
-	$(tools_strip_SOURCES)
+	$(tools_ranlib_SOURCES) $(tools_redo_prebinding_SOURCES) \
+	$(tools_seg_addr_table_SOURCES) $(tools_seg_hack_SOURCES) \
+	$(tools_segedit_SOURCES) $(tools_size_SOURCES) \
+	$(tools_strings_SOURCES) $(tools_strip_SOURCES)
 DIST_SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_ar_SOURCES) $(am__tools_as_SOURCES_DIST) \
 	$(tools_check_dylib_SOURCES) $(tools_checksyms_SOURCES) \
@@ -355,10 +360,10 @@ DIST_SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_ld_SOURCES) $(tools_libtool_SOURCES) \
 	$(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
 	$(tools_otool_SOURCES) $(tools_pagestuff_SOURCES) \
-	$(tools_ranlib_SOURCES) $(tools_seg_addr_table_SOURCES) \
-	$(tools_seg_hack_SOURCES) $(tools_segedit_SOURCES) \
-	$(tools_size_SOURCES) $(tools_strings_SOURCES) \
-	$(tools_strip_SOURCES)
+	$(tools_ranlib_SOURCES) $(tools_redo_prebinding_SOURCES) \
+	$(tools_seg_addr_table_SOURCES) $(tools_seg_hack_SOURCES) \
+	$(tools_segedit_SOURCES) $(tools_size_SOURCES) \
+	$(tools_strings_SOURCES) $(tools_strip_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -664,6 +669,7 @@ tools_libtool_SOURCES = cctools/misc/libtool.c
 tools_lipo_SOURCES = cctools/misc/lipo.c
 tools_nm_SOURCES = cctools/misc/nm.c
 tools_pagestuff_SOURCES = cctools/misc/pagestuff.c
+tools_redo_prebinding_SOURCES = cctools/misc/redo_prebinding.c
 tools_seg_addr_table_SOURCES = cctools/misc/seg_addr_table.c
 tools_segedit_SOURCES = cctools/misc/segedit.c
 tools_seg_hack_SOURCES = cctools/misc/seg_hack.c
@@ -1188,6 +1194,11 @@ cctools/misc/tools_ranlib-libtool.$(OBJEXT):  \
 tools/ranlib$(EXEEXT): $(tools_ranlib_OBJECTS) $(tools_ranlib_DEPENDENCIES) tools/$(am__dirstamp)
 	@rm -f tools/ranlib$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tools_ranlib_OBJECTS) $(tools_ranlib_LDADD) $(LIBS)
+cctools/misc/redo_prebinding.$(OBJEXT): cctools/misc/$(am__dirstamp) \
+	cctools/misc/$(DEPDIR)/$(am__dirstamp)
+tools/redo_prebinding$(EXEEXT): $(tools_redo_prebinding_OBJECTS) $(tools_redo_prebinding_DEPENDENCIES) tools/$(am__dirstamp)
+	@rm -f tools/redo_prebinding$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tools_redo_prebinding_OBJECTS) $(tools_redo_prebinding_LDADD) $(LIBS)
 cctools/misc/seg_addr_table.$(OBJEXT): cctools/misc/$(am__dirstamp) \
 	cctools/misc/$(DEPDIR)/$(am__dirstamp)
 tools/seg_addr_table$(EXEEXT): $(tools_seg_addr_table_OBJECTS) $(tools_seg_addr_table_DEPENDENCIES) tools/$(am__dirstamp)
@@ -1303,6 +1314,7 @@ mostlyclean-compile:
 	-rm -f cctools/misc/lipo.$(OBJEXT)
 	-rm -f cctools/misc/nm.$(OBJEXT)
 	-rm -f cctools/misc/pagestuff.$(OBJEXT)
+	-rm -f cctools/misc/redo_prebinding.$(OBJEXT)
 	-rm -f cctools/misc/seg_addr_table.$(OBJEXT)
 	-rm -f cctools/misc/seg_hack.$(OBJEXT)
 	-rm -f cctools/misc/segedit.$(OBJEXT)
@@ -1441,6 +1453,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/lipo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/nm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/pagestuff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/redo_prebinding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/seg_addr_table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/seg_hack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/misc/$(DEPDIR)/segedit.Po@am__quote@

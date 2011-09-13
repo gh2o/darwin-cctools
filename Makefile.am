@@ -50,6 +50,7 @@ bin_PROGRAMS = \
 	tools/lipo \
 	tools/nm \
 	tools/pagestuff \
+	tools/redo_prebinding \
 	tools/seg_addr_table \
 	tools/segedit \
 	tools/seg_hack \
@@ -246,6 +247,7 @@ tools_libtool_SOURCES           = cctools/misc/libtool.c
 tools_lipo_SOURCES              = cctools/misc/lipo.c
 tools_nm_SOURCES                = cctools/misc/nm.c
 tools_pagestuff_SOURCES         = cctools/misc/pagestuff.c
+tools_redo_prebinding_SOURCES   = cctools/misc/redo_prebinding.c
 tools_seg_addr_table_SOURCES    = cctools/misc/seg_addr_table.c
 tools_segedit_SOURCES           = cctools/misc/segedit.c
 tools_seg_hack_SOURCES          = cctools/misc/seg_hack.c
