@@ -46,10 +46,21 @@ AM_MAINTAINER_MODE
 AC_ARG_WITH(
 	[llvm],
 	[AS_HELP_STRING([[--with-llvm[=/usr]]], [location of LLVM installation])],
-	[llvm_prefix="$withval"],
-	[llvm_prefix="/usr"]
+	[],
+	[with_llvm="/usr"]
 )
 
+AC_ARG_WITH(
+	[sysroot],
+	[AS_HELP_STRING([--with-sysroot=PATH], [location of target system root])],
+	[],
+	[with_sysroot=""]
+)
+
+# Add options
+if test -n "$with_sysroot"; then
+	AC_DEFINE_UNQUOTED([DC_SYSROOT], ["$with_sysroot"], [target system root])
+fi
 
 # Defaults
 : ${CFLAGS=""}
@@ -63,7 +74,7 @@ AC_PROG_RANLIB
 
 AM_PROG_CC_C_O
 
-AC_PATH_PROG([llvm_config], [llvm-config], [], [$llvm_prefix/bin])
+AC_PATH_PROG([llvm_config], [llvm-config], [], [$with_llvm/bin])
 if test "x$llvm_config" = "x"; then
 	AC_MSG_ERROR([llvm-config not found.])
 fi

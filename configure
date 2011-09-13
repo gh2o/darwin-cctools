@@ -729,6 +729,7 @@ enable_option_checking
 enable_silent_rules
 enable_maintainer_mode
 with_llvm
+with_sysroot
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1375,6 +1376,7 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-llvm[=/usr]      location of LLVM installation
+  --with-sysroot=PATH     location of target system root
 
 Some influential environment variables:
   CC          C compiler command
@@ -2924,13 +2926,31 @@ fi
 
 # Check whether --with-llvm was given.
 if test "${with_llvm+set}" = set; then :
-  withval=$with_llvm; llvm_prefix="$withval"
+  withval=$with_llvm;
 else
-  llvm_prefix="/usr"
+  with_llvm="/usr"
 
 fi
 
 
+
+# Check whether --with-sysroot was given.
+if test "${with_sysroot+set}" = set; then :
+  withval=$with_sysroot;
+else
+  with_sysroot=""
+
+fi
+
+
+# Add options
+if test -n "$with_sysroot"; then
+
+cat >>confdefs.h <<_ACEOF
+#define DC_SYSROOT "$with_sysroot"
+_ACEOF
+
+fi
 
 # Defaults
 : ${CFLAGS=""}
@@ -4534,7 +4554,7 @@ else
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $llvm_prefix/bin
+for as_dir in $with_llvm/bin
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.

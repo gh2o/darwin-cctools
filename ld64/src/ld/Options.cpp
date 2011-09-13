@@ -29,6 +29,7 @@
 #include <mach-o/dyld.h>
 #include <libc.h>
 #include <fcntl.h>
+#include <config.h>
 
 #include <vector>
 
@@ -2826,6 +2827,12 @@ void Options::buildSearchPaths(int argc, const char* argv[])
 			fSDKPaths.clear();
 		}
 	}
+	
+#ifdef DC_SYSROOT
+	if (fSDKPaths.size () == 0) {
+		fSDKPaths.push_back (DC_SYSROOT);
+	}
+#endif
 
 	// now merge sdk and library paths to make real search paths
 	fLibrarySearchPaths.reserve(libraryPaths.size()*(fSDKPaths.size()+1));
