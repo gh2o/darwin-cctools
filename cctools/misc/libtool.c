@@ -3005,11 +3005,9 @@ int fd)
 	    if(write(fd, library + write_offset, write_size) !=
 	       (int)write_size)
 		system_fatal("can't write to output file");
-/*
 	    if((r = vm_deallocate(mach_task_self(), (vm_address_t)(library +
 				  write_offset), write_size)) != KERN_SUCCESS)
 		mach_fatal(r, "can't vm_deallocate() buffer for output file");
-*/
 	}
 	output_blocks = NULL;
 }
