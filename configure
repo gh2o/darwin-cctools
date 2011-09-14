@@ -2383,28 +2383,42 @@ ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
 
+
+
 # Check target options
 if test "x$target_os" != "xdarwin10"; then
+
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Target OS must be \"darwin10\"." >&5
+$as_echo "$as_me: WARNING: Target OS must be \"darwin10\"." >&2;}
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "Target OS must be \"darwin10\".
+as_fn_error $? "For an IOS toolchain, add --target=arm-apple-darwin10 to your command-line options.
 See \`config.log' for more details" "$LINENO" 5; }
+
 fi
 if test "x$target_vendor" != "xapple"; then
+
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Target vendor must be \"apple\"." >&5
+$as_echo "$as_me: WARNING: Target vendor must be \"apple\"." >&2;}
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "Target vendor must be \"apple\".
+as_fn_error $? "For an IOS toolchain, add --target=arm-apple-darwin10 to your command-line options.
 See \`config.log' for more details" "$LINENO" 5; }
+
 fi
 
 case "$target_cpu" in
 	arm)
 		;;
 	*)
-		{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Target CPU not supported." >&5
+$as_echo "$as_me: WARNING: Target CPU not supported." >&2;}
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "Target CPU not supported.
+as_fn_error $? "For an IOS toolchain, add --target=arm-apple-darwin10 to your command-line options.
 See \`config.log' for more details" "$LINENO" 5; }
+
 		;;
 esac
 

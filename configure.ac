@@ -20,19 +20,24 @@ AC_CANONICAL_TARGET
 
 AC_ARG_PROGRAM
 
+AC_DEFUN([AC_TARGET_FAILURE], [
+	AC_MSG_WARN([$1])
+	AC_MSG_FAILURE([For an IOS toolchain, add --target=arm-apple-darwin10 to your command-line options.])
+])
+
 # Check target options
 if test "x$target_os" != "xdarwin10"; then
-	AC_MSG_FAILURE([Target OS must be "darwin10".])
+	AC_TARGET_FAILURE([Target OS must be "darwin10".])
 fi
 if test "x$target_vendor" != "xapple"; then
-	AC_MSG_FAILURE([Target vendor must be "apple".])
+	AC_TARGET_FAILURE([Target vendor must be "apple".])
 fi
 
 case "$target_cpu" in
 	arm)
 		;;
 	*)
-		AC_MSG_FAILURE([Target CPU not supported.])
+		AC_TARGET_FAILURE([Target CPU not supported.])
 		;;
 esac
 
