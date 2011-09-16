@@ -636,7 +636,6 @@ int main(int argc, const char* argv[])
 }
 
 
-#ifndef NDEBUG
 extern "C" {
 // implement assert() function to print out a backtrace before aborting
 void __assert_rtn(const char* func, const char* file, int line, const char* failedexpr)
@@ -663,6 +662,5 @@ void __assert_rtn(const char* func, const char* file, int line, const char* fail
 	exit(1);
 }
 }
-#endif
 
 
