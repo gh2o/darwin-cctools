@@ -84,8 +84,7 @@ if test "x$llvm_config" = "x"; then
 	AC_MSG_ERROR([llvm-config not found.])
 fi
 
-CFLAGS="${CFLAGS} `$llvm_config --cflags`"
-CXXFLAGS="${CXXFLAGS} `$llvm_config --cxxflags`"
+CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
 
 AC_SUBST([LLVM_LDFLAGS], [`$llvm_config --ldflags`])
 AC_SUBST([LLVM_LIBS], [`$llvm_config --libfiles`])

@@ -4599,8 +4599,7 @@ if test "x$llvm_config" = "x"; then
 	as_fn_error $? "llvm-config not found." "$LINENO" 5
 fi
 
-CFLAGS="${CFLAGS} `$llvm_config --cflags`"
-CXXFLAGS="${CXXFLAGS} `$llvm_config --cxxflags`"
+CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
 
 LLVM_LDFLAGS=`$llvm_config --ldflags`
 
