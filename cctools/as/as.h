@@ -50,7 +50,9 @@ extern char version_string[];
  * For speed NDEBUG is defined so assert()'s are left out.
 #undef NDEBUG
  */
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 
 /*
  * For speed SUSPECT is undefined.
