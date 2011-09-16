@@ -84,6 +84,9 @@ if test "x$llvm_config" = "x"; then
 	AC_MSG_ERROR([llvm-config not found.])
 fi
 
+CFLAGS="${CFLAGS} `$llvm_config --cflags`"
+CXXFLAGS="${CXXFLAGS} `$llvm_config --cxxflags`"
+
 AC_SUBST([LLVM_LDFLAGS], [`$llvm_config --ldflags`])
 AC_SUBST([LLVM_LIBS], [`$llvm_config --libfiles`])
 AC_SUBST([LLVM_LIBDIR], [`$llvm_config --libdir`])
@@ -102,11 +105,11 @@ AC_SEARCH_LIBS(
 )
 
 # Checks for header files.
-#AC_CHECK_HEADER(
-#	[llvm-c/lto.h],
-#	[true],
-#	[AC_MSG_ERROR([LLVM headers not found.])]
-#)
+AC_CHECK_HEADER(
+	[llvm-c/lto.h],
+	[true],
+	[AC_MSG_ERROR([LLVM headers not found.])]
+)
 AC_CHECK_HEADER(
 	[uuid/uuid.h],
 	[true],

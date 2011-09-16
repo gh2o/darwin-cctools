@@ -4599,6 +4599,9 @@ if test "x$llvm_config" = "x"; then
 	as_fn_error $? "llvm-config not found." "$LINENO" 5
 fi
 
+CFLAGS="${CFLAGS} `$llvm_config --cflags`"
+CXXFLAGS="${CXXFLAGS} `$llvm_config --cxxflags`"
+
 LLVM_LDFLAGS=`$llvm_config --ldflags`
 
 LLVM_LIBS=`$llvm_config --libfiles`
@@ -4736,11 +4739,6 @@ fi
 
 
 # Checks for header files.
-#AC_CHECK_HEADER(
-#	[llvm-c/lto.h],
-#	[true],
-#	[AC_MSG_ERROR([LLVM headers not found.])]
-#)
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5136,6 +5134,15 @@ _ACEOF
 fi
 
 done
+
+
+ac_fn_c_check_header_mongrel "$LINENO" "llvm-c/lto.h" "ac_cv_header_llvm_c_lto_h" "$ac_includes_default"
+if test "x$ac_cv_header_llvm_c_lto_h" = xyes; then :
+  true
+else
+  as_fn_error $? "LLVM headers not found." "$LINENO" 5
+
+fi
 
 
 ac_fn_c_check_header_mongrel "$LINENO" "uuid/uuid.h" "ac_cv_header_uuid_uuid_h" "$ac_includes_default"
