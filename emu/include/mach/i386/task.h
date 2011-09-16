@@ -33,7 +33,6 @@ typedef function_table_entry   *function_table_t;
 #include <mach/mig.h>
 #include <mach/mig.h>
 #include <mach/mach_types.h>
-#include <mach_debug/mach_debug_types.h>
 
 #ifdef __BeforeMigUserHeader
 __BeforeMigUserHeader
@@ -424,21 +423,6 @@ kern_return_t task_set_ras_pc
 	task_t target_task,
 	vm_address_t basepc,
 	vm_address_t boundspc
-);
-
-/* Routine task_zone_info */
-#ifdef	mig_external
-mig_external
-#else
-extern
-#endif	/* mig_external */
-kern_return_t task_zone_info
-(
-	task_t target_task,
-	mach_zone_name_array_t *names,
-	mach_msg_type_number_t *namesCnt,
-	task_zone_info_array_t *info,
-	mach_msg_type_number_t *infoCnt
 );
 
 /* Routine task_assign */
