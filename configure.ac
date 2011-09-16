@@ -102,11 +102,11 @@ AC_SEARCH_LIBS(
 )
 
 # Checks for header files.
-AC_CHECK_HEADER(
-	[llvm-c/lto.h],
-	[true],
-	[AC_MSG_ERROR([LLVM headers not found.])]
-)
+#AC_CHECK_HEADER(
+#	[llvm-c/lto.h],
+#	[true],
+#	[AC_MSG_ERROR([LLVM headers not found.])]
+#)
 AC_CHECK_HEADER(
 	[uuid/uuid.h],
 	[true],
