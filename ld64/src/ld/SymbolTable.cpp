@@ -699,8 +699,8 @@ void SymbolTable::printStatistics()
 	for(unsigned int b=0; b < 11; ++b) {
 		fprintf(stderr, "%u buckets have %u elements\n", count[b], b);
 	}
-	fprintf(stderr, "indirect table size: %lu\n", _indirectBindingTable.size());
-	fprintf(stderr, "by-name table size: %lu\n", _byNameTable.size());
+	fprintf(stderr, "indirect table size: %lu\n", (unsigned long) _indirectBindingTable.size());
+	fprintf(stderr, "by-name table size: %lu\n", (unsigned long) _byNameTable.size());
 //	fprintf(stderr, "by-content table size: %lu, hash count: %u, equals count: %u, lookup count: %u\n", 
 //						_byContentTable.size(), contentHashCount, contentEqualCount, contentLookupCount);
 //	fprintf(stderr, "by-ref table size: %lu, hashed count: %u, equals count: %u, lookup count: %u, insert count: %u\n", 

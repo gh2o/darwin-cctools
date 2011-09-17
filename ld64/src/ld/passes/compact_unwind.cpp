@@ -313,7 +313,7 @@ void UnwindInfoAtom<A>::compressDuplicates(const std::vector<UnwindEntry>& entri
 		last = next;
 	}
 	if (_s_log) fprintf(stderr, "compressDuplicates() entries.size()=%lu, uniqueEntries.size()=%lu\n", 
-								entries.size(), uniqueEntries.size());
+								(unsigned long) entries.size(), (unsigned long) uniqueEntries.size());
 }
 
 template <typename A>
@@ -330,7 +330,7 @@ void UnwindInfoAtom<A>::makePersonalityIndexes(std::vector<UnwindEntry>& entries
 			it->encoding |= (personalityIndex << (__builtin_ctz(UNWIND_PERSONALITY_MASK)) );
 		}
 	}
-	if (_s_log) fprintf(stderr, "makePersonalityIndexes() %lu personality routines used\n", personalityIndexMap.size()); 
+	if (_s_log) fprintf(stderr, "makePersonalityIndexes() %lu personality routines used\n", (unsigned long) personalityIndexMap.size()); 
 }
 
 
@@ -366,7 +366,7 @@ void UnwindInfoAtom<A>::findCommonEncoding(const std::vector<UnwindEntry>& entri
 			}
 		}
 	}
-	if (_s_log) fprintf(stderr, "findCommonEncoding() %lu common encodings found\n", commonEncodings.size()); 
+	if (_s_log) fprintf(stderr, "findCommonEncoding() %lu common encodings found\n", (unsigned long) commonEncodings.size()); 
 }
 
 
@@ -382,7 +382,7 @@ void UnwindInfoAtom<A>::makeLsdaIndex(const std::vector<UnwindEntry>& entries, s
 			lsdaIndex.push_back(entry);
 		}
 	}
-	if (_s_log) fprintf(stderr, "makeLsdaIndex() %lu LSDAs found\n", lsdaIndex.size()); 
+	if (_s_log) fprintf(stderr, "makeLsdaIndex() %lu LSDAs found\n", (unsigned long) lsdaIndex.size()); 
 }
 
 
@@ -558,7 +558,7 @@ unsigned int UnwindInfoAtom<A>::makeCompressedSecondLevelPage(const std::vector<
 				else {
 					canDo = false; // case 3)
 					if (_s_log) fprintf(stderr, "end of compressed page with %u entries, %lu custom encodings because too many custom encodings\n", 
-											entryCount, pageSpecificEncodings.size());
+											entryCount, (unsigned long) pageSpecificEncodings.size());
 				}
 			}
 		}
@@ -641,7 +641,7 @@ unsigned int UnwindInfoAtom<A>::makeCompressedSecondLevelPage(const std::vector<
 		E::set32(encodingsArray[it->second-commonEncodings.size()], it->first);
 	}
 	
-	if (_s_log) fprintf(stderr, "compressed page with %u entries, %lu custom encodings\n", entryCount, pageSpecificEncodings.size());
+	if (_s_log) fprintf(stderr, "compressed page with %u entries, %lu custom encodings\n", entryCount, (unsigned long) pageSpecificEncodings.size());
 	
 	// update pageEnd;
 	pageEnd = pageStart;

@@ -23,8 +23,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/cctools/include \
 	$(CORE_CPPFLAGS)
 
-AM_CFLAGS = -Wall -Wno-format -Wno-enum-compare
-AM_CXXFLAGS = -Wall -Wno-format -Wno-deprecated
+AM_CFLAGS = -Wall -Wno-enum-compare
+AM_CXXFLAGS = -Wall -Wno-deprecated
 
 ########################################
 # programs and libraries               #
