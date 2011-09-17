@@ -71,7 +71,7 @@ void doPass(const Options& opts, ld::Internal& state)
 			const ld::Atom* atom = *ait;
 			if ( (address > 0x7FFFFFFFLL) && !sect->isSectionHidden() ) {
 				state.usingHugeSections = true;
-				if (log) fprintf(stderr, "atom: %s is >2GB (0x%09llX), so enabling huge mode\n", atom->name(), address);
+				if (log) fprintf(stderr, "atom: %s is >2GB (0x%09llX), so enabling huge mode\n", atom->name(), (unsigned long long) address);
 				break;
 			}
 			address += atom->size();
@@ -94,7 +94,7 @@ void doPass(const Options& opts, ld::Internal& state)
 				const ld::Atom* atom = *ait;
 				if ( atom->size() > 1024*1024 ) {
 					hugeSection->atoms.push_back(atom);
-					if (log) fprintf(stderr, "moved to __huge: %s, size=%llu\n", atom->name(), atom->size());
+					if (log) fprintf(stderr, "moved to __huge: %s, size=%llu\n", atom->name(), (unsigned long long) atom->size());
 					*ait = NULL;  // change atom to NULL for later bulk removal
 					movedSome = true;
 				}

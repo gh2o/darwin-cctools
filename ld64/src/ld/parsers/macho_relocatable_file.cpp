@@ -1919,7 +1919,8 @@ void Parser<A>::makeSections()
 					_file->_ojcReplacmentClass = true;
 				if ( sect->size() > 8 ) {
 					warning("section %s/%s has unexpectedly large size %llu in %s", 
-							sect->segname(), sect->sectname(), sect->size(), _file->path());
+							sect->segname(), sect->sectname(),
+							(unsigned long long) sect->size(), _file->path());
 				}
 			}
 			else {
@@ -2142,7 +2143,7 @@ Section<A>* Parser<A>::sectionForAddress(typename A::P::uint_t addr)
 		}
 	}
 	
-	throwf("sectionForAddress(0x%llX) address not in any section", (uint64_t)addr);
+	throwf("sectionForAddress(0x%llX) address not in any section", (unsigned long long) addr);
 }
 
 template <typename A>
@@ -2817,7 +2818,7 @@ const char* Parser<A>::getDwarfString(uint64_t form, const uint8_t* p)
 		}
 		return &dwarfStrings[offset];
 	}
-	warning("unknown dwarf string encoding (form=%lld) in %s\n", form, this->_path);
+	warning("unknown dwarf string encoding (form=%lld) in %s\n", (long long) form, this->_path);
 	return NULL;
 }
 
@@ -3038,7 +3039,7 @@ void Parser<A>::parseStabs()
 							}
 							else {
 								fprintf(stderr, "can't find atom for stabs BNSYM at %08llX in %s",
-									(uint64_t)sym.n_value(), _path);
+									(unsigned long long) sym.n_value(), _path);
 							}
 							break;
 						case N_SO:
@@ -3100,7 +3101,7 @@ void Parser<A>::parseStabs()
 								}
 								else {
 									warning("can't find atom for stabs FUN at %08llX in %s",
-										(uint64_t)currentAtomAddress, _path);
+										(unsigned long long) currentAtomAddress, _path);
 								}
 							}
 							break;
@@ -3136,7 +3137,7 @@ void Parser<A>::parseStabs()
 							}
 							else {
 								warning("can't find atom for stabs 0x%X at %08llX in %s",
-									type, (uint64_t)sym.n_value(), _path);
+									type, (unsigned long long) sym.n_value(), _path);
 							}
 							break;
 						}
@@ -3168,7 +3169,7 @@ void Parser<A>::parseStabs()
 									}
 									else {
 										warning("can't find atom for stabs FUN at %08llX in %s",
-											(uint64_t)currentAtomAddress, _path);
+											(unsigned long long) currentAtomAddress, _path);
 									}
 								}
 								else {
@@ -3958,7 +3959,7 @@ const void*	 CFISection<A>::OAS::mappedAddress(pint_t addr)
 				}
 			}
 		}
-		throwf("__eh_frame parsing problem.  Can't find target of reference to address 0x%08llX", (uint64_t)addr);
+		throwf("__eh_frame parsing problem.  Can't find target of reference to address 0x%08llX", (unsigned long long) addr);
 	}
 }
 		

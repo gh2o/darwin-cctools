@@ -311,39 +311,47 @@ void RebaseInfoAtom<A>::encode() const
 				done = true;
 				break;
 			case REBASE_OPCODE_SET_TYPE_IMM:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_TYPE_IMM(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(REBASE_OPCODE_SET_TYPE_IMM | it->operand1);
 				break;
 			case REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n",
+					(long long) it->operand1, (unsigned long long) it->operand2);
 				this->_encodedData.append_byte(REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
 				this->_encodedData.append_uleb128(it->operand2);
 				break;
 			case REBASE_OPCODE_ADD_ADDR_ULEB:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_ULEB(0x%llX)\n",
+					(unsigned long long) it->operand1);
 				this->_encodedData.append_byte(REBASE_OPCODE_ADD_ADDR_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
 			case REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n",
+					(long long) it->operand1, (unsigned long long)(it->operand1*sizeof(pint_t)));
 				this->_encodedData.append_byte(REBASE_OPCODE_ADD_ADDR_IMM_SCALED | it->operand1 );
 				break;
 			case REBASE_OPCODE_DO_REBASE_IMM_TIMES:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_IMM_TIMES(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_IMM_TIMES(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_IMM_TIMES | it->operand1);
 				break;
 			case REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ULEB_TIMES);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
 			case REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB(0x%llX)\n",
+					(unsigned long long) it->operand1);
 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
 			case REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
+				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n",
+					(long long) it->operand1, (long long) it->operand2);
 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				this->_encodedData.append_uleb128(it->operand2);
@@ -521,39 +529,47 @@ void BindingInfoAtom<A>::encode() const
 				done = true;
 				break;
 			case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | it->operand1);
 				break;
 			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
 			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | (it->operand1 & BIND_IMMEDIATE_MASK));
 				break;
 			case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0llX, %s)\n", it->operand1, it->name);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0llX, %s)\n",
+					(unsigned long long) it->operand1, it->name);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM | it->operand1);
 				this->_encodedData.append_string(it->name);
 				break;
 			case BIND_OPCODE_SET_TYPE_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_TYPE_IMM | it->operand1);
 				break;
 			case BIND_OPCODE_SET_ADDEND_SLEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_ADDEND_SLEB);
 				this->_encodedData.append_sleb128(it->operand1);
 				break;
 			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n",
+					(long long) it->operand1, (unsigned long long) it->operand2);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
 				this->_encodedData.append_uleb128(it->operand2);
 				break;
 			case BIND_OPCODE_ADD_ADDR_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n",
+					(unsigned long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_ADD_ADDR_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
@@ -562,16 +578,19 @@ void BindingInfoAtom<A>::encode() const
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND);
 				break;
 			case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n",
+					(unsigned long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
 			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
+				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n",
+					(long long) it->operand1, (unsigned long long) it->operand1*sizeof(pint_t));
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | it->operand1 );
 				break;
 			case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n",
+					(long long) it->operand1, (long long) it->operand2);
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				this->_encodedData.append_uleb128(it->operand2);
@@ -759,39 +778,47 @@ void WeakBindingInfoAtom<A>::encode() const
 				done = true;
 				break;
 			case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | it->operand1);
 				break;
 			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
 			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | (it->operand1 & BIND_IMMEDIATE_MASK));
 				break;
 			case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0llX, %s)\n", it->operand1, it->name);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0llX, %s)\n",
+					(unsigned long long) it->operand1, it->name);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM | it->operand1);
 				this->_encodedData.append_string(it->name);
 				break;
 			case BIND_OPCODE_SET_TYPE_IMM:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_TYPE_IMM | it->operand1);
 				break;
 			case BIND_OPCODE_SET_ADDEND_SLEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n",
+					(long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_ADDEND_SLEB);
 				this->_encodedData.append_sleb128(it->operand1);
 				break;
 			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n",
+					(long long) it->operand1, (unsigned long long) it->operand2);
 				this->_encodedData.append_byte(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
 				this->_encodedData.append_uleb128(it->operand2);
 				break;
 			case BIND_OPCODE_ADD_ADDR_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n",
+					(unsigned long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_ADD_ADDR_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
@@ -800,16 +827,19 @@ void WeakBindingInfoAtom<A>::encode() const
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND);
 				break;
 			case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n",
+					(unsigned long long) it->operand1);
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				break;
 			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
+				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n",
+					(long long) it->operand1, (unsigned long long)(it->operand1*sizeof(pint_t)));
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | it->operand1 );
 				break;
 			case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
+				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n",
+					(long long) it->operand1, (long long) it->operand2);
 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
 				this->_encodedData.append_uleb128(it->operand1);
 				this->_encodedData.append_uleb128(it->operand2);
@@ -1095,7 +1125,7 @@ void SplitSegInfoAtom<x86_64>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind
 			_64bitPointerLocations.push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", (unsigned long long) address);
 			break;
 	}
 }
@@ -1109,7 +1139,7 @@ void SplitSegInfoAtom<x86>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind ki
 			_32bitPointerLocations.push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", (unsigned long long) address);
 			break;
 	}
 }
@@ -1122,7 +1152,7 @@ void SplitSegInfoAtom<arm>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind ki
 			_32bitPointerLocations.push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", (unsigned long long) address);
 			break;
 	}
 }
@@ -1139,7 +1169,7 @@ void SplitSegInfoAtom<ppc>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind ki
 			_32bitPointerLocations.push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", (unsigned long long) address);
 			break;
 	}
 }
@@ -1153,7 +1183,7 @@ void SplitSegInfoAtom<ppc64>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind 
 			_ppcHi16Locations.push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", (unsigned long long) address);
 			break;
 	}
 }

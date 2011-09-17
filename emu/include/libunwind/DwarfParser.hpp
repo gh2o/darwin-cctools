@@ -518,7 +518,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 	pint_t p = instructions;
 	uint32_t codeOffset = 0;
 	PrologInfo initialState = *results;
-	if ( logDwarf ) fprintf(stderr, "parseInstructions(instructions=0x%0llX)\n", (uint64_t)instructionsEnd);
+	if ( logDwarf ) fprintf(stderr, "parseInstructions(instructions=0x%0llX)\n", (unsigned long long) instructionsEnd);
 	
 	// see Dwarf Spec, section 6.4.2 for details on unwind opcodes
 	while ( (p < instructionsEnd) && (codeOffset < pcoffset) ) {
@@ -564,7 +564,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 					results->registerSavedMoreThanOnce = true;
 				results->savedRegisters[reg].location = kRegisterInCFA;
 				results->savedRegisters[reg].value = offset;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended(reg=%lld, offset=%lld)\n", reg, offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended(reg=%lld, offset=%lld)\n", (long long) reg, (long long) offset);
 				break;
 			case DW_CFA_restore_extended:
 				reg = addressSpace.getULEB128(p, instructionsEnd);;
@@ -573,7 +573,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 					return false;
 				}
 				results->savedRegisters[reg] = initialState.savedRegisters[reg];
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_restore_extended(reg=%lld)\n", reg);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_restore_extended(reg=%lld)\n", (long long) reg);
 				break;
 			case DW_CFA_undefined:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -582,7 +582,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 					return false;
 				}
 				results->savedRegisters[reg].location = kRegisterUnused;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_undefined(reg=%lld)\n", reg);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_undefined(reg=%lld)\n", (long long) reg);
 				break;
 			case DW_CFA_same_value:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -597,7 +597,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				results->savedRegisters[reg].location = kRegisterUnused;
 				// set flag to disable conversion to compact unwind
 				results->sameValueUsed = true;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_same_value(reg=%lld)\n", reg);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_same_value(reg=%lld)\n", (long long) reg);
 				break;
 			case DW_CFA_register:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -614,7 +614,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				results->savedRegisters[reg].value = reg2;
 				// set flag to disable conversion to compact unwind
 				results->registersInOtherRegisters = true;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_register(reg=%lld, reg2=%lld)\n", reg, reg2);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_register(reg=%lld, reg2=%lld)\n", (long long) reg, (long long) reg2);
 				break;
 			case DW_CFA_remember_state:
 				// avoid operator new, because that would be an upward dependency
@@ -652,7 +652,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				results->cfaRegisterOffset = offset;
 				if ( offset > 0x80000000 ) 
 					results->cfaOffsetWasNegative = true;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa(reg=%lld, offset=%lld)\n", reg, offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa(reg=%lld, offset=%lld)\n", (long long) reg, (long long) offset);
 				break;
 			case DW_CFA_def_cfa_register:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -661,7 +661,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 					return false;
 				}
 				results->cfaRegister = reg;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_register(%lld)\n", reg);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_register(%lld)\n", (long long) reg);
 				break;
 			case DW_CFA_def_cfa_offset:
 				results->cfaRegisterOffset = addressSpace.getULEB128(p, instructionsEnd);
@@ -674,7 +674,8 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				length = addressSpace.getULEB128(p, instructionsEnd);
 				p += length;
 				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_expression(expression=0x%llX, length=%llu)\n", 
-													results->cfaExpression, length);
+													(unsigned long long) results->cfaExpression,
+													(unsigned long long) length);
 				break;
 			case DW_CFA_expression:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -687,7 +688,9 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				length = addressSpace.getULEB128(p, instructionsEnd);
 				p += length;
 				if ( logDwarf ) fprintf(stderr, "DW_CFA_expression(reg=%lld, expression=0x%llX, length=%llu)\n", 
-													reg, results->savedRegisters[reg].value, length);
+													(long long) reg,
+													(unsigned long long) results->savedRegisters[reg].value,
+													(unsigned long long) length);
 				break;
 			case DW_CFA_offset_extended_sf:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -700,7 +703,8 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 					results->registerSavedMoreThanOnce = true;
 				results->savedRegisters[reg].location = kRegisterInCFA;
 				results->savedRegisters[reg].value = offset;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended_sf(reg=%lld, offset=%lld)\n", reg, offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended_sf(reg=%lld, offset=%lld)\n",
+					(long long) reg, (long long) offset);
 				break;
 			case DW_CFA_def_cfa_sf:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -711,7 +715,8 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				}
 				results->cfaRegister = reg;
 				results->cfaRegisterOffset = offset;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_sf(reg=%lld, offset=%lld)\n", reg, offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_sf(reg=%lld, offset=%lld)\n",
+					(long long) reg, (long long) offset);
 				break;
 			case DW_CFA_def_cfa_offset_sf:
 				results->cfaRegisterOffset = addressSpace.getSLEB128(p, instructionsEnd) * cieInfo.dataAlignFactor;
@@ -723,7 +728,8 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				offset = addressSpace.getULEB128(p, instructionsEnd) * cieInfo.dataAlignFactor;
 				results->savedRegisters[reg].location = kRegisterOffsetFromCFA;
 				results->savedRegisters[reg].value = offset;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset(reg=%lld, offset=%lld\n", reg, offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset(reg=%lld, offset=%lld\n",
+					(long long) reg, (long long) offset);
 				break;
 			case DW_CFA_val_offset_sf:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -734,7 +740,8 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				offset = addressSpace.getSLEB128(p, instructionsEnd) * cieInfo.dataAlignFactor;
 				results->savedRegisters[reg].location = kRegisterOffsetFromCFA;
 				results->savedRegisters[reg].value = offset;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset_sf(reg=%lld, offset=%lld\n", reg, offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset_sf(reg=%lld, offset=%lld\n",
+					(long long) reg, (long long) offset);
 				break;
 			case DW_CFA_val_expression:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -747,12 +754,14 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 				length = addressSpace.getULEB128(p, instructionsEnd);
 				p += length;
 				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_expression(reg=%lld, expression=0x%llX, length=%lld)\n", 
-													reg, results->savedRegisters[reg].value, length);
+													(long long) reg,
+													(unsigned long long) results->savedRegisters[reg].value,
+													(long long) length);
 				break;
 			case DW_CFA_GNU_args_size:
 				offset = addressSpace.getULEB128(p, instructionsEnd);
 				results->spExtraArgSize = offset;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_args_size(%lld)\n", offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_args_size(%lld)\n", (long long) offset);
 				break;
 			case DW_CFA_GNU_negative_offset_extended:
 				reg = addressSpace.getULEB128(p, instructionsEnd);
@@ -765,7 +774,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 					results->registerSavedMoreThanOnce = true;
 				results->savedRegisters[reg].location = kRegisterInCFA;
 				results->savedRegisters[reg].value = -offset;
-				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_negative_offset_extended(%lld)\n", offset);
+				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_negative_offset_extended(%lld)\n", (long long) offset);
 				break;
 			default:
 				operand = opcode & 0x3F;
@@ -784,7 +793,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 						}
 						results->savedRegisters[reg].location = kRegisterInCFA;
 						results->savedRegisters[reg].value = offset;
-						if ( logDwarf ) fprintf(stderr, "DW_CFA_offset(reg=%d, offset=%lld)\n", operand, offset);
+						if ( logDwarf ) fprintf(stderr, "DW_CFA_offset(reg=%d, offset=%lld)\n", operand, (long long) offset);
 						break;
 					case DW_CFA_advance_loc:
 						codeOffset += operand * cieInfo.codeAlignFactor;
@@ -796,7 +805,7 @@ bool CFI_Parser<A>::parseInstructions(A& addressSpace, pint_t instructions, pint
 						//return true; // gcc-4.5 starts the epilog with this
 						reg = operand;
 						results->savedRegisters[reg] = initialState.savedRegisters[reg];
-						if ( logDwarf ) fprintf(stderr, "DW_CFA_restore(reg=%lld)\n", reg);
+						if ( logDwarf ) fprintf(stderr, "DW_CFA_restore(reg=%lld)\n", (long long) reg);
 						break;
 					default: 
 						if ( logDwarf ) fprintf(stderr, "unknown CFA opcode 0x%02X\n", opcode);

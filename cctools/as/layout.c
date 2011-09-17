@@ -890,7 +890,7 @@ down:
 		layout_line = fixP->line;
 		layout_file = fixP->file;
 		as_bad("Fixup of %lld too large for field width of %d",
-			value, size);
+			(long long) value, size);
 		layout_line = 0;
 		layout_file = NULL;
 	    }

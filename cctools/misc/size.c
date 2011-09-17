@@ -286,24 +286,25 @@ void *cookie)
 		    }
 		    if(sg->nsects > 0){
 			if(flag->x == TRUE)
-			    printf("\ttotal 0x%llx\n", sect_sum);
+			    printf("\ttotal 0x%llx\n", (unsigned long long) sect_sum);
 			else
-			    printf("\ttotal %llu\n", sect_sum);
+			    printf("\ttotal %llu\n", (unsigned long long) sect_sum);
 		    }
 		}
 		else if(lc->cmd == LC_SEGMENT_64){
 		    sg64 = (struct segment_command_64 *)lc;
 		    printf("Segment %.16s: ", sg64->segname);
 		    if(flag->x == TRUE)
-			printf("0x%llx", sg64->vmsize);
+			printf("0x%llx", (unsigned long long) sg64->vmsize);
 		    else
-			printf("%llu", sg64->vmsize);
+			printf("%llu", (unsigned long long) sg64->vmsize);
 		    if(sg64->flags & SG_FVMLIB)
 			printf(" (fixed vm library segment)\n");
 		    else{
 			if(flag->l == TRUE)
 			    printf(" (vmaddr 0x%llx fileoff %llu)\n",
-				    sg64->vmaddr, sg64->fileoff);
+				    (unsigned long long) sg64->vmaddr,
+				    (unsigned long long) sg64->fileoff);
 			else
 			    printf("\n");
 		    }
@@ -318,12 +319,12 @@ void *cookie)
 			else
 			    printf("\tSection %.16s: ", s64->sectname);
 			if(flag->x == TRUE)
-			    printf("0x%llx", s64->size);
+			    printf("0x%llx", (unsigned long long) s64->size);
 			else
-			    printf("%llu", s64->size);
+			    printf("%llu", (unsigned long long) s64->size);
 			if(flag->l == TRUE)
 			    printf(" (addr 0x%llx offset %u)\n",
-				    s64->addr,
+				    (unsigned long long) s64->addr,
 				    s64->offset);
 			else
 			    printf("\n");
@@ -332,17 +333,17 @@ void *cookie)
 		    }
 		    if(sg64->nsects > 0){
 			if(flag->x == TRUE)
-			    printf("\ttotal 0x%llx\n", sect_sum);
+			    printf("\ttotal 0x%llx\n", (unsigned long long) sect_sum);
 			else
-			    printf("\ttotal %llu\n", sect_sum);
+			    printf("\ttotal %llu\n", (unsigned long long) sect_sum);
 		    }
 		}
 		lc = (struct load_command *)((char *)lc + lc->cmdsize);
 	    }
 	    if(flag->x == TRUE)
-		printf("total 0x%llx\n", seg_sum);
+		printf("total 0x%llx\n", (unsigned long long) seg_sum);
 	    else
-		printf("total %llu\n", seg_sum);
+		printf("total %llu\n", (unsigned long long) seg_sum);
 	}
 	else{
 	    text = 0;
@@ -409,9 +410,10 @@ void *cookie)
 		}
 		lc = (struct load_command *)((char *)lc + lc->cmdsize);
 	    }
-	    printf("%llu\t%llu\t%llu\t%llu\t", text, data, objc, others);
+	    printf("%llu\t%llu\t%llu\t%llu\t", (unsigned long long) text, (unsigned long long) data,
+	    	(unsigned long long) objc, (unsigned long long) others);
 	    sum = text + data + objc + others;
-	    printf("%llu\t%llx", sum, sum);
+	    printf("%llu\t%llx", (unsigned long long) sum, (unsigned long long) sum);
 	    if(flag->nfiles > 1 || ofile->member_ar_hdr != NULL ||
 	       arch_name != NULL){
 		if(ofile->member_ar_hdr != NULL){

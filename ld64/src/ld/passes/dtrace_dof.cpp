@@ -316,7 +316,7 @@ void doPass(const Options& opts, ld::Internal& internal)
 				uint64_t offset = offsetsInDOF[i];
 				//fprintf(stderr, "%s offset[%d]=0x%08llX\n", providerName, i, offset);
 				if ( offset > dofSectionSize )
-					throwf("offsetsInDOF[%d]=%0llX > dofSectionSize=%0lX\n", i, offset, (unsigned long) dofSectionSize);
+					throwf("offsetsInDOF[%d]=%0llX > dofSectionSize=%0lX\n", i, (unsigned long long) offset, (unsigned long) dofSectionSize);
 				f->addSectionFixup(ld::Fixup(offset, ld::Fixup::k1of4, ld::Fixup::kindSetTargetAddress, probes[i].atom));
 				f->addSectionFixup(ld::Fixup(offset, ld::Fixup::k2of4, ld::Fixup::kindAddAddend, probes[i].offset));
 				f->addSectionFixup(ld::Fixup(offset, ld::Fixup::k3of4, ld::Fixup::kindSubtractTargetAddress, &f->atom()));

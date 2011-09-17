@@ -445,8 +445,10 @@ void)
 	for(p = file_parts; p != NULL; p = p->next){
 	    if(arch_flag == NULL){
 		printf("%s\n", file_part_type_names[p->type]);
-		printf("    offset = %llu\n", p->offset);
-		printf("    size = %llu\n", p->size);
+		printf("    offset = %llu\n",
+			(unsigned long long) p->offset);
+		printf("    size = %llu\n",
+			(unsigned long long) p->size);
 	    }
 	    if(prev != NULL)
 		if(prev != p->prev)
@@ -1028,8 +1030,10 @@ struct mach_o_part *mp)
 		p->s64->segname, p->s64->sectname);
 	    else
 		printf("%s%s\n", indent, mach_o_part_type_names[p->type]);
-	    printf("%s    offset = %llu\n", indent, p->offset - arch_offset);
-	    printf("%s    size = %llu\n", indent, p->size);
+	    printf("%s    offset = %llu\n", indent,
+	    	(unsigned long long)(p->offset - arch_offset));
+	    printf("%s    size = %llu\n", indent,
+	    	(unsigned long long) p->size);
 	    if(prev != NULL)
 		if(prev != p->prev)
 		    printf("bad prev pointer\n");
@@ -1289,7 +1293,9 @@ uint32_t page_number)
 		}
 		if(sections == TRUE || sections64 == TRUE){
 		    printf("Symbols on file page %u virtual address 0x%llx to "
-			   "0x%llx\n", page_number, low_addr, high_addr);
+			   "0x%llx\n", page_number,
+			   (unsigned long long) low_addr,
+			   (unsigned long long) high_addr);
 		    if(sections == TRUE)
 			print_symbols(fp, low_addr, high_addr);
 		    else
@@ -1558,7 +1564,8 @@ uint64_t high_addr)
 	      (int (*)(const void *, const void *))compare64);
 
 	for(i = 0; i < count; i++){
-	    printf("  0x%016llx %s\n", sorted_symbols64[i].n_value,
+	    printf("  0x%016llx %s\n",
+	    (unsigned long long) sorted_symbols64[i].n_value,
 		fp->strings + sorted_symbols64[i].n_un.n_strx);
 	}
 }

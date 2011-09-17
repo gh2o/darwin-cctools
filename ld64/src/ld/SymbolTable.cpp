@@ -198,8 +198,11 @@ bool SymbolTable::addByName(const ld::Atom& newAtom, bool ignoreDuplicates)
 						if ( newAtom.size() > existingAtom->size() ) {
 							warning("for symbol %s tentative definition of size %llu from %s is "
 											"is smaller than the real definition of size %llu from %s",
-											newAtom.name(), newAtom.size(), newAtom.file()->path(),
-											existingAtom->size(), existingAtom->file()->path());
+											newAtom.name(),
+											(unsigned long long) newAtom.size(),
+											newAtom.file()->path(),
+											(unsigned long long) existingAtom->size(),
+											existingAtom->file()->path());
 						}
 						break;
 					case ld::Atom::definitionAbsolute:
@@ -218,8 +221,11 @@ bool SymbolTable::addByName(const ld::Atom& newAtom, bool ignoreDuplicates)
 						if ( newAtom.size() < existingAtom->size() ) {
 							warning("for symbol %s tentative definition of size %llu from %s is "
 											"being replaced by a real definition of size %llu from %s",
-											newAtom.name(), existingAtom->size(), existingAtom->file()->path(),
-											newAtom.size(), newAtom.file()->path());
+											newAtom.name(),
+											(unsigned long long) existingAtom->size(),
+											existingAtom->file()->path(),
+											(unsigned long long) newAtom.size(),
+											newAtom.file()->path());
 						}
 						break;
 					case ld::Atom::definitionTentative:

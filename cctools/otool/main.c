@@ -2387,7 +2387,7 @@ cpu_subtype_t cpusubtype)
 		    printf("\t");
 		else{
 		    if(cputype & CPU_ARCH_ABI64)
-			printf("%016llx\t", cur_addr);
+			printf("%016llx\t", (unsigned long long) cur_addr);
 		    else
 			printf("%08x\t", (uint32_t)cur_addr);
 		}
@@ -2470,7 +2470,7 @@ cpu_subtype_t cpusubtype)
 	    if(cputype == CPU_TYPE_I386 || cputype == CPU_TYPE_X86_64){
 		for(i = 0 ; i < size ; i += j , addr += j){
 		    if(cputype & CPU_ARCH_ABI64)
-			printf("%016llx ", addr);
+			printf("%016llx ", (unsigned long long) addr);
 		    else
 			printf("%08x ", (uint32_t)addr);
 		    for(j = 0;
@@ -2551,7 +2551,7 @@ uint32_t object_size)
 	}
 	printf("Argument strings on the stack at: ");
 	if(cputype & CPU_ARCH_ABI64 || magic == MH_MAGIC_64)
-	    printf("%016llx\n", usrstack);
+	    printf("%016llx\n", (unsigned long long) usrstack);
 	else
 	    printf("%08x\n", (uint32_t)usrstack);
 	lc = load_commands;

@@ -2344,19 +2344,19 @@ enum bool verbose)
 	    printf("\n");
 	printf("  segname %.16s\n", segname);
 	if(cmd == LC_SEGMENT_64){
-	    printf("   vmaddr 0x%016llx\n", vmaddr);
-	    printf("   vmsize 0x%016llx\n", vmsize);
+	    printf("   vmaddr 0x%016llx\n", (unsigned long long) vmaddr);
+	    printf("   vmsize 0x%016llx\n", (unsigned long long) vmsize);
 	}
 	else{
 	    printf("   vmaddr 0x%08x\n", (uint32_t)vmaddr);
 	    printf("   vmsize 0x%08x\n", (uint32_t)vmsize);
 	}
-	printf("  fileoff %llu", fileoff);
+	printf("  fileoff %llu", (unsigned long long) fileoff);
 	if(fileoff > object_size)
 	    printf(" (past end of file)\n");
 	else
 	    printf("\n");
-	printf(" filesize %llu", filesize);
+	printf(" filesize %llu", (unsigned long long) filesize);
 	if(fileoff + filesize > object_size)
 	    printf(" (past end of file)\n");
 	else
@@ -2467,8 +2467,8 @@ enum bool verbose)
 	else
 	    printf("\n");
 	if(cmd == LC_SEGMENT_64){
-	    printf("      addr 0x%016llx\n", addr);
-	    printf("      size 0x%016llx", size);
+	    printf("      addr 0x%016llx\n", (unsigned long long) addr);
+	    printf("      size 0x%016llx", (unsigned long long) size);
 	}
 	else{
 	    printf("      addr 0x%08x\n", (uint32_t)addr);
@@ -3167,14 +3167,14 @@ struct routines_command_64 *rc64)
 	    printf(" Incorrect size\n");
 	else
 	    printf("\n");
-	printf(" init_address 0x%016llx\n", rc64->init_address);
-	printf("  init_module %llu\n", rc64->init_module);
-	printf("    reserved1 %llu\n", rc64->reserved1);
-	printf("    reserved2 %llu\n", rc64->reserved2);
-	printf("    reserved3 %llu\n", rc64->reserved3);
-	printf("    reserved4 %llu\n", rc64->reserved4);
-	printf("    reserved5 %llu\n", rc64->reserved5);
-	printf("    reserved6 %llu\n", rc64->reserved6);
+	printf(" init_address 0x%016llx\n", (unsigned long long) rc64->init_address);
+	printf("  init_module %llu\n", (unsigned long long) rc64->init_module);
+	printf("    reserved1 %llu\n", (unsigned long long) rc64->reserved1);
+	printf("    reserved2 %llu\n", (unsigned long long) rc64->reserved2);
+	printf("    reserved3 %llu\n", (unsigned long long) rc64->reserved3);
+	printf("    reserved4 %llu\n", (unsigned long long) rc64->reserved4);
+	printf("    reserved5 %llu\n", (unsigned long long) rc64->reserved5);
+	printf("    reserved6 %llu\n", (unsigned long long) rc64->reserved6);
 }
 
 /*
@@ -4075,14 +4075,45 @@ enum byte_sex thread_states_byte_sex)
 			   "   xer  0x%016llx lr  0x%016llx ctr  0x%016llx\n"
 			   "vrsave  0x%08x        srr0 0x%016llx srr1 "
 			   "0x%016llx\n",
-			   cpu64.r0, cpu64.r1, cpu64.r2, cpu64.r3, cpu64.r4,
-			   cpu64.r5, cpu64.r6, cpu64.r7, cpu64.r8, cpu64.r9,
-			   cpu64.r10, cpu64.r11, cpu64.r12, cpu64.r13,cpu64.r14,
-			   cpu64.r15, cpu64.r16, cpu64.r17, cpu64.r18,cpu64.r19,
-			   cpu64.r20, cpu64.r21, cpu64.r22, cpu64.r23,cpu64.r24,
-			   cpu64.r25, cpu64.r26, cpu64.r27, cpu64.r28,cpu64.r29,
-			   cpu64.r30, cpu64.r31, cpu64.cr,  cpu64.xer, cpu64.lr,
-			   cpu64.ctr, cpu64.vrsave, cpu64.srr0, cpu64.srr1);
+			   (unsigned long long) cpu64.r0,
+			   (unsigned long long) cpu64.r1,
+			   (unsigned long long) cpu64.r2,
+			   (unsigned long long) cpu64.r3,
+			   (unsigned long long) cpu64.r4,
+			   (unsigned long long) cpu64.r5,
+			   (unsigned long long) cpu64.r6,
+			   (unsigned long long) cpu64.r7,
+			   (unsigned long long) cpu64.r8,
+			   (unsigned long long) cpu64.r9,
+			   (unsigned long long) cpu64.r10,
+			   (unsigned long long) cpu64.r11,
+			   (unsigned long long) cpu64.r12,
+			   (unsigned long long) cpu64.r13,
+			   (unsigned long long) cpu64.r14,
+			   (unsigned long long) cpu64.r15,
+			   (unsigned long long) cpu64.r16,
+			   (unsigned long long) cpu64.r17,
+			   (unsigned long long) cpu64.r18,
+			   (unsigned long long) cpu64.r19,
+			   (unsigned long long) cpu64.r20,
+			   (unsigned long long) cpu64.r21,
+			   (unsigned long long) cpu64.r22,
+			   (unsigned long long) cpu64.r23,
+			   (unsigned long long) cpu64.r24,
+			   (unsigned long long) cpu64.r25,
+			   (unsigned long long) cpu64.r26,
+			   (unsigned long long) cpu64.r27,
+			   (unsigned long long) cpu64.r28,
+			   (unsigned long long) cpu64.r29,
+			   (unsigned long long) cpu64.r30,
+			   (unsigned long long) cpu64.r31,
+			   cpu64.cr,
+			   (unsigned long long) cpu64.xer,
+			   (unsigned long long) cpu64.lr,
+			   (unsigned long long) cpu64.ctr,
+			   cpu64.vrsave,
+			   (unsigned long long) cpu64.srr0,
+			   (unsigned long long) cpu64.srr1);
 		    break;
 		default:
 		    printf("     flavor %u (unknown)\n", flavor);
@@ -4825,11 +4856,27 @@ print_x86_thread_state64:
 			   "   r15  0x%016llx rip 0x%016llx\n"
 			   "rflags  0x%016llx cs  0x%016llx fs   0x%016llx\n"
 			   "    gs  0x%016llx\n",
-                        cpu64.rax, cpu64.rbx, cpu64.rcx, cpu64.rdx, cpu64.rdi,
-			cpu64.rsi, cpu64.rbp, cpu64.rsp, cpu64.r8, cpu64.r9,
-			cpu64.r10, cpu64.r11, cpu64.r12, cpu64.r13, cpu64.r14,
-			cpu64.r15, cpu64.rip, cpu64.rflags, cpu64.cs, cpu64.fs,
-			cpu64.gs);
+            	(unsigned long long) cpu64.rax,
+            	(unsigned long long) cpu64.rbx,
+            	(unsigned long long) cpu64.rcx,
+            	(unsigned long long) cpu64.rdx,
+            	(unsigned long long) cpu64.rdi,
+            	(unsigned long long) cpu64.rsi,
+            	(unsigned long long) cpu64.rbp,
+            	(unsigned long long) cpu64.rsp,
+            	(unsigned long long) cpu64.r8,
+            	(unsigned long long) cpu64.r9,
+            	(unsigned long long) cpu64.r10,
+            	(unsigned long long) cpu64.r11,
+            	(unsigned long long) cpu64.r12,
+            	(unsigned long long) cpu64.r13,
+            	(unsigned long long) cpu64.r14,
+            	(unsigned long long) cpu64.r15,
+            	(unsigned long long) cpu64.rip,
+            	(unsigned long long) cpu64.rflags,
+            	(unsigned long long) cpu64.cs,
+            	(unsigned long long) cpu64.fs,
+            	(unsigned long long) cpu64.gs);
 		    break;
 
 		case x86_FLOAT_STATE64:
@@ -5015,7 +5062,7 @@ print_x86_exception_state64:
 			swap_x86_exception_state64(&exc64, host_byte_sex);
 		    printf("\t    trapno 0x%08x err 0x%08x faultvaddr "
 			   "0x%016llx\n", exc64.trapno, exc64.err,
-			   exc64.faultvaddr);
+			   (unsigned long long) exc64.faultvaddr);
 		    break;
 
 		case x86_DEBUG_STATE64:
@@ -5041,11 +5088,17 @@ print_x86_debug_state64:
 		    if(swapped)
 			swap_x86_debug_state64(&debug64, host_byte_sex);
 		    printf("\t    dr0 0x%016llx dr1 0x%016llx dr2 0x%016llx "
-			   "dr3 0x%016llx\n", debug64.dr0, debug64.dr1,
-			   debug64.dr2, debug64.dr3);
+			   "dr3 0x%016llx\n",
+			   (unsigned long long) debug64.dr0,
+			   (unsigned long long) debug64.dr1,
+			   (unsigned long long) debug64.dr2,
+			   (unsigned long long) debug64.dr3);
 		    printf("\t    dr4 0x%016llx dr5 0x%016llx dr6 0x%016llx "
-			   "dr7 0x%016llx\n", debug64.dr4, debug64.dr5,
-			   debug64.dr6, debug64.dr7);
+			   "dr7 0x%016llx\n",
+			   (unsigned long long) debug64.dr4,
+			   (unsigned long long) debug64.dr5,
+			   (unsigned long long) debug64.dr6,
+			   (unsigned long long) debug64.dr7);
 		    break;
 
 		case x86_THREAD_STATE:
@@ -6540,7 +6593,7 @@ enum bool verbose)
 		mods64[i].ninit_nterm & 0xffff,
 		(mods64[i].ninit_nterm >> 16) & 0xffff);
 	    printf("      objc_addr = 0x%016llx\n",
-		mods64[i].objc_module_info_addr);
+		(unsigned long long) mods64[i].objc_module_info_addr);
 	    printf("      objc_size = %u\n", mods64[i].objc_module_info_size);
 	}
 }
@@ -6870,7 +6923,7 @@ enum bool verbose)
 
 	    for(j = 0 ; j < count && n + j < nindirect_symbols; j++){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("0x%016llx ", sect_ind[i].addr + j * stride);
+		    printf("0x%016llx ", (unsigned long long)(sect_ind[i].addr + j * stride));
 		else
 		    printf("0x%08x ",(uint32_t)
 				     (sect_ind[i].addr + j * stride));
@@ -7636,7 +7689,7 @@ enum bool verbose)
 
 	for(i = 0 ; i < sect_size; i += stride){
 	    if(cputype & CPU_ARCH_ABI64)
-		printf("0x%016llx ", sect_addr + i * stride);
+		printf("0x%016llx ", (unsigned long long)(sect_addr + i * stride));
 	    else
 		printf("0x%08x ",(uint32_t)(sect_addr + i * stride));
 
@@ -7652,7 +7705,7 @@ enum bool verbose)
 		     p = SWAP_INT(p);
 	    }
 	    if(cputype & CPU_ARCH_ABI64)
-		printf("0x%016llx", q);
+		printf("0x%016llx", (unsigned long long) q);
 	    else
 		printf("0x%08x", p);
 
@@ -8064,7 +8117,7 @@ uint64_t addr)
 	   cputype == CPU_TYPE_X86_64){
 	    for(i = 0 ; i < size ; i += j , addr += j){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("%016llx\t", addr);
+		    printf("%016llx\t", (unsigned long long) addr);
 		else
 		    printf("%08x\t", (uint32_t)addr);
 		for(j = 0;
@@ -8093,7 +8146,7 @@ uint64_t addr)
 	else{
 	    for(i = 0 ; i < size ; i += j , addr += j){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("%016llx\t", addr);
+		    printf("%016llx\t", (unsigned long long) addr);
 		else
 		    printf("%08x\t", (uint32_t)addr);
 		for(j = 0;

@@ -2771,7 +2771,7 @@ uintptr_t value)
 	}
 	input_line_pointer ++;
 	if((size = get_absolute_expression()) < 0){
-	    as_bad("%s size (%lld.) <0! Ignored.", directive, size);
+	    as_bad("%s size (%lld.) <0! Ignored.", directive, (long long) size);
 	    ignore_rest_of_line();
 	    return;
 	}
@@ -3436,7 +3436,8 @@ uintptr_t nbytes) /* nbytes == 1 for .byte, 2 for .word, 4 for .long, 8 for .qua
 		use = get & unmask;
 		if((get & mask) && (get & mask) != mask){
 		    /* Leading bits contain both 0s & 1s. */
-		    as_bad("Value 0x%llx truncated to 0x%llx.", get, use);
+		    as_bad("Value 0x%llx truncated to 0x%llx.",
+		    	(unsigned long long) get, (unsigned long long) use);
 		}
 		/* put bytes in right order. */
 		md_number_to_chars(p, use, nbytes);

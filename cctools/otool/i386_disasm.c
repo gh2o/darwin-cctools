@@ -4180,7 +4180,9 @@ const char *tail)
 		if(value_size != 0){
 		    if(value != 0)
 			printf("%s%s-%s+0x%0*llx%s%s", seg, symadd, symsub,
-			       (int)value_size * 2, value, result, tail);
+			       (int)value_size * 2,
+			       (unsigned long long) value,
+			       result, tail);
 		    else
 			printf("%s%s-%s%s%s",seg, symadd, symsub, result, tail);
 		}
@@ -4192,7 +4194,9 @@ const char *tail)
 		if(value_size != 0){
 		    if(value != 0)
 			printf("%s%s+0x%0*llx%s%s", seg, symadd,
-			       (int)value_size * 2, value, result, tail);
+			       (int)value_size * 2,
+			       (unsigned long long) value,
+			       result, tail);
 		    else
 			printf("%s%s%s%s", seg, symadd, result, tail);
 		}
@@ -4203,7 +4207,8 @@ const char *tail)
 	}
 	else{
 	    if(value_size != 0){
-		printf("%s0x%0*llx%s%s", seg, (int)value_size *2, value, result,
+		printf("%s0x%0*llx%s%s", seg, (int)value_size *2, 
+		       (unsigned long long) value, result,
 		       tail);
 	    }
 	    else{

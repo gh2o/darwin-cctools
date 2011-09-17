@@ -237,7 +237,7 @@ ld::File* InputFiles::makeFile(const Options::FileInfo& info)
 			len = OSSwapBigToHostInt32(archs[sliceToUse].size);
 			if ( fileOffset+len > info.fileLen ) {
 				throwf("truncated fat file. Slice from %u to %llu is past end of file with length %llu", 
-						fileOffset, fileOffset+len, info.fileLen);
+						fileOffset, (unsigned long long)(fileOffset+len), (unsigned long long) info.fileLen);
 			}
 			// if requested architecture is page aligned within fat file, then remap just that portion of file
 			if ( (fileOffset & 0x00000FFF) == 0 ) {

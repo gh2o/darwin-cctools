@@ -231,5 +231,5 @@ const char *format,
 void
 sprint_value (char *buf, signed_expr_t val)
 {
-    sprintf (buf, "%qd", val);
+    sprintf (buf, "%qd", (long long) val);
 }

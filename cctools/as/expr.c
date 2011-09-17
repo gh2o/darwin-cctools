@@ -878,7 +878,7 @@ expressionS *expressionP)
 			}
 			else{ /* Either not seen or not defined. */
 			    as_warn("Backw. ref to unknown label \"%lld\","
-			    "0 assumed.", number);
+			    "0 assumed.", (long long) number);
 			    expressionP->X_add_number = 0;
 			    expressionP->X_seg        = SEG_ABSOLUTE;
 			}

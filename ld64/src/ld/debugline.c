@@ -390,11 +390,11 @@ next_state (struct line_reader_data *lnd)
 	      case DW_LNE_set_address:
 		if (sz == 9) {
 		  lnd->cur.pc = read_64 (eop);
-	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08llX)\n", lnd->cur.pc);
+	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08llX)\n", (unsigned long long) lnd->cur.pc);
 		}
 		else if (sz == 5) {
 		  lnd->cur.pc = read_32 (eop);
-	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08llX)\n", lnd->cur.pc);
+	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08llX)\n", (unsigned long long) lnd->cur.pc);
 		}
 		else
 		  return false;
@@ -436,11 +436,11 @@ next_state (struct line_reader_data *lnd)
 	  if (tmp == (uint64_t) -1)
 	    return false;
 	  lnd->cur.pc += tmp * lnd->minimum_instruction_length;
-	  if (verbose) fprintf(stderr, "DW_LNS_advance_pc(0x%08llX)\n", lnd->cur.pc);
+	  if (verbose) fprintf(stderr, "DW_LNS_advance_pc(0x%08llX)\n", (unsigned long long) lnd->cur.pc);
 	  break;
 	case DW_LNS_advance_line:
 	  lnd->cur.line += read_sleb128 (lnd);
-	  if (verbose) fprintf(stderr, "DW_LNS_advance_line(%lld)\n", lnd->cur.line);
+	  if (verbose) fprintf(stderr, "DW_LNS_advance_line(%lld)\n", (long long) lnd->cur.line);
 	  break;
 	case DW_LNS_set_file:
 	  if (verbose) fprintf(stderr, "DW_LNS_set_file\n");

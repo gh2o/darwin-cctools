@@ -1939,7 +1939,7 @@ void Options::parse(int argc, const char* argv[])
 				fBaseAddress = parseAddress(address);
 				uint64_t temp = ((fBaseAddress+fSegmentAlignment-1) & (-fSegmentAlignment)); 
 				if ( fBaseAddress != temp ) {
-					warning("-seg1addr not %lld byte aligned, rounding up", fSegmentAlignment);
+					warning("-seg1addr not %lld byte aligned, rounding up", (long long) fSegmentAlignment);
 					fBaseAddress = temp;
 				}
 			}
@@ -3225,7 +3225,7 @@ void Options::reconfigureDefaults()
 			}
 			// range check -seg1addr for ARM
 			if ( fBaseAddress > fMaxAddress ) {
-				warning("ignoring -seg1addr 0x%08llX.  Address out of range.", fBaseAddress);
+				warning("ignoring -seg1addr 0x%08llX.  Address out of range.", (unsigned long long) fBaseAddress);
 				fBaseAddress = 0;
 			}
 			break;
@@ -3669,7 +3669,8 @@ void Options::checkIllegalOptionCombinations()
 				throw "-stack_size option can only be used when linking a main executable";
 		}
 		if ( fStackSize > fStackAddr )
-			throwf("-stack_size (0x%08llX) must be smaller than -stack_addr (0x%08llX)", fStackSize, fStackAddr);
+			throwf("-stack_size (0x%08llX) must be smaller than -stack_addr (0x%08llX)",
+				(unsigned long long) fStackSize, (unsigned long long) fStackAddr);
 	}
 
 	// check that -allow_stack_execute is only used with main executables
@@ -3816,7 +3817,7 @@ void Options::checkIllegalOptionCombinations()
 		if ( fZeroPageSize != ULLONG_MAX ) {
 			for (std::vector<SegmentStart>::iterator it = fCustomSegmentAddresses.begin(); it != fCustomSegmentAddresses.end(); ++it) {
 				if ( it->address < fZeroPageSize )
-					throwf("-segaddr %s 0x%llX conflicts with -pagezero_size", it->name, it->address);
+					throwf("-segaddr %s 0x%llX conflicts with -pagezero_size", it->name, (unsigned long long) it->address);
 			}
 		}
 		// verify no duplicates

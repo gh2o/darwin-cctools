@@ -121,11 +121,14 @@ void OutputFile::dumpAtomsBySection(ld::Internal& state, bool printAtoms)
 	for (std::vector<ld::Internal::FinalSection*>::iterator it = state.sections.begin(); it != state.sections.end(); ++it) {
 		fprintf(stderr, "final section %p %s/%s %s start addr=0x%08llX, size=0x%08llX, alignment=%02d, fileOffset=0x%08llX\n", 
 				(*it), (*it)->segmentName(), (*it)->sectionName(), (*it)->isSectionHidden() ? "(hidden)" : "", 
-				(*it)->address, (*it)->size, (*it)->alignment, (*it)->fileOffset);
+				(unsigned long long)(*it)->address,
+				(unsigned long long)(*it)->size,
+				(*it)->alignment,
+				(unsigned long long)(*it)->fileOffset);
 		if ( printAtoms ) {
 			std::vector<const ld::Atom*>& atoms = (*it)->atoms;
 			for (std::vector<const ld::Atom*>::iterator ait = atoms.begin(); ait != atoms.end(); ++ait) {
-				fprintf(stderr, "   %p (0x%04llX) %s\n", *ait, (*ait)->size(), (*ait)->name());
+				fprintf(stderr, "   %p (0x%04llX) %s\n", *ait, (unsigned long long)(*ait)->size(), (*ait)->name());
 			}
 		}
 	}
@@ -483,10 +486,10 @@ void OutputFile::assignFileOffsets(ld::Internal& state)
 		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
 															  && (_options.outputKind() != Options::kStaticExecutable) )
 			throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
-						sect->sectionName(), address, sect->size);
+						sect->sectionName(), (unsigned long long) address, (unsigned long long) sect->size);
 		
 		if ( log ) fprintf(stderr, "  address=0x%08llX, hidden=%d, alignment=%02d, section=%s,%s\n",
-						sect->address, sect->isSectionHidden(), sect->alignment, sect->segmentName(), sect->sectionName());
+						(unsigned long long) sect->address, sect->isSectionHidden(), sect->alignment, sect->segmentName(), sect->sectionName());
 		// update running totals
 		if ( !sect->isSectionHidden() || hiddenSectionsOccupyAddressSpace )
 			address += sect->size;
@@ -533,10 +536,11 @@ void OutputFile::assignFileOffsets(ld::Internal& state)
 		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
 															  && (_options.outputKind() != Options::kStaticExecutable) )
 				throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
-						sect->sectionName(), address, sect->size);
+						sect->sectionName(), (unsigned long long) address, (unsigned long long) sect->size);
 		
 		if ( log ) fprintf(stderr, "  address=0x%08llX, hidden=%d, alignment=%02d, padBytes=%d, section=%s,%s\n",
-							sect->address, sect->isSectionHidden(), sect->alignment, sect->alignmentPaddingBytes, 
+							(unsigned long long) sect->address,
+							sect->isSectionHidden(), sect->alignment, sect->alignmentPaddingBytes, 
 							sect->segmentName(), sect->sectionName());
 		// update running totals
 		if ( !sect->isSectionHidden() || hiddenSectionsOccupyAddressSpace )
@@ -572,7 +576,11 @@ void OutputFile::assignFileOffsets(ld::Internal& state)
 		}
 		
 		if ( log ) fprintf(stderr, "  fileoffset=0x%08llX, address=0x%08llX, hidden=%d, size=%lld, alignment=%02d, section=%s,%s\n",
-				sect->fileOffset, sect->address, sect->isSectionHidden(), sect->size, sect->alignment, 
+				(unsigned long long) sect->fileOffset,
+				(unsigned long long) sect->address,
+				sect->isSectionHidden(),
+				(long long) sect->size,
+				sect->alignment, 
 				sect->segmentName(), sect->sectionName());
 	}
 
@@ -599,7 +607,7 @@ static const char* makeName(const ld::Atom& atom)
 	switch ( atom.symbolTableInclusion() ) {
 		case ld::Atom::symbolTableNotIn:
 		case ld::Atom::symbolTableNotInFinalLinkedImages:
-			sprintf(buffer, "%s@0x%08llX", atom.name(), atom.objectAddress());
+			sprintf(buffer, "%s@0x%08llX", atom.name(), (unsigned long long) atom.objectAddress());
 			break;
 		case ld::Atom::symbolTableIn:
 		case ld::Atom::symbolTableInAndNeverStrip:
@@ -735,7 +743,10 @@ void OutputFile::printSectionLayout(ld::Internal& state)
 			continue;
 		fprintf(stderr, "    %s/%s addr=0x%08llX, size=0x%08llX, fileOffset=0x%08llX, type=%d\n", 
 				(*it)->segmentName(), (*it)->sectionName(), 
-				(*it)->address, (*it)->size, (*it)->fileOffset, (*it)->type());
+				(unsigned long long)(*it)->address,
+				(unsigned long long)(*it)->size,
+				(unsigned long long)(*it)->fileOffset,
+				(*it)->type());
 	}
 }
 
@@ -748,8 +759,11 @@ void OutputFile::rangeCheck8(int64_t displacement, ld::Internal& state, const ld
 		
 		const ld::Atom* target;	
 		throwf("8-bit reference out of range (%lld max is +/-127B): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), 
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -762,8 +776,11 @@ void OutputFile::rangeCheck16(int64_t displacement, ld::Internal& state, const l
 		
 		const ld::Atom* target;	
 		throwf("16-bit reference out of range (%lld max is +/-32KB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup),  
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup),  
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -776,8 +793,11 @@ void OutputFile::rangeCheckBranch32(int64_t displacement, ld::Internal& state, c
 		
 		const ld::Atom* target;	
 		throwf("32-bit branch out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), 
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -790,8 +810,11 @@ void OutputFile::rangeCheckRIP32(int64_t displacement, ld::Internal& state, cons
 		
 		const ld::Atom* target;	
 		throwf("32-bit RIP relative reference out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), 
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -803,8 +826,11 @@ void OutputFile::rangeCheckARM12(int64_t displacement, ld::Internal& state, cons
 		
 		const ld::Atom* target;	
 		throwf("ARM ldr 12-bit displacement out of range (%lld max is +/-4096B): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), 
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -817,8 +843,11 @@ void OutputFile::rangeCheckARMBranch24(int64_t displacement, ld::Internal& state
 		
 		const ld::Atom* target;	
 		throwf("b/bl/blx ARM branch out of range (%lld max is +/-32MB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), 
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -832,8 +861,11 @@ void OutputFile::rangeCheckThumbBranch22(int64_t displacement, ld::Internal& sta
 			
 			const ld::Atom* target;	
 			throwf("b/bl/blx thumb2 branch out of range (%lld max is +/-16MB): from %s (0x%08llX) to %s (0x%08llX)", 
-					displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+					(long long) displacement,
+					atom->name(),
+					(unsigned long long) atom->finalAddress(),
+					referenceTargetAtomName(state, fixup), 
+					(unsigned long long) addressOf(state, fixup, &target));
 		}
 	}
 	else {
@@ -843,8 +875,11 @@ void OutputFile::rangeCheckThumbBranch22(int64_t displacement, ld::Internal& sta
 			
 			const ld::Atom* target;	
 			throwf("b/bl/blx thumb1 branch out of range (%lld max is +/-4MB): from %s (0x%08llX) to %s (0x%08llX)", 
-					displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+					(long long) displacement,
+					atom->name(),
+					(unsigned long long)atom->finalAddress(),
+					referenceTargetAtomName(state, fixup), 
+					(unsigned long long) addressOf(state, fixup, &target));
 		}
 	}
 }
@@ -858,8 +893,11 @@ void OutputFile::rangeCheckPPCBranch24(int64_t displacement, ld::Internal& state
 		
 		const ld::Atom* target;	
 		throwf("bl PPC branch out of range (%lld max is +/-16MB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), 
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -872,8 +910,11 @@ void OutputFile::rangeCheckPPCBranch14(int64_t displacement, ld::Internal& state
 		
 		const ld::Atom* target;	
 		throwf("bcc PPC branch out of range (%lld max is +/-64KB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long) displacement,
+				atom->name(),
+				(unsigned long long) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), 
+				(unsigned long long) addressOf(state, fixup, &target));
 	}
 }
 
@@ -1536,7 +1577,7 @@ void OutputFile::writeOutputFile(ld::Internal& state)
 	// try to allocate buffer for entire output file content
 	uint8_t* wholeBuffer = (uint8_t*)calloc(_fileSize, 1);
 	if ( wholeBuffer == NULL )
-		throwf("can't create buffer of %llu bytes for output", _fileSize);
+		throwf("can't create buffer of %llu bytes for output", (unsigned long long) _fileSize);
 	
 	if ( _options.UUIDMode() == Options::kUUIDRandom ) {
 		uint8_t bits[16];
@@ -1609,22 +1650,24 @@ void OutputFile::writeOutputFile(ld::Internal& state)
 				uint64_t lastStabNlistFileOffset   = symbolTableFileOffset + stabsOffsetEnd;
 				uint64_t firstStabStringFileOffset = stringPoolFileOffset  + stabsStringsOffsetStart;
 				uint64_t lastStabStringFileOffset  = stringPoolFileOffset  + tabsStringsOffsetEnd;
-				if ( log ) fprintf(stderr, "firstStabNlistFileOffset=0x%08llX\n", firstStabNlistFileOffset);
-				if ( log ) fprintf(stderr, "lastStabNlistFileOffset=0x%08llX\n", lastStabNlistFileOffset);
-				if ( log ) fprintf(stderr, "firstStabStringFileOffset=0x%08llX\n", firstStabStringFileOffset);
-				if ( log ) fprintf(stderr, "lastStabStringFileOffset=0x%08llX\n", lastStabStringFileOffset);
+				if ( log ) fprintf(stderr, "firstStabNlistFileOffset=0x%08llX\n", (unsigned long long) firstStabNlistFileOffset);
+				if ( log ) fprintf(stderr, "lastStabNlistFileOffset=0x%08llX\n", (unsigned long long) lastStabNlistFileOffset);
+				if ( log ) fprintf(stderr, "firstStabStringFileOffset=0x%08llX\n", (unsigned long long) firstStabStringFileOffset);
+				if ( log ) fprintf(stderr, "lastStabStringFileOffset=0x%08llX\n", (unsigned long long) lastStabStringFileOffset);
 				assert(firstStabNlistFileOffset <= firstStabStringFileOffset);
 				
 				MD5_CTX md5state;
 				MD5_Init(&md5state);
 				// checksum everything up to first stabs nlist
-				if ( log ) fprintf(stderr, "checksum 0x%08X -> 0x%08llX\n", 0, firstStabNlistFileOffset);
+				if ( log ) fprintf(stderr, "checksum 0x%08X -> 0x%08llX\n", 0, (unsigned long long) firstStabNlistFileOffset);
 				MD5_Update(&md5state, &wholeBuffer[0], firstStabNlistFileOffset);
 				// checkusm everything after last stabs nlist and up to first stabs string
-				if ( log ) fprintf(stderr, "checksum 0x%08llX -> 0x%08llX\n", lastStabNlistFileOffset, firstStabStringFileOffset);
+				if ( log ) fprintf(stderr, "checksum 0x%08llX -> 0x%08llX\n",
+					(unsigned long long) lastStabNlistFileOffset, (unsigned long long) firstStabStringFileOffset);
 				MD5_Update(&md5state, &wholeBuffer[lastStabNlistFileOffset], firstStabStringFileOffset-lastStabNlistFileOffset);
 				// checksum everything after last stabs string to end of file
-				if ( log ) fprintf(stderr, "checksum 0x%08llX -> 0x%08llX\n", lastStabStringFileOffset, _fileSize);
+				if ( log ) fprintf(stderr, "checksum 0x%08llX -> 0x%08llX\n",
+					(unsigned long long) lastStabStringFileOffset, (unsigned long long) _fileSize);
 				MD5_Update(&md5state, &wholeBuffer[lastStabStringFileOffset], _fileSize-lastStabStringFileOffset);
 				MD5_Final(digest, &md5state);
 				if ( log ) fprintf(stderr, "uuid=%02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X\n", digest[0], digest[1], digest[2], 
@@ -3146,7 +3189,9 @@ void OutputFile::writeMapFile(ld::Internal& state)
 				ld::Internal::FinalSection* sect = *sit;
 				if ( sect->isSectionHidden() ) 
 					continue;
-				fprintf(mapFile, "0x%08llX\t0x%08llX\t%s\t%s\n", sect->address, sect->size, 
+				fprintf(mapFile, "0x%08llX\t0x%08llX\t%s\t%s\n",
+							(unsigned long long) sect->address,
+							(unsigned long long) sect->size, 
 							sect->segmentName(), sect->sectionName());
 			}
 			// write table of symbols
@@ -3194,7 +3239,9 @@ void OutputFile::writeMapFile(ld::Internal& state)
 						}
 						name = buffer;
 					}
-					fprintf(mapFile, "0x%08llX\t0x%08llX\t[%3u] %s\n", atom->finalAddress(), atom->size(), 
+					fprintf(mapFile, "0x%08llX\t0x%08llX\t[%3u] %s\n",
+							(unsigned long long) atom->finalAddress(),
+							(unsigned long long) atom->size(), 
 							readerToFileOrdinal[atom->file()], name);
 				}
 			}

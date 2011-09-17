@@ -465,7 +465,7 @@ void File<A>::buildHashTable()
 		const char* entryName = &_tableOfContentStrings[E::get32(entry->ran_un.ran_strx)];
 		if ( E::get32(entry->ran_off) > _archiveFilelength ) {
 			throwf("malformed archive TOC entry for %s, offset %d is beyond end of file %lld\n",
-				entryName, entry->ran_off, _archiveFilelength);
+				entryName, entry->ran_off, (unsigned long long) _archiveFilelength);
 		}
 		
 		//const Entry* member = (Entry*)&_archiveFileContent[E::get32(entry->ran_off)];

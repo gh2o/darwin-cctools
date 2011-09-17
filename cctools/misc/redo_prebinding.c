@@ -4356,7 +4356,7 @@ uint32_t nextrefsyms)
 	    if((n_type & N_TYPE) == N_INDR && n_value > strsize){
 		error("malformed file: %s (bad string table index (%llu) for "
 		      "N_INDR symbol %u) (for architecture %s)", file_name,
-		      n_value, i, arch_name);
+		      (unsigned long long) n_value, i, arch_name);
 		redo_exit(2);
 	    }
 	    if((mh_flags & MH_TWOLEVEL) == MH_TWOLEVEL &&

@@ -124,13 +124,15 @@ public:
 			if ( (skipToFinalDisplacement < 33554428LL) && (skipToFinalDisplacement > (-33554432LL)) ) {
 				// can skip branch island and jump straight to target
 				if (_s_log) fprintf(stderr, "%s: optimized jump to final target at 0x%08llX, thisAddr=0x%08llX\n", 
-											_target->name(), _finalTarget.atom->finalAddress(), this->finalAddress());
+											_target->name(),
+											(unsigned long long) _finalTarget.atom->finalAddress(),
+											(unsigned long long) this->finalAddress());
 				displacement = skipToFinalDisplacement;
 			}
 			else {
 				// ultimate target is too far, jump to island
 				if (_s_log) fprintf(stderr, "%s: jump to branch island at 0x%08llX\n", 
-											_target->name(), _finalTarget.atom->finalAddress());
+											_target->name(), (unsigned long long) _finalTarget.atom->finalAddress());
 			}
 		}
 		uint32_t imm24 = (displacement >> 2) & 0x00FFFFFF;
@@ -171,7 +173,7 @@ public:
 		if ( _finalTarget.atom->isThumb() )
 			displacement |= 1;
 		if (_s_log) fprintf(stderr, "%s: 4 ARM instruction jump to final target at 0x%08llX\n", 
-										_target->name(), _finalTarget.atom->finalAddress());
+										_target->name(), (unsigned long long) _finalTarget.atom->finalAddress());
 		OSWriteLittleInt32(&buffer[ 0], 0, 0xe59fc004);	// 	ldr  ip, pc + 4
 		OSWriteLittleInt32(&buffer[ 4], 0, 0xe08fc00c);	// 	add	 ip, pc, ip
 		OSWriteLittleInt32(&buffer[ 8], 0, 0xe12fff1c);	// 	bx	 ip
@@ -214,13 +216,15 @@ public:
 			if ( (skipToFinalDisplacement < 16777214) && (skipToFinalDisplacement > (-16777216LL)) ) {
 				// can skip branch island and jump straight to target
 				if (_s_log) fprintf(stderr, "%s: optimized jump to final target at 0x%08llX, thisAddr=0x%08llX\n", 
-											_target->name(), _finalTarget.atom->finalAddress(), this->finalAddress());
+											_target->name(),
+											(unsigned long long) _finalTarget.atom->finalAddress(),
+											(unsigned long long) this->finalAddress());
 				displacement = skipToFinalDisplacement;
 			}
 			else {
 				// ultimate target is too far for thumb2 branch, jump to island
 				if (_s_log) fprintf(stderr, "%s: jump to branch island at 0x%08llX\n", 
-											_target->name(), _finalTarget.atom->finalAddress());
+											_target->name(), (unsigned long long) _finalTarget.atom->finalAddress());
 			}
 		}
 		// The instruction is really two instructions:
@@ -276,7 +280,7 @@ public:
 		if ( _finalTarget.atom->isThumb() )
 			targetAddr |= 1;
 		if (_s_log) fprintf(stderr, "%s: 2 ARM instruction jump to final target at 0x%08llX\n",
-									_target->name(), _finalTarget.atom->finalAddress());
+									_target->name(), (unsigned long long) _finalTarget.atom->finalAddress());
 		OSWriteLittleInt32(&buffer[0], 0, 0xe51ff004);	// 	ldr	pc, [pc, #-4]
 		OSWriteLittleInt32(&buffer[4], 0, targetAddr);	// 	.long target-this		
 	}
@@ -460,7 +464,7 @@ void doPass(const Options& opts, ld::Internal& state)
 	uint64_t totalTextSize = offset;
 	if ( totalTextSize < textSizeWhenMightNeedBranchIslands(opts, hasThumbBranches) )
 		return;
-	if (_s_log) fprintf(stderr, "ld:  __text section size=%llu, might need branch islands\n", totalTextSize);
+	if (_s_log) fprintf(stderr, "ld:  __text section size=%llu, might need branch islands\n", (unsigned long long) totalTextSize);
 	
 	// figure out how many regions of branch islands will be needed
 	const uint32_t kBetweenRegions = maxDistanceBetweenIslands(opts, hasThumbBranches); // place regions of islands every 14MB in __text section
