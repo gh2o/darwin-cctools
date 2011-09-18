@@ -48,11 +48,11 @@ AM_INIT_AUTOMAKE([1.11 foreign subdir-objects silent-rules])
 AM_MAINTAINER_MODE
 
 # Options
-AC_ARG_WITH(
+AC_ARG_ENABLE(
 	[llvm],
-	[AS_HELP_STRING([[--with-llvm[=/usr]]], [location of LLVM installation])],
+	[AS_HELP_STRING([[--enable-llvm[=/usr]]], [location of LLVM installation])],
 	[],
-	[with_llvm="/usr"]
+	[enable_llvm="NONE"]
 )
 
 AC_ARG_WITH(
@@ -79,17 +79,29 @@ AC_PROG_RANLIB
 
 AM_PROG_CC_C_O
 
-AC_PATH_PROG([llvm_config], [llvm-config], [], [$with_llvm/bin])
-if test "x$llvm_config" = "x"; then
-	AC_MSG_ERROR([llvm-config not found.])
+# Check for LLVM.
+if test "x$enable_llvm" != "xNONE"; then
+	if test -z "$enable_llvm"; then
+		enable_llvm="/usr"
+	fi
+	
+	AC_PATH_PROG([llvm_config], [llvm-config], [], [$enable_llvm/bin])
+	if test "x$llvm_config" = "x"; then
+		AC_MSG_ERROR([llvm-config not found.])
+	fi
+
+	CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
+
+	AC_SUBST([LLVM_LDFLAGS], [`$llvm_config --ldflags`])
+	AC_SUBST([LLVM_LIBS], [`$llvm_config --libfiles`])
+	AC_SUBST([LLVM_LIBDIR], [`$llvm_config --libdir`])
+	AC_SUBST([LLVM_INCLUDEDIR], [`$llvm_config --includedir`])
+	
+	AC_DEFINE([HAVE_LLVM], [1], [Define if using LLVM.])
+	AM_CONDITIONAL([HAVE_LLVM], [true])
+else
+	AM_CONDITIONAL([HAVE_LLVM], [false])
 fi
-
-CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
-
-AC_SUBST([LLVM_LDFLAGS], [`$llvm_config --ldflags`])
-AC_SUBST([LLVM_LIBS], [`$llvm_config --libfiles`])
-AC_SUBST([LLVM_LIBDIR], [`$llvm_config --libdir`])
-AC_SUBST([LLVM_INCLUDEDIR], [`$llvm_config --includedir`])
 
 # Checks for libraries.
 AC_SEARCH_LIBS(

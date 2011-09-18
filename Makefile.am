@@ -188,12 +188,16 @@ tools_ld_SOURCES = \
 tools_ld_CPPFLAGS = $(CORE_CPPFLAGS) \
 	-I$(top_srcdir)/ld64/src/ld \
 	-I$(top_srcdir)/ld64/src/ld/parsers \
-	-I$(top_srcdir)/ld64/src/abstraction \
-	-I$(LLVM_INCLUDEDIR)
+	-I$(top_srcdir)/ld64/src/abstraction
+	
+tools_ld_LDFLAGS = $(AM_LDFLAGS) 
+tools_ld_LDADD = $(LDADD)
 
-tools_ld_LDFLAGS = $(AM_LDFLAGS) $(LLVM_LDFLAGS)
-tools_ld_LDADD = $(LDADD) \
-	$(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
+if HAVE_LLVM
+tools_ld_CPPFLAGS += -I$(LLVM_INCLUDEDIR)
+tools_ld_LDFLAGS += $(LLVM_LDFLAGS)
+tools_ld_LDADD += $(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
+endif
 
 ########################################
 # ar                                   #

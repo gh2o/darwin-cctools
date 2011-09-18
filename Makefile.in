@@ -57,6 +57,9 @@ bin_PROGRAMS = tools/ar$(EXEEXT) tools/as$(EXEEXT) tools/ld$(EXEEXT) \
 	tools/strip$(EXEEXT)
 @TARGET_ARM_TRUE@am__append_4 = cctools/as/arm.c
 @TARGET_ARM_TRUE@am__append_5 = -DARM
+@HAVE_LLVM_TRUE@am__append_6 = -I$(LLVM_INCLUDEDIR)
+@HAVE_LLVM_TRUE@am__append_7 = $(LLVM_LDFLAGS)
+@HAVE_LLVM_TRUE@am__append_8 = $(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -237,8 +240,9 @@ am_tools_ld_OBJECTS = ld64/src/ld/tools_ld-ld.$(OBJEXT) \
 	ld64/src/ld/parsers/tools_ld-opaque_section_file.$(OBJEXT)
 tools_ld_OBJECTS = $(am_tools_ld_OBJECTS)
 am__DEPENDENCIES_1 =
-tools_ld_DEPENDENCIES = $(LDADD) $(LLVM_LIBDIR)/libLTO.a \
-	$(am__DEPENDENCIES_1)
+@HAVE_LLVM_TRUE@am__DEPENDENCIES_2 = $(LLVM_LIBDIR)/libLTO.a \
+@HAVE_LLVM_TRUE@	$(am__DEPENDENCIES_1)
+tools_ld_DEPENDENCIES = $(LDADD) $(am__DEPENDENCIES_2)
 tools_ld_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(tools_ld_LDFLAGS) $(LDFLAGS) -o $@
 am_tools_libtool_OBJECTS = cctools/misc/libtool.$(OBJEXT)
@@ -612,16 +616,11 @@ tools_ld_SOURCES = \
 	ld64/src/ld/parsers/macho_relocatable_file.cpp \
 	ld64/src/ld/parsers/opaque_section_file.cpp
 
-tools_ld_CPPFLAGS = $(CORE_CPPFLAGS) \
-	-I$(top_srcdir)/ld64/src/ld \
+tools_ld_CPPFLAGS = $(CORE_CPPFLAGS) -I$(top_srcdir)/ld64/src/ld \
 	-I$(top_srcdir)/ld64/src/ld/parsers \
-	-I$(top_srcdir)/ld64/src/abstraction \
-	-I$(LLVM_INCLUDEDIR)
-
-tools_ld_LDFLAGS = $(AM_LDFLAGS) $(LLVM_LDFLAGS)
-tools_ld_LDADD = $(LDADD) \
-	$(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
-
+	-I$(top_srcdir)/ld64/src/abstraction $(am__append_6)
+tools_ld_LDFLAGS = $(AM_LDFLAGS) $(am__append_7)
+tools_ld_LDADD = $(LDADD) $(am__append_8)
 
 ########################################
 # ar                                   #

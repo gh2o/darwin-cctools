@@ -615,6 +615,8 @@ IS_BIG_ENDIAN_TRUE
 EGREP
 GREP
 CPP
+HAVE_LLVM_FALSE
+HAVE_LLVM_TRUE
 LLVM_INCLUDEDIR
 LLVM_LIBDIR
 LLVM_LIBS
@@ -728,7 +730,7 @@ ac_user_opts='
 enable_option_checking
 enable_silent_rules
 enable_maintainer_mode
-with_llvm
+enable_llvm
 with_sysroot
 enable_dependency_tracking
 '
@@ -1369,13 +1371,13 @@ Optional Features:
   --disable-silent-rules         verbose build output (undo: `make V=0')
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
+  --enable-llvm[=/usr]    location of LLVM installation
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-llvm[=/usr]      location of LLVM installation
   --with-sysroot=PATH     location of target system root
 
 Some influential environment variables:
@@ -2937,12 +2939,11 @@ fi
 
 
 # Options
-
-# Check whether --with-llvm was given.
-if test "${with_llvm+set}" = set; then :
-  withval=$with_llvm;
+# Check whether --enable-llvm was given.
+if test "${enable_llvm+set}" = set; then :
+  enableval=$enable_llvm;
 else
-  with_llvm="/usr"
+  enable_llvm="NONE"
 
 fi
 
@@ -4555,7 +4556,13 @@ fi
 
 
 
-# Extract the first word of "llvm-config", so it can be a program name with args.
+# Check for LLVM.
+if test "x$enable_llvm" != "xNONE"; then
+	if test -z "$enable_llvm"; then
+		enable_llvm="/usr"
+	fi
+
+	# Extract the first word of "llvm-config", so it can be a program name with args.
 set dummy llvm-config; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -4568,7 +4575,7 @@ else
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $with_llvm/bin
+for as_dir in $enable_llvm/bin
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
@@ -4595,20 +4602,42 @@ $as_echo "no" >&6; }
 fi
 
 
-if test "x$llvm_config" = "x"; then
-	as_fn_error $? "llvm-config not found." "$LINENO" 5
+	if test "x$llvm_config" = "x"; then
+		as_fn_error $? "llvm-config not found." "$LINENO" 5
+	fi
+
+	CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
+
+	LLVM_LDFLAGS=`$llvm_config --ldflags`
+
+	LLVM_LIBS=`$llvm_config --libfiles`
+
+	LLVM_LIBDIR=`$llvm_config --libdir`
+
+	LLVM_INCLUDEDIR=`$llvm_config --includedir`
+
+
+
+$as_echo "#define HAVE_LLVM 1" >>confdefs.h
+
+	 if true; then
+  HAVE_LLVM_TRUE=
+  HAVE_LLVM_FALSE='#'
+else
+  HAVE_LLVM_TRUE='#'
+  HAVE_LLVM_FALSE=
 fi
 
-CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
+else
+	 if false; then
+  HAVE_LLVM_TRUE=
+  HAVE_LLVM_FALSE='#'
+else
+  HAVE_LLVM_TRUE='#'
+  HAVE_LLVM_FALSE=
+fi
 
-LLVM_LDFLAGS=`$llvm_config --ldflags`
-
-LLVM_LIBS=`$llvm_config --libfiles`
-
-LLVM_LIBDIR=`$llvm_config --libdir`
-
-LLVM_INCLUDEDIR=`$llvm_config --includedir`
-
+fi
 
 # Checks for libraries.
 
@@ -5629,6 +5658,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_LLVM_TRUE}" && test -z "${HAVE_LLVM_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LLVM\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_LLVM_TRUE}" && test -z "${HAVE_LLVM_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LLVM\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
