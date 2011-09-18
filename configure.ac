@@ -120,15 +120,18 @@ AC_SEARCH_LIBS(
 
 # Checks for header files.
 AC_CHECK_HEADER(
-	[llvm-c/lto.h],
-	[true],
-	[AC_MSG_ERROR([LLVM headers not found.])]
-)
-AC_CHECK_HEADER(
 	[uuid/uuid.h],
 	[true],
-	[AC_MSG_ERROR([UUID headers not found.])]
+	[AC_MSG_FAILURE([UUID headers not found.])]
 )
+
+if test "x$enable_llvm" != "xno"; then
+	AC_CHECK_HEADER(
+		[llvm-c/lto.h],
+		[true],
+		[AC_MSG_FAILURE([LLVM headers not found.])]
+	)
+fi
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE

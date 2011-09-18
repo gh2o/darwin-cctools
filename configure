@@ -5170,24 +5170,33 @@ fi
 done
 
 
-ac_fn_c_check_header_mongrel "$LINENO" "llvm-c/lto.h" "ac_cv_header_llvm_c_lto_h" "$ac_includes_default"
-if test "x$ac_cv_header_llvm_c_lto_h" = xyes; then :
-  true
-else
-  as_fn_error $? "LLVM headers not found." "$LINENO" 5
-
-fi
-
-
 ac_fn_c_check_header_mongrel "$LINENO" "uuid/uuid.h" "ac_cv_header_uuid_uuid_h" "$ac_includes_default"
 if test "x$ac_cv_header_uuid_uuid_h" = xyes; then :
   true
 else
-  as_fn_error $? "UUID headers not found." "$LINENO" 5
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "UUID headers not found.
+See \`config.log' for more details" "$LINENO" 5; }
 
 fi
 
 
+
+if test "x$enable_llvm" != "xno"; then
+	ac_fn_c_check_header_mongrel "$LINENO" "llvm-c/lto.h" "ac_cv_header_llvm_c_lto_h" "$ac_includes_default"
+if test "x$ac_cv_header_llvm_c_lto_h" = xyes; then :
+  true
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "LLVM headers not found.
+See \`config.log' for more details" "$LINENO" 5; }
+
+fi
+
+
+fi
 
 # Checks for typedefs, structures, and compiler characteristics.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for inline" >&5
