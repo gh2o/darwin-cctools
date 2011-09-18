@@ -52,18 +52,21 @@ AC_ARG_ENABLE(
 	[llvm],
 	[AS_HELP_STRING([[--enable-llvm[=/usr]]], [location of LLVM installation])],
 	[],
-	[enable_llvm="NONE"]
+	[enable_llvm=no]
 )
 
 AC_ARG_WITH(
 	[sysroot],
 	[AS_HELP_STRING([--with-sysroot=PATH], [location of target system root])],
 	[],
-	[with_sysroot=""]
+	[with_sysroot=no]
 )
 
 # Add options
-if test -n "$with_sysroot"; then
+if test "x$with_sysroot" != "xno"; then
+	if test "x$with_sysroot" = "xyes"; then
+		AC_MSG_FAILURE([--with-sysroot= requires a path.])
+	fi
 	AC_DEFINE_UNQUOTED([DC_SYSROOT], ["$with_sysroot"], [target system root])
 fi
 
@@ -80,8 +83,8 @@ AC_PROG_RANLIB
 AM_PROG_CC_C_O
 
 # Check for LLVM.
-if test "x$enable_llvm" != "xNONE"; then
-	if test -z "$enable_llvm"; then
+if test "x$enable_llvm" != "xno"; then
+	if test "x$enable_llvm" = "xyes"; then
 		enable_llvm="/usr"
 	fi
 	

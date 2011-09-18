@@ -2943,7 +2943,7 @@ fi
 if test "${enable_llvm+set}" = set; then :
   enableval=$enable_llvm;
 else
-  enable_llvm="NONE"
+  enable_llvm=no
 
 fi
 
@@ -2953,13 +2953,19 @@ fi
 if test "${with_sysroot+set}" = set; then :
   withval=$with_sysroot;
 else
-  with_sysroot=""
+  with_sysroot=no
 
 fi
 
 
 # Add options
-if test -n "$with_sysroot"; then
+if test "x$with_sysroot" != "xno"; then
+	if test "x$with_sysroot" = "xyes"; then
+		{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "--with-sysroot= requires a path.
+See \`config.log' for more details" "$LINENO" 5; }
+	fi
 
 cat >>confdefs.h <<_ACEOF
 #define DC_SYSROOT "$with_sysroot"
@@ -4557,8 +4563,8 @@ fi
 
 
 # Check for LLVM.
-if test "x$enable_llvm" != "xNONE"; then
-	if test -z "$enable_llvm"; then
+if test "x$enable_llvm" != "xno"; then
+	if test "x$enable_llvm" = "xyes"; then
 		enable_llvm="/usr"
 	fi
 
