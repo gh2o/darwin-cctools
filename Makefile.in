@@ -60,6 +60,8 @@ bin_PROGRAMS = tools/ar$(EXEEXT) tools/as$(EXEEXT) tools/ld$(EXEEXT) \
 @HAVE_LLVM_TRUE@am__append_6 = -I$(LLVM_INCLUDEDIR)
 @HAVE_LLVM_TRUE@am__append_7 = $(LLVM_LDFLAGS)
 @HAVE_LLVM_TRUE@am__append_8 = $(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
+@HAVE_LLVM_TRUE@am__append_9 = ld64/src/ld/parsers/lto_file.cpp
+@HAVE_LLVM_FALSE@am__append_10 = ld64/src/ld/parsers/lto_file_stub.cpp
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -215,6 +217,26 @@ tools_install_name_tool_OBJECTS =  \
 	$(am_tools_install_name_tool_OBJECTS)
 tools_install_name_tool_LDADD = $(LDADD)
 tools_install_name_tool_DEPENDENCIES = $(noinst_LIBRARIES)
+am__tools_ld_SOURCES_DIST = ld64/src/ld/ld.cpp ld64/src/ld/Options.cpp \
+	ld64/src/ld/InputFiles.cpp ld64/src/ld/Resolver.cpp \
+	ld64/src/ld/OutputFile.cpp ld64/src/ld/SymbolTable.cpp \
+	ld64/src/ld/debugline.c ld64/src/ld/passes/objc.cpp \
+	ld64/src/ld/passes/huge.cpp ld64/src/ld/passes/got.cpp \
+	ld64/src/ld/passes/tlvp.cpp ld64/src/ld/passes/order_file.cpp \
+	ld64/src/ld/passes/branch_shim.cpp \
+	ld64/src/ld/passes/branch_island.cpp \
+	ld64/src/ld/passes/dtrace_dof.cpp \
+	ld64/src/ld/passes/compact_unwind.cpp \
+	ld64/src/ld/passes/dylibs.cpp \
+	ld64/src/ld/passes/stubs/stubs.cpp \
+	ld64/src/ld/parsers/archive_file.cpp \
+	ld64/src/ld/parsers/macho_dylib_file.cpp \
+	ld64/src/ld/parsers/macho_relocatable_file.cpp \
+	ld64/src/ld/parsers/opaque_section_file.cpp \
+	ld64/src/ld/parsers/lto_file.cpp \
+	ld64/src/ld/parsers/lto_file_stub.cpp
+@HAVE_LLVM_TRUE@am__objects_2 = ld64/src/ld/parsers/tools_ld-lto_file.$(OBJEXT)
+@HAVE_LLVM_FALSE@am__objects_3 = ld64/src/ld/parsers/tools_ld-lto_file_stub.$(OBJEXT)
 am_tools_ld_OBJECTS = ld64/src/ld/tools_ld-ld.$(OBJEXT) \
 	ld64/src/ld/tools_ld-Options.$(OBJEXT) \
 	ld64/src/ld/tools_ld-InputFiles.$(OBJEXT) \
@@ -234,10 +256,10 @@ am_tools_ld_OBJECTS = ld64/src/ld/tools_ld-ld.$(OBJEXT) \
 	ld64/src/ld/passes/tools_ld-dylibs.$(OBJEXT) \
 	ld64/src/ld/passes/stubs/tools_ld-stubs.$(OBJEXT) \
 	ld64/src/ld/parsers/tools_ld-archive_file.$(OBJEXT) \
-	ld64/src/ld/parsers/tools_ld-lto_file.$(OBJEXT) \
 	ld64/src/ld/parsers/tools_ld-macho_dylib_file.$(OBJEXT) \
 	ld64/src/ld/parsers/tools_ld-macho_relocatable_file.$(OBJEXT) \
-	ld64/src/ld/parsers/tools_ld-opaque_section_file.$(OBJEXT)
+	ld64/src/ld/parsers/tools_ld-opaque_section_file.$(OBJEXT) \
+	$(am__objects_2) $(am__objects_3)
 tools_ld_OBJECTS = $(am_tools_ld_OBJECTS)
 am__DEPENDENCIES_1 =
 @HAVE_LLVM_TRUE@am__DEPENDENCIES_2 = $(LLVM_LIBDIR)/libLTO.a \
@@ -367,7 +389,7 @@ DIST_SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_cmpdylib_SOURCES) $(tools_codesign_allocate_SOURCES) \
 	$(tools_ctf_insert_SOURCES) $(tools_indr_SOURCES) \
 	$(tools_inout_SOURCES) $(tools_install_name_tool_SOURCES) \
-	$(tools_ld_SOURCES) $(tools_libtool_SOURCES) \
+	$(am__tools_ld_SOURCES_DIST) $(tools_libtool_SOURCES) \
 	$(tools_lipo_SOURCES) $(tools_nm_SOURCES) \
 	$(tools_nmedit_SOURCES) $(tools_otool_SOURCES) \
 	$(tools_pagestuff_SOURCES) $(tools_ranlib_SOURCES) \
@@ -589,33 +611,23 @@ tools_as_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_5)
 ########################################
 # ld                                   #
 ########################################
-tools_ld_SOURCES = \
-	ld64/src/ld/ld.cpp \
-	ld64/src/ld/Options.cpp \
-	ld64/src/ld/InputFiles.cpp \
-	ld64/src/ld/Resolver.cpp \
-	ld64/src/ld/OutputFile.cpp \
-	ld64/src/ld/SymbolTable.cpp \
-	ld64/src/ld/debugline.c \
-	\
-	ld64/src/ld/passes/objc.cpp \
-	ld64/src/ld/passes/huge.cpp \
-	ld64/src/ld/passes/got.cpp \
-	ld64/src/ld/passes/tlvp.cpp \
-	ld64/src/ld/passes/order_file.cpp \
+tools_ld_SOURCES = ld64/src/ld/ld.cpp ld64/src/ld/Options.cpp \
+	ld64/src/ld/InputFiles.cpp ld64/src/ld/Resolver.cpp \
+	ld64/src/ld/OutputFile.cpp ld64/src/ld/SymbolTable.cpp \
+	ld64/src/ld/debugline.c ld64/src/ld/passes/objc.cpp \
+	ld64/src/ld/passes/huge.cpp ld64/src/ld/passes/got.cpp \
+	ld64/src/ld/passes/tlvp.cpp ld64/src/ld/passes/order_file.cpp \
 	ld64/src/ld/passes/branch_shim.cpp \
 	ld64/src/ld/passes/branch_island.cpp \
 	ld64/src/ld/passes/dtrace_dof.cpp \
 	ld64/src/ld/passes/compact_unwind.cpp \
 	ld64/src/ld/passes/dylibs.cpp \
 	ld64/src/ld/passes/stubs/stubs.cpp \
-	\
 	ld64/src/ld/parsers/archive_file.cpp \
-	ld64/src/ld/parsers/lto_file.cpp \
 	ld64/src/ld/parsers/macho_dylib_file.cpp \
 	ld64/src/ld/parsers/macho_relocatable_file.cpp \
-	ld64/src/ld/parsers/opaque_section_file.cpp
-
+	ld64/src/ld/parsers/opaque_section_file.cpp $(am__append_9) \
+	$(am__append_10)
 tools_ld_CPPFLAGS = $(CORE_CPPFLAGS) -I$(top_srcdir)/ld64/src/ld \
 	-I$(top_srcdir)/ld64/src/ld/parsers \
 	-I$(top_srcdir)/ld64/src/abstraction $(am__append_6)
@@ -1122,9 +1134,6 @@ ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp):
 ld64/src/ld/parsers/tools_ld-archive_file.$(OBJEXT):  \
 	ld64/src/ld/parsers/$(am__dirstamp) \
 	ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp)
-ld64/src/ld/parsers/tools_ld-lto_file.$(OBJEXT):  \
-	ld64/src/ld/parsers/$(am__dirstamp) \
-	ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp)
 ld64/src/ld/parsers/tools_ld-macho_dylib_file.$(OBJEXT):  \
 	ld64/src/ld/parsers/$(am__dirstamp) \
 	ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp)
@@ -1132,6 +1141,12 @@ ld64/src/ld/parsers/tools_ld-macho_relocatable_file.$(OBJEXT):  \
 	ld64/src/ld/parsers/$(am__dirstamp) \
 	ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp)
 ld64/src/ld/parsers/tools_ld-opaque_section_file.$(OBJEXT):  \
+	ld64/src/ld/parsers/$(am__dirstamp) \
+	ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp)
+ld64/src/ld/parsers/tools_ld-lto_file.$(OBJEXT):  \
+	ld64/src/ld/parsers/$(am__dirstamp) \
+	ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp)
+ld64/src/ld/parsers/tools_ld-lto_file_stub.$(OBJEXT):  \
 	ld64/src/ld/parsers/$(am__dirstamp) \
 	ld64/src/ld/parsers/$(DEPDIR)/$(am__dirstamp)
 tools/ld$(EXEEXT): $(tools_ld_OBJECTS) $(tools_ld_DEPENDENCIES) tools/$(am__dirstamp)
@@ -1361,6 +1376,7 @@ mostlyclean-compile:
 	-rm -f emu/vm.$(OBJEXT)
 	-rm -f ld64/src/ld/parsers/tools_ld-archive_file.$(OBJEXT)
 	-rm -f ld64/src/ld/parsers/tools_ld-lto_file.$(OBJEXT)
+	-rm -f ld64/src/ld/parsers/tools_ld-lto_file_stub.$(OBJEXT)
 	-rm -f ld64/src/ld/parsers/tools_ld-macho_dylib_file.$(OBJEXT)
 	-rm -f ld64/src/ld/parsers/tools_ld-macho_relocatable_file.$(OBJEXT)
 	-rm -f ld64/src/ld/parsers/tools_ld-opaque_section_file.$(OBJEXT)
@@ -1508,6 +1524,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/$(DEPDIR)/tools_ld-ld.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/parsers/$(DEPDIR)/tools_ld-archive_file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file_stub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/parsers/$(DEPDIR)/tools_ld-macho_dylib_file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/parsers/$(DEPDIR)/tools_ld-macho_relocatable_file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/parsers/$(DEPDIR)/tools_ld-opaque_section_file.Po@am__quote@
@@ -2279,22 +2296,6 @@ ld64/src/ld/parsers/tools_ld-archive_file.obj: ld64/src/ld/parsers/archive_file.
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-archive_file.obj `if test -f 'ld64/src/ld/parsers/archive_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/archive_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/archive_file.cpp'; fi`
 
-ld64/src/ld/parsers/tools_ld-lto_file.o: ld64/src/ld/parsers/lto_file.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/parsers/tools_ld-lto_file.o -MD -MP -MF ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo -c -o ld64/src/ld/parsers/tools_ld-lto_file.o `test -f 'ld64/src/ld/parsers/lto_file.cpp' || echo '$(srcdir)/'`ld64/src/ld/parsers/lto_file.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/lto_file.cpp' object='ld64/src/ld/parsers/tools_ld-lto_file.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-lto_file.o `test -f 'ld64/src/ld/parsers/lto_file.cpp' || echo '$(srcdir)/'`ld64/src/ld/parsers/lto_file.cpp
-
-ld64/src/ld/parsers/tools_ld-lto_file.obj: ld64/src/ld/parsers/lto_file.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/parsers/tools_ld-lto_file.obj -MD -MP -MF ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo -c -o ld64/src/ld/parsers/tools_ld-lto_file.obj `if test -f 'ld64/src/ld/parsers/lto_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/lto_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/lto_file.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/lto_file.cpp' object='ld64/src/ld/parsers/tools_ld-lto_file.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-lto_file.obj `if test -f 'ld64/src/ld/parsers/lto_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/lto_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/lto_file.cpp'; fi`
-
 ld64/src/ld/parsers/tools_ld-macho_dylib_file.o: ld64/src/ld/parsers/macho_dylib_file.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/parsers/tools_ld-macho_dylib_file.o -MD -MP -MF ld64/src/ld/parsers/$(DEPDIR)/tools_ld-macho_dylib_file.Tpo -c -o ld64/src/ld/parsers/tools_ld-macho_dylib_file.o `test -f 'ld64/src/ld/parsers/macho_dylib_file.cpp' || echo '$(srcdir)/'`ld64/src/ld/parsers/macho_dylib_file.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/parsers/$(DEPDIR)/tools_ld-macho_dylib_file.Tpo ld64/src/ld/parsers/$(DEPDIR)/tools_ld-macho_dylib_file.Po
@@ -2342,6 +2343,38 @@ ld64/src/ld/parsers/tools_ld-opaque_section_file.obj: ld64/src/ld/parsers/opaque
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/opaque_section_file.cpp' object='ld64/src/ld/parsers/tools_ld-opaque_section_file.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-opaque_section_file.obj `if test -f 'ld64/src/ld/parsers/opaque_section_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/opaque_section_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/opaque_section_file.cpp'; fi`
+
+ld64/src/ld/parsers/tools_ld-lto_file.o: ld64/src/ld/parsers/lto_file.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/parsers/tools_ld-lto_file.o -MD -MP -MF ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo -c -o ld64/src/ld/parsers/tools_ld-lto_file.o `test -f 'ld64/src/ld/parsers/lto_file.cpp' || echo '$(srcdir)/'`ld64/src/ld/parsers/lto_file.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/lto_file.cpp' object='ld64/src/ld/parsers/tools_ld-lto_file.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-lto_file.o `test -f 'ld64/src/ld/parsers/lto_file.cpp' || echo '$(srcdir)/'`ld64/src/ld/parsers/lto_file.cpp
+
+ld64/src/ld/parsers/tools_ld-lto_file.obj: ld64/src/ld/parsers/lto_file.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/parsers/tools_ld-lto_file.obj -MD -MP -MF ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo -c -o ld64/src/ld/parsers/tools_ld-lto_file.obj `if test -f 'ld64/src/ld/parsers/lto_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/lto_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/lto_file.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Tpo ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/lto_file.cpp' object='ld64/src/ld/parsers/tools_ld-lto_file.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-lto_file.obj `if test -f 'ld64/src/ld/parsers/lto_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/lto_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/lto_file.cpp'; fi`
+
+ld64/src/ld/parsers/tools_ld-lto_file_stub.o: ld64/src/ld/parsers/lto_file_stub.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/parsers/tools_ld-lto_file_stub.o -MD -MP -MF ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file_stub.Tpo -c -o ld64/src/ld/parsers/tools_ld-lto_file_stub.o `test -f 'ld64/src/ld/parsers/lto_file_stub.cpp' || echo '$(srcdir)/'`ld64/src/ld/parsers/lto_file_stub.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file_stub.Tpo ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file_stub.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/lto_file_stub.cpp' object='ld64/src/ld/parsers/tools_ld-lto_file_stub.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-lto_file_stub.o `test -f 'ld64/src/ld/parsers/lto_file_stub.cpp' || echo '$(srcdir)/'`ld64/src/ld/parsers/lto_file_stub.cpp
+
+ld64/src/ld/parsers/tools_ld-lto_file_stub.obj: ld64/src/ld/parsers/lto_file_stub.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/parsers/tools_ld-lto_file_stub.obj -MD -MP -MF ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file_stub.Tpo -c -o ld64/src/ld/parsers/tools_ld-lto_file_stub.obj `if test -f 'ld64/src/ld/parsers/lto_file_stub.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/lto_file_stub.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/lto_file_stub.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file_stub.Tpo ld64/src/ld/parsers/$(DEPDIR)/tools_ld-lto_file_stub.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/lto_file_stub.cpp' object='ld64/src/ld/parsers/tools_ld-lto_file_stub.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-lto_file_stub.obj `if test -f 'ld64/src/ld/parsers/lto_file_stub.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/lto_file_stub.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/lto_file_stub.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

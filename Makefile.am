@@ -180,7 +180,6 @@ tools_ld_SOURCES = \
 	ld64/src/ld/passes/stubs/stubs.cpp \
 	\
 	ld64/src/ld/parsers/archive_file.cpp \
-	ld64/src/ld/parsers/lto_file.cpp \
 	ld64/src/ld/parsers/macho_dylib_file.cpp \
 	ld64/src/ld/parsers/macho_relocatable_file.cpp \
 	ld64/src/ld/parsers/opaque_section_file.cpp
@@ -197,6 +196,9 @@ if HAVE_LLVM
 tools_ld_CPPFLAGS += -I$(LLVM_INCLUDEDIR)
 tools_ld_LDFLAGS += $(LLVM_LDFLAGS)
 tools_ld_LDADD += $(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
+tools_ld_SOURCES += ld64/src/ld/parsers/lto_file.cpp
+else
+tools_ld_SOURCES += ld64/src/ld/parsers/lto_file_stub.cpp
 endif
 
 ########################################
