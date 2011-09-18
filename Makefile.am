@@ -27,6 +27,40 @@ AM_CFLAGS = -Wall -Wno-enum-compare
 AM_CXXFLAGS = -Wall -Wno-deprecated
 
 ########################################
+# manpages                             #
+########################################
+
+man_MANS = \
+	cctools/man/as.1 \
+	cctools/man/check_dylib.1 \
+	cctools/man/checksyms.1 \
+	cctools/man/cmpdylib.1 \
+	cctools/man/codesign_allocate.1 \
+	cctools/man/ctf_insert.1 \
+	cctools/man/dyld.1 \
+	cctools/man/gprof.1 \
+	cctools/man/indr.1 \
+	cctools/man/install_name_tool.1 \
+	cctools/man/ld_classic.1 \
+	cctools/man/libtool.1 \
+	cctools/man/lipo.1 \
+	cctools/man/mtoc.1 \
+	cctools/man/nm.1 \
+	cctools/man/nmedit.1 \
+	cctools/man/otool.1 \
+	cctools/man/pagestuff.1 \
+	cctools/man/ranlib.1 \
+	cctools/man/redo_prebinding.1 \
+	cctools/man/seg_addr_table.1 \
+	cctools/man/segedit.1 \
+	cctools/man/size.1 \
+	cctools/man/strings.1 \
+	cctools/man/strip.1 \
+	\
+	cctools/ar/ar.1 \
+	ld64/doc/man/man1/ld.1
+
+########################################
 # programs and libraries               #
 ########################################
 

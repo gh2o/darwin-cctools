@@ -132,7 +132,7 @@ am_libs_libstuff_a_OBJECTS = cctools/libstuff/allocate.$(OBJEXT) \
 	cctools/libstuff/version_number.$(OBJEXT) \
 	cctools/libstuff/writeout.$(OBJEXT)
 libs_libstuff_a_OBJECTS = $(am_libs_libstuff_a_OBJECTS)
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_tools_ar_OBJECTS = cctools/ar/ar.$(OBJEXT) \
 	cctools/ar/archive.$(OBJEXT) cctools/ar/misc.$(OBJEXT) \
@@ -397,6 +397,30 @@ DIST_SOURCES = $(libs_libemu_a_SOURCES) $(libs_libstuff_a_SOURCES) \
 	$(tools_seg_addr_table_SOURCES) $(tools_seg_hack_SOURCES) \
 	$(tools_segedit_SOURCES) $(tools_size_SOURCES) \
 	$(tools_strings_SOURCES) $(tools_strip_SOURCES)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+man1dir = $(mandir)/man1
+NROFF = nroff
+MANS = $(man_MANS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -529,6 +553,40 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = -Wall -Wno-enum-compare
 AM_CXXFLAGS = -Wall -Wno-deprecated
+
+########################################
+# manpages                             #
+########################################
+man_MANS = \
+	cctools/man/as.1 \
+	cctools/man/check_dylib.1 \
+	cctools/man/checksyms.1 \
+	cctools/man/cmpdylib.1 \
+	cctools/man/codesign_allocate.1 \
+	cctools/man/ctf_insert.1 \
+	cctools/man/dyld.1 \
+	cctools/man/gprof.1 \
+	cctools/man/indr.1 \
+	cctools/man/install_name_tool.1 \
+	cctools/man/ld_classic.1 \
+	cctools/man/libtool.1 \
+	cctools/man/lipo.1 \
+	cctools/man/mtoc.1 \
+	cctools/man/nm.1 \
+	cctools/man/nmedit.1 \
+	cctools/man/otool.1 \
+	cctools/man/pagestuff.1 \
+	cctools/man/ranlib.1 \
+	cctools/man/redo_prebinding.1 \
+	cctools/man/seg_addr_table.1 \
+	cctools/man/segedit.1 \
+	cctools/man/size.1 \
+	cctools/man/strings.1 \
+	cctools/man/strip.1 \
+	\
+	cctools/ar/ar.1 \
+	ld64/doc/man/man1/ld.1
+
 
 ########################################
 # programs and libraries               #
@@ -2375,6 +2433,44 @@ ld64/src/ld/parsers/tools_ld-lto_file_stub.obj: ld64/src/ld/parsers/lto_file_stu
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ld64/src/ld/parsers/lto_file_stub.cpp' object='ld64/src/ld/parsers/tools_ld-lto_file_stub.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/parsers/tools_ld-lto_file_stub.obj `if test -f 'ld64/src/ld/parsers/lto_file_stub.cpp'; then $(CYGPATH_W) 'ld64/src/ld/parsers/lto_file_stub.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/parsers/lto_file_stub.cpp'; fi`
+install-man1: $(man_MANS)
+	@$(NORMAL_INSTALL)
+	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
+	@list=''; test -n "$(man1dir)" || exit 0; \
+	{ for i in $$list; do echo "$$i"; done; \
+	l2='$(man_MANS)'; for i in $$l2; do echo "$$i"; done | \
+	  sed -n '/\.1[a-z]*$$/p'; \
+	} | while read p; do \
+	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; echo "$$p"; \
+	done | \
+	sed -e 'n;s,.*/,,;p;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,' | \
+	sed 'N;N;s,\n, ,g' | { \
+	list=; while read file base inst; do \
+	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
+	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man1dir)/$$inst'"; \
+	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man1dir)/$$inst" || exit $$?; \
+	  fi; \
+	done; \
+	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
+	while read files; do \
+	  test -z "$$files" || { \
+	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man1dir)'"; \
+	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man1dir)" || exit $$?; }; \
+	done; }
+
+uninstall-man1:
+	@$(NORMAL_UNINSTALL)
+	@list=''; test -n "$(man1dir)" || exit 0; \
+	files=`{ for i in $$list; do echo "$$i"; done; \
+	l2='$(man_MANS)'; for i in $$l2; do echo "$$i"; done | \
+	  sed -n '/\.1[a-z]*$$/p'; \
+	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
+	test -z "$$files" || { \
+	  echo " ( cd '$(DESTDIR)$(man1dir)' && rm -f" $$files ")"; \
+	  cd "$(DESTDIR)$(man1dir)" && rm -f $$files; }
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -2429,6 +2525,19 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
+	@list='$(MANS)'; if test -n "$$list"; then \
+	  list=`for p in $$list; do \
+	    if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	    if test -f "$$d$$p"; then echo "$$d$$p"; else :; fi; done`; \
+	  if test -n "$$list" && \
+	    grep 'ab help2man is required to generate this page' $$list >/dev/null; then \
+	    echo "error: found man pages containing the \`missing help2man' replacement text:" >&2; \
+	    grep -l 'ab help2man is required to generate this page' $$list | sed 's/^/         /' >&2; \
+	    echo "       to fix them, install help2man, remove and regenerate the man pages;" >&2; \
+	    echo "       typically \`make maintainer-clean' will remove them" >&2; \
+	    exit 1; \
+	  else :; fi; \
+	else :; fi
 	$(am__remove_distdir)
 	test -d "$(distdir)" || mkdir "$(distdir)"
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -2577,9 +2686,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) config.h
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(MANS) config.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -2653,7 +2762,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-man
 
 install-dvi: install-dvi-am
 
@@ -2669,7 +2778,7 @@ install-info: install-info-am
 
 install-info-am:
 
-install-man:
+install-man: install-man1
 
 install-pdf: install-pdf-am
 
@@ -2700,7 +2809,9 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am: uninstall-binPROGRAMS uninstall-man
+
+uninstall-man: uninstall-man1
 
 .MAKE: all install-am install-strip
 
@@ -2714,11 +2825,12 @@ uninstall-am: uninstall-binPROGRAMS
 	install-binPROGRAMS install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS
+	install-man1 install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-man uninstall-man1
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
