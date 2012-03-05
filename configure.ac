@@ -117,6 +117,11 @@ AC_SEARCH_LIBS(
 	[true],
 	[AC_MSG_FAILURE([UUID library not found.])]
 )
+AC_SEARCH_LIBS(
+	[dlsym], [dl],
+	[true],
+	[AC_MSG_FAILURE([dlsym not found.])]
+)
 
 # Checks for header files.
 AC_CHECK_HEADER(

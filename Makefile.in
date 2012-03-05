@@ -116,6 +116,7 @@ am_libs_libstuff_a_OBJECTS = cctools/libstuff/allocate.$(OBJEXT) \
 	cctools/libstuff/guess_short_name.$(OBJEXT) \
 	cctools/libstuff/hash_string.$(OBJEXT) \
 	cctools/libstuff/hppa.$(OBJEXT) cctools/libstuff/lto.$(OBJEXT) \
+	cctools/libstuff/llvm.$(OBJEXT) \
 	cctools/libstuff/macosx_deployment_target.$(OBJEXT) \
 	cctools/libstuff/ofile.$(OBJEXT) \
 	cctools/libstuff/ofile_error.$(OBJEXT) \
@@ -555,8 +556,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 CORE_CPPFLAGS = -I$(top_srcdir)/emu/include -DNeXT_MOD -D_GNU_SOURCE \
-	-D_DARWIN_C_SOURCE -D__DARWIN_UNIX03 $(am__append_1) \
-	$(am__append_2) $(am__append_3)
+	-D_DARWIN_C_SOURCE -D__DARWIN_UNIX03 -DLTO_SUPPORT \
+	$(am__append_1) $(am__append_2) $(am__append_3)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/cctools/include \
 	$(CORE_CPPFLAGS)
@@ -643,6 +644,7 @@ libs_libstuff_a_SOURCES = \
 	cctools/libstuff/hash_string.c \
 	cctools/libstuff/hppa.c \
 	cctools/libstuff/lto.c \
+	cctools/libstuff/llvm.c \
 	cctools/libstuff/macosx_deployment_target.c \
 	cctools/libstuff/ofile.c \
 	cctools/libstuff/ofile_error.c \
@@ -902,6 +904,8 @@ cctools/libstuff/hash_string.$(OBJEXT):  \
 cctools/libstuff/hppa.$(OBJEXT): cctools/libstuff/$(am__dirstamp) \
 	cctools/libstuff/$(DEPDIR)/$(am__dirstamp)
 cctools/libstuff/lto.$(OBJEXT): cctools/libstuff/$(am__dirstamp) \
+	cctools/libstuff/$(DEPDIR)/$(am__dirstamp)
+cctools/libstuff/llvm.$(OBJEXT): cctools/libstuff/$(am__dirstamp) \
 	cctools/libstuff/$(DEPDIR)/$(am__dirstamp)
 cctools/libstuff/macosx_deployment_target.$(OBJEXT):  \
 	cctools/libstuff/$(am__dirstamp) \
@@ -1382,6 +1386,7 @@ mostlyclean-compile:
 	-rm -f cctools/libstuff/guess_short_name.$(OBJEXT)
 	-rm -f cctools/libstuff/hash_string.$(OBJEXT)
 	-rm -f cctools/libstuff/hppa.$(OBJEXT)
+	-rm -f cctools/libstuff/llvm.$(OBJEXT)
 	-rm -f cctools/libstuff/lto.$(OBJEXT)
 	-rm -f cctools/libstuff/macosx_deployment_target.$(OBJEXT)
 	-rm -f cctools/libstuff/ofile.$(OBJEXT)
@@ -1523,6 +1528,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/libstuff/$(DEPDIR)/guess_short_name.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/libstuff/$(DEPDIR)/hash_string.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/libstuff/$(DEPDIR)/hppa.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@cctools/libstuff/$(DEPDIR)/llvm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/libstuff/$(DEPDIR)/lto.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/libstuff/$(DEPDIR)/macosx_deployment_target.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@cctools/libstuff/$(DEPDIR)/ofile.Po@am__quote@

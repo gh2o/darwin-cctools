@@ -7,7 +7,8 @@ CORE_CPPFLAGS = \
 	-DNeXT_MOD \
 	-D_GNU_SOURCE \
 	-D_DARWIN_C_SOURCE \
-	-D__DARWIN_UNIX03
+	-D__DARWIN_UNIX03 \
+	-DLTO_SUPPORT
 
 if !HAVE_PRIVATE_EXTERN
   CORE_CPPFLAGS += -D__private_extern__=extern
@@ -136,6 +137,7 @@ libs_libstuff_a_SOURCES = \
 	cctools/libstuff/hash_string.c \
 	cctools/libstuff/hppa.c \
 	cctools/libstuff/lto.c \
+	cctools/libstuff/llvm.c \
 	cctools/libstuff/macosx_deployment_target.c \
 	cctools/libstuff/ofile.c \
 	cctools/libstuff/ofile_error.c \
