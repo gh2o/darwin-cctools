@@ -77,7 +77,7 @@ struct arch_flag *arch_flag,
 void **pmod) /* maybe NULL */
 {
 
-   size_t bufsize;
+   uint32_t bufsize;
    char *p, *prefix, *lto_path, buf[MAXPATHLEN], resolved_name[PATH_MAX];
    int i;
    void *mod;

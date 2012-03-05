@@ -16,6 +16,7 @@
 #define LLVM_C_DISASSEMBLER_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 /**
  * An opaque reference to a disassembler context.
