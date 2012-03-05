@@ -1,3 +1,36 @@
+Changes for the 5.30 release (the cctools-822 release):
+- The "low risk fix to strip(1)" below in cctools-821 for Radar bug #10718585
+  breaks striping .o files with dwarf debug info.  Because the input file has
+  an "ld -r" run on it so it is not the original input file.  That change has
+  been backed out.
+
+Changes for the 5.30 release (the cctools-821 release):
+- As part of a low risk fix to strip(1) to fix bugs when stripping objects with
+  code signature data, new field checkout_sym_info_size was added in the object
+  struct in "stuff/breakout.h" .  Radar bug #10718585.
+
+Changes for the 5.30 release (the cctools-817 release):
+- Changed the type of the n_strx field in the nlist struct in <mach-o/nlist.h>
+  to be uint32_t and not int32_t.  Radar bug #10464743.
+
+Changes for the 5.30 release (the cctools-814 release):
+- Added support for new load commands LC_MAIN, LC_DATA_IN_CODE,
+  LC_SOURCE_VERSION and LC_DYLIB_CODE_SIGN_DRS
+  - Added constants and structs to <mach-o/loader.h> .
+  - Added declarations of swap_entry_point_command() and
+    swap_source_version_command() to "stuff/bytesex.h" .
+  - Added fields for data_in_code and code_sign_drs commands plus info and size
+    to struct object in "stuff/breakout.h".
+  Radar bug #10290817.
+
+Changes for the 5.30 release (the cctools-813 release):
+- Updated llvm-c/Disassembler.h for LLVMSymbolLookupCallback References.
+
+Changes for the 5.27 release (the cctools-809 release):
+- Moved the declaration of is_llvm_bitcode() from "stuff/lto.h" to
+  "stuff/ofile.h".  And added is_llvm_bitcode_from_memory() to "stuff/lto.h".
+  Radar bug #9087924.
+
 Changes for the 5.27 release (the cctools-805 release):
 - Added toc_bad field to the ofile struct in "stuff/ofile.h".
   Radar bug #9475790.
@@ -8,6 +41,10 @@ Changes for the 5.27 release (the cctools-803 release):
 Changes for the 5.27 release (the cctools-801 release):
 - Added the file_mtime field to the ofile struct in "stuff/ofile.h" and the
   mtime parameter to ofile_map_from_memory().  Radar bug #9354501.
+
+Changes for the 5.27 release (the cctools-800.3 release):
+- Added constants for CPU_SUBTYPE_ARM_V7F[FK] to <mach/machine.h> .
+  Radar bug #8987684.
 
 Changes for the 5.27 release (the cctools-800 release):
 - Updated comment in <mach-o/loader.h> before GET_LIBRARY_ORDINAL to include
@@ -441,7 +478,7 @@ Changes for the 5.17 release (the cctools-572 release):
 Changes for the 5.17 release (the cctools-568 release):
 - Added the constant S_INTERPOSING to <mach-o/loader.h> . Radar bug #3965794.
 - Changed "stuff/bytesex.h" and "stuff/arch.h" to remove multiply defined
-  warnings by changing all #import's to #include's.
+  warnings by changing all #include's to #include's.
 
 Changes for the 5.17 release (the cctools-564 release):
 - Changed the Makefile so that it only installs /usr/include/mach-o/dyld_debug.h
@@ -892,7 +929,7 @@ Changes for the 5.10 release (the cctools-404 release):
 
 Changes for the 5.10 release (the cctools-403 release):
 - Changed mach-o/ppc/swap.h and mach-o/i386/swap.h to use #include and not
-  #import.  Radar bug #2778821.
+  #include.  Radar bug #2778821.
 
 Changes for the 5.10 release (the cctools-400 release):
 - Added a new throttle parameter to redo_prebinding() in
@@ -934,7 +971,7 @@ Changes for the 5.10 release (the cctools-392 release):
   in <stuff/ofile.h>.  Radar bug #2730127.
 
 Changes for the 5.10 release (the cctools-388 release):
-- Changed the use of #import to #include in the mach-o directory files and
+- Changed the use of #include to #include in the mach-o directory files and
   added guards to each header to prevent multiple includes.  Radar bug #2778821.
 
 Changes for the 5.10 release (the cctools-387 release):
@@ -1178,7 +1215,7 @@ Changes for the 5.3 release (the cctools-285 release):
 	PPC_THREAD_MACHINE_STATE_MAX
   So that mach/{ppc,i386,etc}/thread_status.h can all be included in the same
   file without warnings about redefined macros.
-- Changed #import <sys/types.h> in ranlib.h to #include <sys/types.h>
+- Changed #include <sys/types.h> in ranlib.h to #include <sys/types.h>
   Radar Bug #2303937.
 
 Changes for the MacOS X bring up (the cctools-282 release):
@@ -1433,7 +1470,7 @@ Changes for the Warp ?? release (the -25 compiler release):
 - Added the scattered_relocation_info struct to reloc.h
 
 Changes for the Warp ?? release (the -24 compiler release):
-- Added #import <sys/loader.h> to ldsyms.h (bug 6031).
+- Added #include <sys/loader.h> to ldsyms.h (bug 6031).
 - Added rld.h to be installed in /usr/include.
 
 Changes for the 2.0 impulse X.X release (the -19 compiler release):

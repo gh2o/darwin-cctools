@@ -326,7 +326,7 @@ static uint32_t trnc(
     uint32_t v,
     uint32_t r);
 
-/* apple_version is in vers.c which is created by the Makefile */
+/* apple_version is in vers.c which is created by the libstuff/Makefile */
 extern char apple_version[];
 
 int
@@ -1011,8 +1011,7 @@ char **envp)
 			    cmd_flags.verbose= TRUE;
 			    break;
 			case 'V':
-			    printf("Apple Computer, Inc. version %s\n",
-				   apple_version);
+			    printf("Apple Inc. version %s\n", apple_version);
 			    Vflag = TRUE;
 			    break;
 			case 't':
@@ -2326,7 +2325,7 @@ struct ofile *ofile)
 			if(archs[0].members[j].offset == 
 			   archs[0].toc_ranlibs[i].ran_off){
 			    archs[0].toc_ranlibs[i].ran_off = 
-				archs[0].members[i].input_member_offset;
+				archs[0].members[j].input_member_offset;
 			    break;
 			}
 		    }

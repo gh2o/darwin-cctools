@@ -51,6 +51,7 @@
 #include "hppa_disasm.h"
 #include "sparc_disasm.h"
 #include "arm_disasm.h"
+#include "llvm-c/Disassembler.h"
 
 /* Name of this program for error messages (argv[0]) */
 char *progname = NULL;
@@ -83,6 +84,9 @@ enum bool Wflag = FALSE; /* print the mod time of an archive as a number */
 enum bool Xflag = FALSE; /* don't print leading address in disassembly */
 enum bool Zflag = FALSE; /* don't use simplified ppc mnemonics in disassembly */
 enum bool Bflag = FALSE; /* force Thumb disassembly (ARM objects only) */
+enum bool Qflag = FALSE; /* use the HACKED llvm-mc disassembler */
+enum bool qflag = FALSE; /* use 'C' Public llvm-mc disassembler */
+enum bool jflag = FALSE; /* print opcode bytes */
 char *pflag = NULL; 	 /* procedure name to start disassembling from */
 char *segname = NULL;	 /* name of the section to print the contents of */
 char *sectname = NULL;
@@ -221,7 +225,9 @@ static void print_text(
     uint32_t sizeofcmds,
     enum bool disassemble,
     enum bool verbose,
-    cpu_subtype_t cpusubtype);
+    cpu_subtype_t cpusubtype,
+    char *object_addr,
+    uint32_t object_size);
 
 static void print_argstrings(
     uint32_t magic,
@@ -233,6 +239,10 @@ static void print_argstrings(
     enum byte_sex load_commands_byte_sex,
     char *object_addr,
     uint32_t object_size);
+
+/* apple_version is created by the libstuff/Makefile */
+extern char apple_version[];
+char *version = apple_version;
 
 int
 main(
@@ -420,6 +430,17 @@ char **envp)
 		    break;
 		case 'B':
 		    Bflag = TRUE;
+		    break;
+#ifdef HACKED_LLVM_DISASSEMBLER_INTERFACE
+		case 'Q':
+		    Qflag = TRUE;
+		    break;
+#endif /* HACKED_LLVM_DISASSEMBLER_INTERFACE */
+		case 'q':
+		    qflag = TRUE;
+		    break;
+		case 'j':
+		    jflag = TRUE;
 		    break;
 		default:
 		    error("unknown char `%c' in flag %s\n", argv[i][j],argv[i]);
@@ -1110,7 +1131,8 @@ void *cookie) /* cookie is not used */
 		       nsorted_symbols, symbols, symbols64, nsymbols, strings,
 		       strings_size, relocs, nrelocs, indirect_symbols,
 		       nindirect_symbols, ofile->load_commands, mh_ncmds,
-		       mh_sizeofcmds, vflag, Vflag, mh_cpusubtype);
+		       mh_sizeofcmds, vflag, Vflag, mh_cpusubtype,
+		       ofile->object_addr, ofile->object_size);
 
 	    if(relocs != NULL && relocs != sect_relocs)
 		free(relocs);
@@ -1218,8 +1240,9 @@ void *cookie) /* cookie is not used */
 			       "file\n");
 			break;
 		    case S_CSTRING_LITERALS:
-			print_cstring_section(sect, sect_size, sect_addr,
-				Xflag == TRUE ? FALSE : TRUE);
+			print_cstring_section(mh_cputype, sect, sect_size,
+					      sect_addr,
+					      Xflag == TRUE ? FALSE : TRUE);
 			break;
 		    case S_4BYTE_LITERALS:
 			print_literal4_section(sect, sect_size, sect_addr,
@@ -2342,7 +2365,9 @@ uint32_t ncmds,
 uint32_t sizeofcmds,
 enum bool disassemble,
 enum bool verbose,
-cpu_subtype_t cpusubtype)
+cpu_subtype_t cpusubtype,
+char *object_addr,
+uint32_t object_size)
 {
     enum byte_sex host_byte_sex;
     enum bool swapped;
@@ -2350,6 +2375,7 @@ cpu_subtype_t cpusubtype)
     uint64_t cur_addr;
     unsigned short short_word;
     unsigned char byte_word;
+    LLVMDisasmContextRef arm_dc, thumb_dc;
 
 	host_byte_sex = get_host_byte_sex();
 	swapped = host_byte_sex != object_byte_sex;
@@ -2377,19 +2403,28 @@ cpu_subtype_t cpusubtype)
 		offset = 0;
 		cur_addr = addr;
 	    }
-	    if(cputype == CPU_TYPE_ARM && cpusubtype == CPU_SUBTYPE_ARM_V7)
+	    if(cputype == CPU_TYPE_ARM &&
+	       (cpusubtype == CPU_SUBTYPE_ARM_V7 ||
+	        cpusubtype == CPU_SUBTYPE_ARM_V7F ||
+	        cpusubtype == CPU_SUBTYPE_ARM_V7K))
 		in_thumb = TRUE;
 	    else
 		in_thumb = FALSE;
+	    arm_dc = NULL;
+	    thumb_dc = NULL;
+	    if(cputype == CPU_TYPE_ARM){
+		arm_dc = create_arm_llvm_disassembler();
+		thumb_dc = create_thumb_llvm_disassembler();
+	    }
 	    for(i = offset ; i < size ; ){
 		print_label(cur_addr, TRUE, sorted_symbols, nsorted_symbols);
-		if(Xflag)
-		    printf("\t");
-		else{
+		if(Xflag == FALSE){
 		    if(cputype & CPU_ARCH_ABI64)
-			printf("%016llx\t", cur_addr);
+			printf("%016llx", cur_addr);
 		    else
-			printf("%08x\t", (uint32_t)cur_addr);
+			printf("%08x", (uint32_t)cur_addr);
+		    if(Qflag == FALSE && qflag == FALSE)
+			printf("\t");
 		}
 		if(cputype == CPU_TYPE_POWERPC64)
 		    j = ppc_disassemble(sect, size - i, cur_addr, addr,
@@ -2456,7 +2491,8 @@ cpu_subtype_t cpusubtype)
 				nsymbols, sorted_symbols, nsorted_symbols,
 				strings, strings_size, indirect_symbols,
 				nindirect_symbols, load_commands, ncmds,
-				sizeofcmds, cpusubtype, verbose);
+				sizeofcmds, cpusubtype, verbose, arm_dc,
+				thumb_dc, object_addr, object_size);
 		else{
 		    printf("Can't disassemble unknown cputype %d\n", cputype);
 		    return;
@@ -2465,6 +2501,10 @@ cpu_subtype_t cpusubtype)
 		cur_addr += j;
 		i += j;
 	    }
+	    if(arm_dc != NULL)
+		delete_arm_llvm_disassembler(arm_dc);
+	    if(thumb_dc != NULL)
+		delete_arm_llvm_disassembler(thumb_dc);
 	}
 	else{
 	    if(cputype == CPU_TYPE_I386 || cputype == CPU_TYPE_X86_64){
