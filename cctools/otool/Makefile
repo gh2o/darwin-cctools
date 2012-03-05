@@ -34,6 +34,7 @@ endif
 ifneq "" "$(SDKROOT)"
   SDK = -isysroot $(SDKROOT)
   CC = $(shell xcrun -find -sdk $(SDKROOT) cc)
+  CXX = $(shell xcrun -find -sdk $(SDKROOT) c++)
 endif
 
 ifeq "clang" "$(notdir $(CC))"
@@ -106,7 +107,7 @@ endif
 HFILES = otool.h ofile_print.h m68k_disasm.h i860_disasm.h \
 	 sparc_disasm.h m88k_disasm.h i386_disasm.h ppc_disasm.h hppa_disasm.h \
 	 notify.h arm_disasm.h
-OBJS = $(CFILES:.c=.o) ofile.o vers.o
+OBJS = $(CFILES:.c=.o) ofile.o
 INSTALL_FILES = $(CFILES) $(HFILES) Makefile notes
 
 PRODUCT = otool
@@ -115,11 +116,8 @@ all: $(OFILE_DIR) $(SYMROOT) $(PRODUCT).NEW
 $(PRODUCT).NEW:	$(OFILE_DIR) $(SYMROOT) $(OBJS)
 	$(CC) $(RC_CFLAGS) -nostdlib -r -o $(OBJROOT)/private.o \
 		$(OBJS) $(LIBSTUFF)
-	$(CC) $(RC_CFLAGS) $(SDK) -o $(SYMROOT)/$@ $(OBJROOT)/private.o \
+	$(CXX) $(RC_CFLAGS) $(SDK) -o $(SYMROOT)/$@ $(OBJROOT)/private.o \
 		$(LIBSTUFF) $(LIBS)
-
-vers.c:
-	vers_string -c $(VERS_STRING_FLAGS) $(PRODUCT) > $(OFILE_DIR)/$@
 
 ifeq "NO" "$(USE_DEPENDENCY_FILE)"
 .c.o:
@@ -142,7 +140,7 @@ else
 endif
 
 clean: shlib_clean
-	-rm -f $(SYMROOT)/$(PRODUCT).NEW $(OFILE_DIR)/vers.c
+	-rm -f $(SYMROOT)/$(PRODUCT).NEW
 
 shlib_clean:
 	-cd $(OFILE_DIR); rm -f $(OBJS) private.o

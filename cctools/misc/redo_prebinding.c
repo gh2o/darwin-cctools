@@ -663,6 +663,10 @@ cleanup_libs()
 }
 
 #ifndef LIBRARY_API
+/* apple_version is created by the libstuff/Makefile */
+extern char apple_version[];
+char *version = apple_version;
+
 /*
  * main() see top of file for program's description and options.
  */
@@ -5433,6 +5437,16 @@ enum bool missing_arch)
 		arch->object->func_starts_info_cmd->datasize;
 	}
 
+	if(arch->object->data_in_code_cmd != NULL){
+	    sym_info_size +=
+		arch->object->data_in_code_cmd->datasize;
+	}
+
+	if(arch->object->code_sign_drs_cmd != NULL){
+	    sym_info_size +=
+		arch->object->code_sign_drs_cmd->datasize;
+	}
+
 	if(arch->object->code_sig_cmd != NULL){
 	    sym_info_size =
 		rnd(sym_info_size, 16);
@@ -5483,6 +5497,20 @@ enum bool missing_arch)
 		arch->object->func_starts_info_cmd->dataoff;
 	    arch->object->output_func_start_info_data_size = 
 		arch->object->func_starts_info_cmd->datasize;
+	}
+	if(arch->object->data_in_code_cmd != NULL){
+	    arch->object->output_data_in_code_info_data =
+		arch->object->object_addr +
+		arch->object->data_in_code_cmd->dataoff;
+	    arch->object->output_data_in_code_info_data_size = 
+		arch->object->data_in_code_cmd->datasize;
+	}
+	if(arch->object->code_sign_drs_cmd != NULL){
+	    arch->object->output_code_sign_drs_info_data =
+		arch->object->object_addr +
+		arch->object->code_sign_drs_cmd->dataoff;
+	    arch->object->output_code_sign_drs_info_data_size = 
+		arch->object->code_sign_drs_cmd->datasize;
 	}
 	if(arch->object->code_sig_cmd != NULL){
 	    arch->object->output_code_sig_data = arch->object->object_addr +
@@ -9260,6 +9288,14 @@ uint32_t vmslide)
 		break;
 	    case LC_FUNCTION_STARTS:
 		arch->object->func_starts_info_cmd =
+		    (struct linkedit_data_command *)lc1;
+		break;
+	    case LC_DATA_IN_CODE:
+		arch->object->data_in_code_cmd =
+		    (struct linkedit_data_command *)lc1;
+		break;
+	    case LC_DYLIB_CODE_SIGN_DRS:
+		arch->object->code_sign_drs_cmd =
 		    (struct linkedit_data_command *)lc1;
 		break;
 	    }
