@@ -30,11 +30,11 @@
 #include <mach-o/fat.h>
 #include <mach-o/stab.h>
 #include <mach-o/reloc.h>
-#include <mach-o/ppc/reloc.h>
 #include <mach-o/x86_64/reloc.h>
 #include <mach-o/arm/reloc.h>
 #include <mach-o/compact_unwind_encoding.h>
 #include <mach/machine.h>
+#include <stddef.h>
 
 #include "FileAbstraction.hpp"
 
@@ -53,6 +53,7 @@
 #ifndef CPU_SUBTYPE_ARM_V7
 	#define CPU_SUBTYPE_ARM_V7			((cpu_subtype_t) 9)
 #endif
+
 #ifndef ARM_THUMB_32BIT_BRANCH
 	#define ARM_THUMB_32BIT_BRANCH	7 
 #endif
@@ -208,6 +209,32 @@
 // hack until newer <mach-o/arm/reloc.h> everywhere
 #define ARM_RELOC_HALF 8
 #define ARM_RELOC_HALF_SECTDIFF 9
+
+#ifndef CPU_SUBTYPE_ARM_V7F
+  #define CPU_SUBTYPE_ARM_V7F    ((cpu_subtype_t) 10)
+#endif
+#ifndef CPU_SUBTYPE_ARM_V7K
+  #define CPU_SUBTYPE_ARM_V7K    ((cpu_subtype_t) 12)
+#endif
+
+struct ARMSubType {
+	const char*			subTypeName;
+	const char*			llvmTriplePrefix;
+	cpu_subtype_t		subType;
+	bool				supportsThumb2;
+};
+
+static const ARMSubType ARMSubTypes[] = {
+	{ "armv4t","armv4t-",   CPU_SUBTYPE_ARM_V4T,   false },
+	{ "armv5", "armv5e-",   CPU_SUBTYPE_ARM_V5TEJ, false },
+	{ "armv6", "armv6-",    CPU_SUBTYPE_ARM_V6,    false },
+	{ "armv7", "thumbv7-",  CPU_SUBTYPE_ARM_V7,    true },
+	{ "armv7f", "thumbv7f-", CPU_SUBTYPE_ARM_V7F,   true },
+	{ "armv7k", "thumbv7k-", CPU_SUBTYPE_ARM_V7K,   true },
+	{ 0, NULL, false }
+};
+
+
 
 
 //
@@ -1251,14 +1278,55 @@ public:
 	uint32_t		version() const							INLINE { return fields.version; }
 	void			set_version(uint32_t value)				INLINE { E::set32(fields.version, value); }
 
-	uint32_t		reserved() const						INLINE { return fields.reserved; }
-	void			set_reserved(uint32_t value)			INLINE { E::set32(fields.reserved, value); }
+#ifdef LC_SOURCE_VERSION
+	uint32_t		sdk() const								INLINE { return fields.sdk; }
+	void			set_sdk(uint32_t value)					INLINE { E::set32(fields.sdk, value); }
+#else
+	uint32_t		sdk() const								INLINE { return fields.reserved; }
+	void			set_sdk(uint32_t value)					INLINE { E::set32(fields.reserved, value); }
+#endif
 
 	typedef typename P::E		E;
 private:
 	version_min_command	fields;
 };
 
+
+//
+// mach-o __LD, __compact_unwind section in object files
+//
+template <typename P>
+class macho_compact_unwind_entry {
+public:
+	typedef typename P::E		E;
+	typedef typename P::uint_t	pint_t;
+
+	pint_t			codeStart() const						INLINE { return P::getP(_codeStart); }
+	void			set_codeStart(pint_t value)				INLINE { P::setP(_codeStart, value); }
+
+	uint32_t		codeLen() const							INLINE { return E::get32(_codeLen); }
+	void			set_codeLen(uint32_t value)				INLINE { E::set32(_codeLen, value); }
+
+	uint32_t		compactUnwindInfo() const				INLINE { return E::get32(_compactUnwindInfo); }
+	void			set_compactUnwindInfo(uint32_t value)	INLINE { E::set32(_compactUnwindInfo, value);  }
+	
+	pint_t			personality() const						INLINE { return P::getP(_personality); }
+	void			set_personality(pint_t value)			INLINE { P::setP(_personality, value);  }
+	
+	pint_t			lsda() const							INLINE { return P::getP(_lsda); }
+	void			set_lsda(pint_t value)					INLINE { P::setP(_lsda, value);  }
+	
+	static uint32_t	codeStartFieldOffset()					INLINE { return offsetof(macho_compact_unwind_entry<P>,_codeStart); }
+	static uint32_t	personalityFieldOffset()				INLINE { return offsetof(macho_compact_unwind_entry<P>,_personality); }
+	static uint32_t	lsdaFieldOffset()						INLINE { return offsetof(macho_compact_unwind_entry<P>,_lsda); }
+	
+private:
+	pint_t		_codeStart;
+	uint32_t	_codeLen;
+	uint32_t	_compactUnwindInfo;
+	pint_t		_personality;
+	pint_t		_lsda;
+};
 
 
 #endif	// __MACH_O_FILE_ABSTRACTION__

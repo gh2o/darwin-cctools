@@ -298,26 +298,6 @@ void Resolver::buildAtomList()
 	//_symbolTable.printStatistics();
 }
 
-unsigned int Resolver::ppcSubTypeIndex(uint32_t subtype)
-{
-	switch ( subtype ) {
-		case CPU_SUBTYPE_POWERPC_ALL:
-			return 0;
-		case CPU_SUBTYPE_POWERPC_750:
-			// G3
-			return 1;
-		case CPU_SUBTYPE_POWERPC_7400:
-		case CPU_SUBTYPE_POWERPC_7450:
-			// G4
-			return 2;
-		case CPU_SUBTYPE_POWERPC_970:
-			// G5 can run everything
-			return 3;
-		default:
-			throw "Unhandled PPC cpu subtype!";
-			break;
-	}
-}
 
 void Resolver::doFile(const ld::File& file)
 {
@@ -364,29 +344,6 @@ void Resolver::doFile(const ld::File& file)
 		// update cpu-sub-type
 		cpu_subtype_t nextObjectSubType = file.cpuSubType();
 		switch ( _options.architecture() ) {
-			case CPU_TYPE_POWERPC:
-				// no checking when -force_cpusubtype_ALL is used
-				if ( _options.forceCpuSubtypeAll() )
-					return;
-				if ( _options.preferSubArchitecture() ) {
-					// warn if some .o file is not compatible with desired output sub-type
-					if ( _options.subArchitecture() != nextObjectSubType ) {
-						if ( ppcSubTypeIndex(nextObjectSubType) > ppcSubTypeIndex(_options.subArchitecture()) ) {
-							if ( !_inputFiles.inferredArch() )
-								warning("cpu-sub-type of %s is not compatible with command line cpu-sub-type", file.path());
-							_internal.cpuSubType = nextObjectSubType;
-						}
-					}
-				}
-				else {
-					// command line to linker just had -arch ppc
-					// figure out final sub-type based on sub-type of all .o files
-					if ( ppcSubTypeIndex(nextObjectSubType) > ppcSubTypeIndex(_internal.cpuSubType) ) {
-						_internal.cpuSubType = nextObjectSubType;
-					}
-				}
-				break;
-			
 			case CPU_TYPE_ARM:
 				if ( _options.subArchitecture() != nextObjectSubType ) {
 					if ( (_options.subArchitecture() == CPU_SUBTYPE_ARM_ALL) && _options.forceCpuSubtypeAll() ) {
@@ -395,6 +352,10 @@ void Resolver::doFile(const ld::File& file)
 					else if ( nextObjectSubType == CPU_SUBTYPE_ARM_ALL ) {
 						warning("CPU_SUBTYPE_ARM_ALL subtype is deprecated: %s", file.path());
 					}
+					else if ( _options.allowSubArchitectureMismatches() ) {
+						//warning("object file %s was built for different arm sub-type (%d) than link command line (%d)", 
+						//	file.path(), nextObjectSubType, _options.subArchitecture());
+					}
 					else {
 						throwf("object file %s was built for different arm sub-type (%d) than link command line (%d)", 
 							file.path(), nextObjectSubType, _options.subArchitecture());
@@ -402,9 +363,6 @@ void Resolver::doFile(const ld::File& file)
 				}
 				break;
 			
-			case CPU_TYPE_POWERPC64:
-				break;
-				
 			case CPU_TYPE_I386:
 				_internal.cpuSubType = CPU_SUBTYPE_I386_ALL;
 				break;
@@ -468,11 +426,11 @@ void Resolver::doAtom(const ld::Atom& atom)
 								// marking proxy atom as global triggers the re-export
 								(const_cast<ld::Atom*>(&atom))->setScope(ld::Atom::scopeGlobal);
 							}
-							else {
+							else if ( _options.outputKind() == Options::kDynamicLibrary ) {
 								if ( atom.file() != NULL )
-									warning("cannot re-export symbol %s from %s\n", SymbolTable::demangle(name), atom.file()->path());
+									warning("target OS does not support re-exporting symbol %s from %s\n", SymbolTable::demangle(name), atom.file()->path());
 								else
-									warning("cannot re-export symbol %s\n", SymbolTable::demangle(name));
+									warning("target OS does not support re-exporting symbol %s\n", SymbolTable::demangle(name));
 							}
 						}
 						else {
@@ -564,8 +522,6 @@ bool Resolver::isDtraceProbe(ld::Fixup::Kind kind)
 		case ld::Fixup::kindStoreARMDtraceIsEnableSiteClear:
 		case ld::Fixup::kindStoreThumbDtraceCallSiteNop:
 		case ld::Fixup::kindStoreThumbDtraceIsEnableSiteClear:
-		case ld::Fixup::kindStorePPCDtraceCallSiteNop:
-		case ld::Fixup::kindStorePPCDtraceIsEnableSiteClear:
 		case ld::Fixup::kindDtraceExtra:
 			return true;
 		default: 
@@ -640,7 +596,7 @@ void Resolver::resolveUndefines()
 			const char* undef = *it;
 			// load for previous undefine may also have loaded this undefine, so check again
 			if ( ! _symbolTable.hasName(undef) ) {
-				_inputFiles.searchLibraries(undef, true, true, *this);
+				_inputFiles.searchLibraries(undef, true, true, false, *this);
 				if ( !_symbolTable.hasName(undef) && (_options.outputKind() != Options::kObjectFile) ) {
 					if ( strncmp(undef, "section$", 8) == 0 ) {
 						if ( strncmp(undef, "section$start$", 14) == 0 ) {
@@ -687,7 +643,7 @@ void Resolver::resolveUndefines()
 				const ld::Atom* curAtom = _symbolTable.atomForSlot(_symbolTable.findSlotForName(*it));
 				assert(curAtom != NULL);
 				if ( curAtom->definition() == ld::Atom::definitionTentative ) {
-					_inputFiles.searchLibraries(*it, searchDylibs, true, *this);
+					_inputFiles.searchLibraries(*it, searchDylibs, true, true, *this);
 				}
 			}
 		}
@@ -761,9 +717,12 @@ void Resolver::markLive(const ld::Atom& atom, WhyLiveBackChain* previous)
 			case ld::Fixup::kindStoreTargetAddressX86BranchPCRel32:
 			case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoad:
 			case ld::Fixup::kindStoreTargetAddressX86PCRel32GOTLoadNowLEA:
+			case ld::Fixup::kindStoreTargetAddressX86PCRel32TLVLoad:
+			case ld::Fixup::kindStoreTargetAddressX86PCRel32TLVLoadNowLEA:
+			case ld::Fixup::kindStoreTargetAddressX86Abs32TLVLoad:
+			case ld::Fixup::kindStoreTargetAddressX86Abs32TLVLoadNowLEA:
 			case ld::Fixup::kindStoreTargetAddressARMBranch24:
 			case ld::Fixup::kindStoreTargetAddressThumbBranch22:
-			case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 				if ( fit->binding == ld::Fixup::bindingByContentBound ) {
 					// normally this was done in convertReferencesToIndirect()
 					// but a archive loaded .o file may have a forward reference
@@ -799,14 +758,14 @@ void Resolver::markLive(const ld::Atom& atom, WhyLiveBackChain* previous)
 						target = _internal.indirectBindingTable[fit->u.bindingIndex];
 						if ( target == NULL ) {
 							const char* targetName = _symbolTable.indirectName(fit->u.bindingIndex);
-							_inputFiles.searchLibraries(targetName, true, true, *this);
+							_inputFiles.searchLibraries(targetName, true, true, false, *this);
 							target = _internal.indirectBindingTable[fit->u.bindingIndex];
 						}
 						if ( target != NULL ) {
 							if ( target->definition() == ld::Atom::definitionTentative ) {
 								// <rdar://problem/5894163> need to search archives for overrides of common symbols 
 								bool searchDylibs = (_options.commonsMode() == Options::kCommonsOverriddenByDylibs);
-								_inputFiles.searchLibraries(target->name(), searchDylibs, true, *this);
+								_inputFiles.searchLibraries(target->name(), searchDylibs, true, true, *this);
 								// recompute target since it may have been overridden by searchLibraries()
 								target = _internal.indirectBindingTable[fit->u.bindingIndex];
 							}
@@ -827,6 +786,21 @@ void Resolver::markLive(const ld::Atom& atom, WhyLiveBackChain* previous)
 
 }
 
+class NotLiveLTO {
+public:
+	bool operator()(const ld::Atom* atom) const {
+		if (atom->live() || atom->dontDeadStrip() )
+			return false;
+		// don't kill combinable atoms in first pass
+		switch ( atom->combine() ) {
+			case ld::Atom::combineByNameAndContent:
+			case ld::Atom::combineByNameAndReferences:
+				return false;
+			default:
+				return true;
+		}
+	}
+};
 
 void Resolver::deadStripOptimize()
 {
@@ -843,7 +817,7 @@ void Resolver::deadStripOptimize()
 	for (Options::UndefinesIterator uit=_options.initialUndefinesBegin(); uit != _options.initialUndefinesEnd(); ++uit) {
 		SymbolTable::IndirectBindingSlot slot = _symbolTable.findSlotForName(*uit);
 		if ( _internal.indirectBindingTable[slot] == NULL ) {
-			_inputFiles.searchLibraries(*uit, false, true, *this);
+			_inputFiles.searchLibraries(*uit, false, true, false, *this);
 		}
 		if ( _internal.indirectBindingTable[slot] != NULL )
 			_deadStripRoots.insert(_internal.indirectBindingTable[slot]);
@@ -888,7 +862,14 @@ void Resolver::deadStripOptimize()
 			fprintf(stderr, "  live=%d  name=%s\n", (*it)->live(), (*it)->name());
 		}
 	}
-	_atoms.erase(std::remove_if(_atoms.begin(), _atoms.end(), NotLive()), _atoms.end());
+	
+	if ( _haveLLVMObjs ) {
+		// <rdar://problem/9777977> don't remove combinable atoms, they may come back in lto output
+		_atoms.erase(std::remove_if(_atoms.begin(), _atoms.end(), NotLiveLTO()), _atoms.end());
+	}
+	else {
+		_atoms.erase(std::remove_if(_atoms.begin(), _atoms.end(), NotLive()), _atoms.end());
+	}
 }
 
 
@@ -898,7 +879,8 @@ void Resolver::liveUndefines(std::vector<const char*>& undefs)
 	// search all live atoms for references that are unbound
 	for (std::vector<const ld::Atom*>::const_iterator it=_atoms.begin(); it != _atoms.end(); ++it) {
 		const ld::Atom* atom = *it;
-		assert(atom->live());
+		if ( ! atom->live() )
+			continue;
 		for (ld::Fixup::iterator fit=atom->fixupsBegin(); fit != atom->fixupsEnd(); ++fit) {
 			switch ( (ld::Fixup::TargetBinding)fit->binding ) {
 				case ld::Fixup::bindingByNameUnbound:
@@ -1048,7 +1030,8 @@ void Resolver::checkUndefines(bool force)
 			break;
 	}
 	std::vector<const char*> unresolvableUndefines;
-	if ( _options.deadCodeStrip() ) 
+	// <rdar://problem/10052396> LTO many have eliminated need for some undefines
+	if ( _options.deadCodeStrip() || _haveLLVMObjs ) 
 		this->liveUndefines(unresolvableUndefines);
 	else	
 		_symbolTable.undefines(unresolvableUndefines);
@@ -1108,7 +1091,7 @@ void Resolver::checkUndefines(bool force)
 				bool printedStart = false;
 				for (SymbolTable::byNameIterator sit=_symbolTable.begin(); sit != _symbolTable.end(); sit++) {
 					const ld::Atom* atom = *sit;
-					if ( (atom != NULL) && (strstr(atom->name(), name) != NULL) ) {
+					if ( (atom != NULL) && (atom->symbolTableInclusion() == ld::Atom::symbolTableIn) && (strstr(atom->name(), name) != NULL) ) {
 						if ( ! printedStart ) {
 							fprintf(stderr, "     (maybe you meant: %s", atom->name());
 							printedStart = true;
@@ -1120,6 +1103,10 @@ void Resolver::checkUndefines(bool force)
 				}
 				if ( printedStart )
 					fprintf(stderr, ")\n");
+				// <rdar://problem/8989530> Add comment to error message when __ZTV symbols are undefined
+				if ( strncmp(name, "__ZTV", 5) == 0 ) {
+					fprintf(stderr, "  NOTE: a missing vtable usually means the first non-inline virtual member function has no definition.\n");
+				}
 			}
 		}
 		if ( doError ) 
@@ -1140,7 +1127,7 @@ void Resolver::checkDylibSymbolCollisions()
 			// <rdar://problem/5048861> No warning about tentative definition conflicting with dylib definition
 			// for each tentative definition in symbol table look for dylib that exports same symbol name
 			if ( atom->definition() == ld::Atom::definitionTentative ) {
-				_inputFiles.searchLibraries(atom->name(), true, false, *this);
+				_inputFiles.searchLibraries(atom->name(), true, false, false, *this);
 			}
 			// record any overrides of weak symbols in any linked dylib 
 			if ( (atom->definition() == ld::Atom::definitionRegular) && (atom->symbolTableInclusion() == ld::Atom::symbolTableIn) ) {
@@ -1155,6 +1142,7 @@ void Resolver::checkDylibSymbolCollisions()
 const ld::Atom* Resolver::entryPoint(bool searchArchives)
 {
 	const char* symbolName = NULL;
+	bool makingDylib = false;
 	switch ( _options.outputKind() ) {
 		case Options::kDynamicExecutable:
 		case Options::kStaticExecutable:
@@ -1164,6 +1152,7 @@ const ld::Atom* Resolver::entryPoint(bool searchArchives)
 			break;
 		case Options::kDynamicLibrary:
 			symbolName = _options.initFunctionName();
+			makingDylib = true;
 			break;
 		case Options::kObjectFile:
 		case Options::kDynamicBundle:
@@ -1175,13 +1164,19 @@ const ld::Atom* Resolver::entryPoint(bool searchArchives)
 		SymbolTable::IndirectBindingSlot slot = _symbolTable.findSlotForName(symbolName);
 		if ( (_internal.indirectBindingTable[slot] == NULL) && searchArchives ) {
 			// <rdar://problem/7043256> ld64 can not find a -e entry point from an archive				
-			_inputFiles.searchLibraries(symbolName, false, true, *this);
+			_inputFiles.searchLibraries(symbolName, false, true, false, *this);
 		}
 		if ( _internal.indirectBindingTable[slot] == NULL ) {
 			if ( strcmp(symbolName, "start") == 0 )
 				throwf("entry point (%s) undefined.  Usually in crt1.o", symbolName);
 			else
 				throwf("entry point (%s) undefined.", symbolName);
+		}
+		else if ( _internal.indirectBindingTable[slot]->definition() == ld::Atom::definitionProxy ) {
+			if ( makingDylib ) 
+				throwf("-init function (%s) found in linked dylib, must be in dylib being linked", symbolName);
+			else
+				throwf("entry point (%s) found in linked dylib, must be in executable being linked", symbolName);
 		}
 		return _internal.indirectBindingTable[slot];
 	}
@@ -1232,7 +1227,7 @@ void Resolver::fillInHelpersInInternalState()
 	if ( needsStubHelper && _options.makeCompressedDyldInfo() ) { 
 		// "dyld_stub_binder" comes from libSystem.dylib so will need to manually resolve
 		if ( !_symbolTable.hasName("dyld_stub_binder") ) {
-			_inputFiles.searchLibraries("dyld_stub_binder", true, false, *this);
+			_inputFiles.searchLibraries("dyld_stub_binder", true, false, false, *this);
 		}
 		if ( _symbolTable.hasName("dyld_stub_binder") ) {
 			SymbolTable::IndirectBindingSlot slot = _symbolTable.findSlotForName("dyld_stub_binder");
@@ -1243,9 +1238,6 @@ void Resolver::fillInHelpersInInternalState()
 				// make proxy
 				_internal.compressedFastBinderProxy = new UndefinedProxyAtom("dyld_stub_binder");
 				this->doAtom(*_internal.compressedFastBinderProxy);
-			}
-			else {
-				warning("symbol dyld_stub_binder not found, normally in libSystem.dylib");
 			}
 		}
 	}
@@ -1342,7 +1334,7 @@ void Resolver::linkTimeOptimize()
 		const char *targetName = *uit;
 		// these symbols may or may not already be in linker's symbol table
 		if ( ! _symbolTable.hasName(targetName) ) {
-			_inputFiles.searchLibraries(targetName, true, true, *this);
+			_inputFiles.searchLibraries(targetName, true, true, false, *this);
 		}
 	}
 	_addToFinalSection = false;

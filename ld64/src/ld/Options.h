@@ -153,12 +153,14 @@ public:
 	bool						forceCpuSubtypeAll() const { return fForceSubtypeAll; }
 	const char*					architectureName() const { return fArchitectureName; }
 	void						setArchitecture(cpu_type_t, cpu_subtype_t subtype);
+	bool						archSupportsThumb2() const { return fArchSupportsThumb2; }
 	OutputKind					outputKind() const { return fOutputKind; }
 	bool						prebind() const { return fPrebind; }
 	bool						bindAtLoad() const { return fBindAtLoad; }
 	NameSpace					nameSpace() const { return fNameSpace; }
 	const char*					installPath() const;			// only for kDynamicLibrary
-	uint32_t					currentVersion() const { return fDylibCurrentVersion; }		// only for kDynamicLibrary
+	uint64_t					currentVersion() const { return fDylibCurrentVersion; }		// only for kDynamicLibrary
+	uint32_t					currentVersion32() const;		// only for kDynamicLibrary
 	uint32_t					compatibilityVersion() const { return fDylibCompatVersion; }	// only for kDynamicLibrary
 	const char*					entryName() const { return fEntryName; }		// only for kDynamicExecutable or kStaticExecutable
 	const char*					executablePath();
@@ -181,8 +183,8 @@ public:
 	bool						deadCodeStrip()	const	{ return fDeadStrip; }
 	UndefinedTreatment			undefinedTreatment() const { return fUndefinedTreatment; }
 	ld::MacVersionMin			macosxVersionMin() const { return fMacVersionMin; }
-	ld::IPhoneVersionMin		iphoneOSVersionMin() const { return fIPhoneVersionMin; }
-	bool						minOS(ld::MacVersionMin mac, ld::IPhoneVersionMin iPhoneOS);
+	ld::IOSVersionMin			iOSVersionMin() const { return fIOSVersionMin; }
+	bool						minOS(ld::MacVersionMin mac, ld::IOSVersionMin iPhoneOS);
 	bool						messagesPrefixedWithArchitecture();
 	Treatment					picTreatment();
 	WeakReferenceMismatchTreatment	weakReferenceMismatchTreatment() const { return fWeakReferenceMismatchTreatment; }
@@ -265,6 +267,7 @@ public:
 	bool						loadAllObjcObjectsFromArchives() const { return fLoadAllObjcObjectsFromArchives; }
 	bool						autoOrderInitializers() const { return fAutoOrderInitializers; }
 	bool						optimizeZeroFill() const { return fOptimizeZeroFill; }
+	bool						mergeZeroFill() const { return fMergeZeroFill; }
 	bool						logAllFiles() const { return fLogAllFiles; }
 	DebugInfoStripping			debugInfoStripping() const { return fDebugInfoStripping; }
 	bool						flatNamespace() const { return fFlatNamespace; }
@@ -288,11 +291,13 @@ public:
 	bool						canReExportSymbols() const { return fCanReExportSymbols; }
 	const char*					tempLtoObjectPath() const { return fTempLtoObjectPath; }
 	bool						objcCategoryMerging() const { return fObjcCategoryMerging; }
+	bool						pageAlignDataAtoms() const { return fPageAlignDataAtoms; }
 	bool						hasWeakBitTweaks() const;
 	bool						forceWeak(const char* symbolName) const;
 	bool						forceNotWeak(const char* symbolName) const;
 	bool						forceWeakNonWildCard(const char* symbolName) const;
 	bool						forceNotWeakNonWildcard(const char* symbolName) const;
+	bool						errorBecauseOfWarnings() const;
 
 private:
 	class CStringEquals
@@ -335,7 +340,8 @@ private:
 	FileInfo					findFramework(const char* rootName, const char* suffix);
 	bool						checkForFile(const char* format, const char* dir, const char* rootName,
 											 FileInfo& result) const;
-	uint32_t					parseVersionNumber(const char*);
+	uint64_t					parseVersionNumber64(const char*);
+	uint32_t					parseVersionNumber32(const char*);
 	void						parseSectionOrderFile(const char* segment, const char* section, const char* path);
 	void						parseOrderFile(const char* path, bool cstring);
 	void						addSection(const char* segment, const char* section, const char* path);
@@ -348,7 +354,7 @@ private:
 	void						parsePostCommandLineEnvironmentSettings();
 	void						setUndefinedTreatment(const char* treatment);
 	void						setMacOSXVersionMin(const char* version);
-	void						setIPhoneVersionMin(const char* version);
+	void						setIOSVersionMin(const char* version);
 	void						setWeakReferenceMismatchTreatment(const char* treatment);
 	void						addDylibOverride(const char* paths);
 	void						addSectionAlignment(const char* segment, const char* section, const char* alignment);
@@ -372,6 +378,7 @@ private:
 	const char*							fArchitectureName;
 	OutputKind							fOutputKind;
 	bool								fHasPreferredSubType;
+	bool								fArchSupportsThumb2;
 	bool								fPrebind;
 	bool								fBindAtLoad;
 	bool								fKeepPrivateExterns;
@@ -383,7 +390,7 @@ private:
 	bool								fDeadStrip;
 	NameSpace							fNameSpace;
 	uint32_t							fDylibCompatVersion;
-	uint32_t							fDylibCurrentVersion;
+	uint64_t							fDylibCurrentVersion;
 	const char*							fDylibInstallName;
 	const char*							fFinalName;
 	const char*							fEntryName;
@@ -479,6 +486,7 @@ private:
 	bool								fRemoveDwarfUnwindIfCompactExists;
 	bool								fAutoOrderInitializers;
 	bool								fOptimizeZeroFill;
+	bool								fMergeZeroFill;
 	bool								fLogObjectFiles;
 	bool								fLogAllFiles;
 	bool								fTraceDylibs;
@@ -492,13 +500,18 @@ private:
 	bool								fDemangle;
 	bool								fTLVSupport;
 	bool								fVersionLoadCommand;
+	bool								fVersionLoadCommandForcedOn;
+	bool								fVersionLoadCommandForcedOff;
 	bool								fFunctionStartsLoadCommand;
+	bool								fFunctionStartsForcedOn;
+	bool								fFunctionStartsForcedOff;
 	bool								fCanReExportSymbols;
 	bool								fObjcCategoryMerging;
+	bool								fPageAlignDataAtoms;
 	DebugInfoStripping					fDebugInfoStripping;
 	const char*							fTraceOutputFile;
 	ld::MacVersionMin					fMacVersionMin;
-	ld::IPhoneVersionMin				fIPhoneVersionMin;
+	ld::IOSVersionMin					fIOSVersionMin;
 	std::vector<AliasPair>				fAliases;
 	std::vector<const char*>			fInitialUndefines;
 	NameSet								fAllowedUndefined;
