@@ -94,12 +94,10 @@ if test "x$enable_llvm" != "xno"; then
 		AC_MSG_ERROR([llvm-config not found.])
 	fi
 
-	CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
-
+	AC_SUBST([LLVM_CPPFLAGS], [`$llvm_config --cppflags`])
 	AC_SUBST([LLVM_LDFLAGS], [`$llvm_config --ldflags`])
-	AC_SUBST([LLVM_LIBS], [`$llvm_config --libfiles`])
 	AC_SUBST([LLVM_LIBDIR], [`$llvm_config --libdir`])
-	AC_SUBST([LLVM_INCLUDEDIR], [`$llvm_config --includedir`])
+	AC_SUBST([LLVM_LIBFILES], [`$llvm_config --libfiles`])
 	
 	AC_DEFINE([HAVE_LLVM], [1], [Define if using LLVM.])
 	AM_CONDITIONAL([HAVE_LLVM], [true])

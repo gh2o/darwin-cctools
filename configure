@@ -635,10 +635,10 @@ GREP
 CPP
 HAVE_LLVM_FALSE
 HAVE_LLVM_TRUE
-LLVM_INCLUDEDIR
+LLVM_LIBFILES
 LLVM_LIBDIR
-LLVM_LIBS
 LLVM_LDFLAGS
+LLVM_CPPFLAGS
 llvm_config
 RANLIB
 am__fastdepCXX_FALSE
@@ -4676,15 +4676,13 @@ fi
 		as_fn_error $? "llvm-config not found." "$LINENO" 5
 	fi
 
-	CPPFLAGS="${CPPFLAGS} `$llvm_config --cppflags`"
+	LLVM_CPPFLAGS=`$llvm_config --cppflags`
 
 	LLVM_LDFLAGS=`$llvm_config --ldflags`
 
-	LLVM_LIBS=`$llvm_config --libfiles`
-
 	LLVM_LIBDIR=`$llvm_config --libdir`
 
-	LLVM_INCLUDEDIR=`$llvm_config --includedir`
+	LLVM_LIBFILES=`$llvm_config --libfiles`
 
 
 

@@ -230,9 +230,9 @@ tools_ld_LDFLAGS = $(AM_LDFLAGS)
 tools_ld_LDADD = $(LDADD)
 
 if HAVE_LLVM
-tools_ld_CPPFLAGS += -I$(LLVM_INCLUDEDIR)
+tools_ld_CPPFLAGS += $(LLVM_CPPFLAGS)
 tools_ld_LDFLAGS += $(LLVM_LDFLAGS)
-tools_ld_LDADD += $(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBS)
+tools_ld_LDADD += $(LLVM_LIBDIR)/libLTO.a $(LLVM_LIBFILES)
 tools_ld_SOURCES += ld64/src/ld/parsers/lto_file.cpp
 else
 tools_ld_SOURCES += ld64/src/ld/parsers/lto_file_stub.cpp
