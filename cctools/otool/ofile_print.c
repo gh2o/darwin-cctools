@@ -3396,7 +3396,7 @@ void
 print_source_version_command(
 struct source_version_command *sv)
 {
-    uint64_t a, b, c, d, e;
+    long long unsigned int a, b, c, d, e;
 
 	printf("      cmd LC_SOURCE_VERSION\n");
 	printf("  cmdsize %u", sv->cmdsize);
@@ -3433,8 +3433,8 @@ struct entry_point_command *ep)
 	    printf(" Incorrect size\n");
 	else
 	    printf("\n");
-	printf("  entryoff %llu\n", ep->entryoff);
-	printf(" stacksize %llu\n", ep->stacksize);
+	printf("  entryoff %llu\n", (long long unsigned int) ep->entryoff);
+	printf(" stacksize %llu\n", (long long unsigned int) ep->stacksize);
 }
 
 /*
@@ -7243,7 +7243,7 @@ enum bool print_addresses)
 	for(i = 0; i < sect_size ; i++){
 	    if(print_addresses == TRUE){
 	        if(cputype & CPU_ARCH_ABI64)
-		    printf("0x%016llx  ", sect_addr + i);
+		    printf("0x%016llx  ", (long long unsigned int)(sect_addr + i));
 		else
 		    printf("%08x  ", (unsigned int)(sect_addr + i));
 	    }

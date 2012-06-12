@@ -35,7 +35,7 @@ int TagType,
 LLVMOpInfoCallback GetOpInfo,
 LLVMSymbolLookupCallback SymbolLookUp)
 {
-   size_t bufsize;
+   uint32_t bufsize;
    char *p, *prefix, *llvm_path, buf[MAXPATHLEN], resolved_name[PATH_MAX];
    int i;
    LLVMDisasmContextRef DC;

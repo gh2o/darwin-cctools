@@ -113,7 +113,7 @@
 #define U_ABS(l) (((int32_t)(l))<0 ? (uint32_t)(-(l)) : (l))
 
 /* name of the program for error messages (argv[0]) */
-__private_extern__ char *progname = NULL;
+char *progname = NULL;
 
 /* -c option, only check and return status */
 static enum bool check_only = FALSE;

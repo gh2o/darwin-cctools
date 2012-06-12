@@ -527,7 +527,7 @@ void doPass(const Options& opts, ld::Internal& state)
 				if ( target->section().type() == ld::Section::typeStub )
 					dstAddr = totalTextSize;
 				int64_t displacement = dstAddr - srcAddr;
-				TargetAndOffset finalTargetAndOffset = { target, addend };
+				TargetAndOffset finalTargetAndOffset = { target, (uint32_t) addend };
 				const int64_t kBranchLimit = kBetweenRegions;
 				if ( displacement > kBranchLimit ) {
 					// create forward branch chain
