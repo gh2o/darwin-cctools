@@ -24,8 +24,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/cctools/include \
 	$(CORE_CPPFLAGS)
 
-AM_CFLAGS = -Wall -Wno-enum-compare
-AM_CXXFLAGS = -Wall -Wno-deprecated
+AM_CFLAGS = -Wall -Wno-enum-compare -Wno-unused-but-set-variable
+AM_CXXFLAGS = -Wall -Wno-deprecated -Wno-unused-but-set-variable
 
 ########################################
 # manpages                             #

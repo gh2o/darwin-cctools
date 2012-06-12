@@ -1,14 +1,14 @@
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.68])
-AC_INIT([cctools], [806], [cctools@localhost])
+AC_PREREQ([2.69])
+AC_INIT([cctools], [822], [cctools@localhost])
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 
-CCTOOLS_VERSION=cctools-806
+CCTOOLS_VERSION=cctools-822
 LD64_VERSION=ld64-123.2.1
 
 AC_DEFINE_UNQUOTED([CCTOOLS_VERSION], ["$CCTOOLS_VERSION"], [cctools version])
