@@ -69,6 +69,12 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Define if qsort_r is BSD-style. */
+#undef QSORT_R_IS_BSD
+
+/* Define if qsort_r is GNU-style. */
+#undef QSORT_R_IS_GNU
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 

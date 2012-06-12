@@ -122,6 +122,11 @@ AC_SEARCH_LIBS(
 	[true],
 	[AC_MSG_FAILURE([dlsym not found.])]
 )
+AC_SEARCH_LIBS(
+	[clock_gettime], [rt],
+	[true],
+	[AC_MSG_FAILURE([clock_gettime not found.])]
+)
 
 # Checks for header files.
 AC_CHECK_HEADER(
@@ -145,7 +150,61 @@ AM_CONDITIONAL([IS_BIG_ENDIAN], [test x$ac_cv_c_bigendian = xyes])
 
 # Checks for library functions.
 AC_CHECK_FUNCS([strmode])
-AM_CONDITIONAL([HAVE_STRMODE], [test x$ac_cv_func_strmode = xyes])
+AC_CHECK_FUNC(
+	[qsort_r],
+	[
+		AC_LANG_PUSH([C])
+		
+		AC_CACHE_CHECK([if qsort_r is GNU-style], [my_cv_func_qsort_r_gnu], [
+			AC_RUN_IFELSE(
+				[AC_LANG_SOURCE([
+					#include <stdlib.h>
+					int comp (const void *l, const void *r, void *x) { return 0; }
+					int arr[[]] = { 1, 0 };
+					int main ()
+					{
+						qsort_r (arr, 2, sizeof (int), comp, NULL);
+						return 0;
+					}
+				])],
+				[my_cv_func_qsort_r_gnu=yes],
+				[my_cv_func_qsort_r_gnu=no]
+			)
+		])
+		
+		AC_CACHE_CHECK([if qsort_r is BSD-style], [my_cv_func_qsort_r_bsd], [
+			AC_RUN_IFELSE(
+				[AC_LANG_SOURCE([
+					#include <stdlib.h>
+					int comp (void *x, const void *l, const void *r) { return 0; }
+					int arr[[]] = { 1, 0 };
+					int main ()
+					{
+						qsort_r (arr, 2, sizeof (int), NULL, comp);
+						return 0;
+					}
+				])],
+				[my_cv_func_qsort_r_bsd=yes],
+				[my_cv_func_qsort_r_bsd=no]
+			)
+		])
+		
+		AC_LANG_POP([C])
+		
+		if test "x$my_cv_func_qsort_r_gnu" = "x$my_cv_func_qsort_r_bsd"; then
+			AC_MSG_FAILURE([qsort_r has unknown semantics.])
+		fi
+		
+		if test "x$my_cv_func_qsort_r_gnu" = "xyes"; then
+			AC_DEFINE([QSORT_R_IS_GNU], [1], [Define if qsort_r is GNU-style.])
+		fi
+		
+		if test "x$my_cv_func_qsort_r_bsd" = "xyes"; then
+			AC_DEFINE([QSORT_R_IS_BSD], [1], [Define if qsort_r is BSD-style.])
+		fi
+	],
+	[AC_MSG_FAILURE([qsort_r not found.])]
+)
 
 # Other checks.
 AC_CACHE_CHECK([whether the compiler supports __private_extern__], [my_cv_cc_private_extern_supports], [

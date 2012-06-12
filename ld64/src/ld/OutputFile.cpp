@@ -556,7 +556,7 @@ void OutputFile::assignFileOffsets(ld::Internal& state)
 		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
 															  && (_options.outputKind() != Options::kStaticExecutable) )
 				throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
-						sect->sectionName(), address, sect->size);
+						sect->sectionName(), (long long unsigned int) address, (long long unsigned int) sect->size);
 
 		// sanity check it does not overlap a fixed address segment
 		for (std::vector<ld::Internal::FinalSection*>::iterator sit = state.sections.begin(); sit != state.sections.end(); ++sit) {
@@ -592,7 +592,8 @@ void OutputFile::assignFileOffsets(ld::Internal& state)
 			if ( sect->isSectionHidden() )
 				continue;
 			fprintf(stderr, "  address:0x%08llX, alignment:2^%d, size:0x%08llX, padBytes:%d, section:%s/%s\n",
-							sect->address, sect->alignment, sect->size, sect->alignmentPaddingBytes, 
+							(long long unsigned int) sect->address, sect->alignment,
+							(long long unsigned int) sect->size, sect->alignmentPaddingBytes, 
 							sect->segmentName(), sect->sectionName());
 	
 		}
@@ -830,8 +831,9 @@ void OutputFile::rangeCheck16(int64_t displacement, ld::Internal& state, const l
 		
 		const ld::Atom* target;	
 		throwf("16-bit reference out of range (%lld max is +/-32KB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup),  
-				addressOf(state, fixup, &target));
+				(long long int) displacement,
+				atom->name(), (long long unsigned int) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), (long long unsigned int) addressOf(state, fixup, &target));
 	}
 }
 
@@ -844,8 +846,9 @@ void OutputFile::rangeCheckBranch32(int64_t displacement, ld::Internal& state, c
 		
 		const ld::Atom* target;	
 		throwf("32-bit branch out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long int) displacement,
+				atom->name(), (long long unsigned int) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), (long long unsigned int) addressOf(state, fixup, &target));
 	}
 }
 
@@ -863,7 +866,9 @@ void OutputFile::rangeCheckAbsolute32(int64_t displacement, ld::Internal& state,
 			// Unlikely userland code does funky stuff like this, so warn for them, but not warn for -preload
 			if ( _options.outputKind() != Options::kPreload ) {
 				warning("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to 0x%08llX", 
-						displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), displacement);
+						(long long unsigned int) displacement,
+						atom->name(), fixup->offsetInAtom, (long long unsigned int) atom->finalAddress(),
+						(long long unsigned int) displacement);
 			}
 			return;
 		}
@@ -873,11 +878,14 @@ void OutputFile::rangeCheckAbsolute32(int64_t displacement, ld::Internal& state,
 		const ld::Atom* target;	
 		if ( fixup->binding == ld::Fixup::bindingNone )
 			throwf("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to 0x%08llX", 
-				displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), displacement);
+				(long long unsigned int) displacement,
+				atom->name(), fixup->offsetInAtom, (long long unsigned int) atom->finalAddress(),
+				(long long unsigned int) displacement);
 		else
 			throwf("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to %s (0x%08llX)", 
-				displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), referenceTargetAtomName(state, fixup), 
-				addressOf(state, fixup, &target));
+				(long long unsigned int) displacement,
+				atom->name(), fixup->offsetInAtom, (long long unsigned int) atom->finalAddress(),
+				referenceTargetAtomName(state, fixup), (long long unsigned int) addressOf(state, fixup, &target));
 	}
 }
 

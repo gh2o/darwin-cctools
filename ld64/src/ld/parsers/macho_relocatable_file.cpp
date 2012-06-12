@@ -1819,7 +1819,8 @@ void Parser<A>::makeSortedSectionsArray(uint32_t array[])
 	if ( log ) {
 		fprintf(stderr, "unsorted sections:\n");
 		for(unsigned int i=0; i < _machOSectionsCount; ++i ) 
-			fprintf(stderr, "0x%08llX %s %s\n", _sectionsStart[i].addr(), _sectionsStart[i].segname(), _sectionsStart[i].sectname());
+			fprintf(stderr, "0x%08llX %s %s\n", (long long unsigned int) _sectionsStart[i].addr(),
+				_sectionsStart[i].segname(), _sectionsStart[i].sectname());
  	}
 	
 	// sort by symbol table address
@@ -1830,7 +1831,8 @@ void Parser<A>::makeSortedSectionsArray(uint32_t array[])
 	if ( log ) {
 		fprintf(stderr, "sorted sections:\n");
 		for(unsigned int i=0; i < _machOSectionsCount; ++i ) 
-			fprintf(stderr, "0x%08llX %s %s\n", _sectionsStart[array[i]].addr(), _sectionsStart[array[i]].segname(), _sectionsStart[array[i]].sectname());
+			fprintf(stderr, "0x%08llX %s %s\n", (long long unsigned int) _sectionsStart[array[i]].addr(),
+				_sectionsStart[array[i]].segname(), _sectionsStart[array[i]].sectname());
 	}
 }
 
@@ -1923,7 +1925,12 @@ void Parser<A>::makeSortedSymbolsArray(uint32_t array[], const uint32_t sectionA
 	if ( log ) {
 		fprintf(stderr, "sorted symbols:\n");
 		for(unsigned int i=0; i < _symbolsInSections; ++i ) 
-			fprintf(stderr, "0x%09llX symIndex=%d sectNum=%2d, %s\n", symbolFromIndex(array[i]).n_value(), array[i], symbolFromIndex(array[i]).n_sect(), nameFromSymbol(symbolFromIndex(array[i])) );
+			fprintf(stderr, "0x%09llX symIndex=%d sectNum=%2d, %s\n",
+				(long long unsigned int) symbolFromIndex(array[i]).n_value(),
+				array[i],
+				symbolFromIndex(array[i]).n_sect(),
+				nameFromSymbol(symbolFromIndex(array[i]))
+			);
 	}
 }
 
@@ -1991,7 +1998,8 @@ void Parser<A>::makeSections()
 					_file->_ojcReplacmentClass = true;
 				if ( sect->size() > 8 ) {
 					warning("section %s/%s has unexpectedly large size %llu in %s", 
-							sect->segname(), Section<A>::makeSectionName(sect), sect->size(), _file->path());
+							sect->segname(), Section<A>::makeSectionName(sect),
+							(long long unsigned int) sect->size(), _file->path());
 				}
 			}
 			else {
@@ -2219,7 +2227,7 @@ Section<A>* Parser<A>::sectionForAddress(typename A::P::uint_t addr)
 		}
 	}
 	
-	throwf("sectionForAddress(0x%llX) address not in any section", (uint64_t)addr);
+	throwf("sectionForAddress(0x%llX) address not in any section", (long long unsigned int)addr);
 }
 
 template <typename A>
@@ -2891,7 +2899,7 @@ const char* Parser<A>::getDwarfString(uint64_t form, const uint8_t* p)
 		}
 		return &dwarfStrings[offset];
 	}
-	warning("unknown dwarf string encoding (form=%lld) in %s\n", form, this->_path);
+	warning("unknown dwarf string encoding (form=%lld) in %s\n", (long long int) form, this->_path);
 	return NULL;
 }
 
@@ -3112,7 +3120,7 @@ void Parser<A>::parseStabs()
 							}
 							else {
 								fprintf(stderr, "can't find atom for stabs BNSYM at %08llX in %s",
-									(uint64_t)sym.n_value(), _path);
+									(long long unsigned int)sym.n_value(), _path);
 							}
 							break;
 						case N_SO:
@@ -3174,7 +3182,7 @@ void Parser<A>::parseStabs()
 								}
 								else {
 									warning("can't find atom for stabs FUN at %08llX in %s",
-										(uint64_t)currentAtomAddress, _path);
+										(long long unsigned int)currentAtomAddress, _path);
 								}
 							}
 							break;
@@ -3210,7 +3218,7 @@ void Parser<A>::parseStabs()
 							}
 							else {
 								warning("can't find atom for stabs 0x%X at %08llX in %s",
-									type, (uint64_t)sym.n_value(), _path);
+									type, (long long unsigned int)sym.n_value(), _path);
 							}
 							break;
 						}
@@ -3242,7 +3250,7 @@ void Parser<A>::parseStabs()
 									}
 									else {
 										warning("can't find atom for stabs FUN at %08llX in %s",
-											(uint64_t)currentAtomAddress, _path);
+											(long long unsigned int)currentAtomAddress, _path);
 									}
 								}
 								else {
@@ -3686,7 +3694,7 @@ bool CFISection<A>::needsRelocating()
 
 template <>
 void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<x86_64>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// copy __eh_frame data to buffer
@@ -3748,7 +3756,7 @@ void CFISection<x86_64>::cfiParse(class Parser<x86_64>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<x86>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<x86>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// create ObjectAddressSpace object for use by libunwind
@@ -3768,7 +3776,7 @@ void CFISection<x86>::cfiParse(class Parser<x86>& parser, uint8_t* buffer,
 
 template <>
 void CFISection<arm>::cfiParse(class Parser<arm>& parser, uint8_t* buffer, 
-									libunwind::CFI_Atom_Info<CFISection<arm>::OAS>::CFI_Atom_Info cfiArray[], 
+									libunwind::CFI_Atom_Info<CFISection<arm>::OAS> cfiArray[], 
 									uint32_t count)
 {
 	// arm does not use zero cost exceptions
@@ -3981,7 +3989,8 @@ const void*	 CFISection<A>::OAS::mappedAddress(pint_t addr)
 				}
 			}
 		}
-		throwf("__eh_frame parsing problem.  Can't find target of reference to address 0x%08llX", (uint64_t)addr);
+		throwf("__eh_frame parsing problem.  Can't find target of reference to address 0x%08llX",
+			(long long unsigned int)addr);
 	}
 }
 		

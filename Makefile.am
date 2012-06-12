@@ -109,7 +109,8 @@ libs_libemu_a_SOURCES = \
 	emu/version.c \
 	emu/vm.c \
 	emu/strmode.c \
-	emu/strlcc.c
+	emu/strlcc.c \
+	emu/qsort.c
 
 ########################################
 # libstuff                             #
@@ -207,7 +208,7 @@ tools_ld_SOURCES = \
 	ld64/src/ld/passes/huge.cpp \
 	ld64/src/ld/passes/got.cpp \
 	ld64/src/ld/passes/tlvp.cpp \
-	ld64/src/ld/passes/order_file.cpp \
+	ld64/src/ld/passes/order.cpp \
 	ld64/src/ld/passes/branch_shim.cpp \
 	ld64/src/ld/passes/branch_island.cpp \
 	ld64/src/ld/passes/dtrace_dof.cpp \

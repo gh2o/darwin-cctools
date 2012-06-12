@@ -1128,7 +1128,8 @@ void SplitSegInfoAtom<x86_64>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind
 			_64bitPointerLocations.push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache",
+				(long long unsigned int) address);
 			break;
 	}
 }
@@ -1142,7 +1143,8 @@ void SplitSegInfoAtom<x86>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind ki
 			_32bitPointerLocations.push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache",
+				(long long unsigned int) address);
 			break;
 	}
 }
@@ -1169,7 +1171,8 @@ void SplitSegInfoAtom<arm>::addSplitSegInfo(uint64_t address, ld::Fixup::Kind ki
 			_thumbHi16Locations[extra].push_back(address);
 			break;
 		default:
-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
+			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache",
+				(long long unsigned int) address);
 			break;
 	}
 }

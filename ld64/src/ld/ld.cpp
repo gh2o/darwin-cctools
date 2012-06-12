@@ -571,7 +571,7 @@ static char* commatize(uint64_t in, char* out)
 {
 	char* result = out;
 	char rawNum[30];
-	sprintf(rawNum, "%llu", in);
+	sprintf(rawNum, "%llu", (long long unsigned int) in);
 	const int rawNumLen = strlen(rawNum);
 	for(int i=0; i < rawNumLen-1; ++i) {
 		*out++ = rawNum[i];

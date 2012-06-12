@@ -1,5 +1,4 @@
 #include <libc.h>
-#include <config.h>
 
 #ifndef HAVE_STRMODE
 void

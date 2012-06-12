@@ -248,8 +248,9 @@ bool SymbolTable::addByName(const ld::Atom& newAtom, bool ignoreDuplicates)
 							if ( newAtom.size() < existingAtom->size() ) {
 								warning("for symbol %s tentative definition of size %llu from %s is "
 												"being replaced by a real definition of size %llu from %s",
-												newAtom.name(), existingAtom->size(), existingAtom->file()->path(),
-												newAtom.size(), newAtom.file()->path());
+												newAtom.name(),
+												(long long unsigned int) existingAtom->size(), existingAtom->file()->path(),
+												(long long unsigned int) newAtom.size(), newAtom.file()->path());
 							}
 							if ( newAtom.section().type() == ld::Section::typeCode ) {
 								warning("for symbol %s tentative (data) defintion from %s is "

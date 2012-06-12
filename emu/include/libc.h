@@ -33,6 +33,12 @@ size_t strlcpy(char * dst, const char * src, size_t siz);
 size_t strlcat(char * dst, const char * src, size_t siz);
 #endif
 
+#ifdef QSORT_R_IS_GNU
+void qsort_r_bsd (void * base, size_t nmemb, size_t size,
+	void *arg, int (*compar) (void *, const void *, const void *));
+#define qsort_r qsort_r_bsd
+#endif
+
 __END_DECLS
 
 #endif

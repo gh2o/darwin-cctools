@@ -113,7 +113,8 @@ libs_libemu_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libs_libemu_a_OBJECTS = emu/log.$(OBJEXT) emu/host.$(OBJEXT) \
 	emu/mach.$(OBJEXT) emu/ns.$(OBJEXT) emu/version.$(OBJEXT) \
-	emu/vm.$(OBJEXT) emu/strmode.$(OBJEXT) emu/strlcc.$(OBJEXT)
+	emu/vm.$(OBJEXT) emu/strmode.$(OBJEXT) emu/strlcc.$(OBJEXT) \
+	emu/qsort.$(OBJEXT)
 libs_libemu_a_OBJECTS = $(am_libs_libemu_a_OBJECTS)
 libs_libstuff_a_AR = $(AR) $(ARFLAGS)
 libs_libstuff_a_LIBADD =
@@ -244,7 +245,7 @@ am__tools_ld_SOURCES_DIST = ld64/src/ld/ld.cpp ld64/src/ld/Options.cpp \
 	ld64/src/ld/OutputFile.cpp ld64/src/ld/SymbolTable.cpp \
 	ld64/src/ld/debugline.c ld64/src/ld/passes/objc.cpp \
 	ld64/src/ld/passes/huge.cpp ld64/src/ld/passes/got.cpp \
-	ld64/src/ld/passes/tlvp.cpp ld64/src/ld/passes/order_file.cpp \
+	ld64/src/ld/passes/tlvp.cpp ld64/src/ld/passes/order.cpp \
 	ld64/src/ld/passes/branch_shim.cpp \
 	ld64/src/ld/passes/branch_island.cpp \
 	ld64/src/ld/passes/dtrace_dof.cpp \
@@ -270,7 +271,7 @@ am_tools_ld_OBJECTS = ld64/src/ld/tools_ld-ld.$(OBJEXT) \
 	ld64/src/ld/passes/tools_ld-huge.$(OBJEXT) \
 	ld64/src/ld/passes/tools_ld-got.$(OBJEXT) \
 	ld64/src/ld/passes/tools_ld-tlvp.$(OBJEXT) \
-	ld64/src/ld/passes/tools_ld-order_file.$(OBJEXT) \
+	ld64/src/ld/passes/tools_ld-order.$(OBJEXT) \
 	ld64/src/ld/passes/tools_ld-branch_shim.$(OBJEXT) \
 	ld64/src/ld/passes/tools_ld-branch_island.$(OBJEXT) \
 	ld64/src/ld/passes/tools_ld-dtrace_dof.$(OBJEXT) \
@@ -645,7 +646,8 @@ libs_libemu_a_SOURCES = \
 	emu/version.c \
 	emu/vm.c \
 	emu/strmode.c \
-	emu/strlcc.c
+	emu/strlcc.c \
+	emu/qsort.c
 
 
 ########################################
@@ -715,7 +717,7 @@ tools_ld_SOURCES = ld64/src/ld/ld.cpp ld64/src/ld/Options.cpp \
 	ld64/src/ld/OutputFile.cpp ld64/src/ld/SymbolTable.cpp \
 	ld64/src/ld/debugline.c ld64/src/ld/passes/objc.cpp \
 	ld64/src/ld/passes/huge.cpp ld64/src/ld/passes/got.cpp \
-	ld64/src/ld/passes/tlvp.cpp ld64/src/ld/passes/order_file.cpp \
+	ld64/src/ld/passes/tlvp.cpp ld64/src/ld/passes/order.cpp \
 	ld64/src/ld/passes/branch_shim.cpp \
 	ld64/src/ld/passes/branch_island.cpp \
 	ld64/src/ld/passes/dtrace_dof.cpp \
@@ -869,6 +871,7 @@ emu/strmode.$(OBJEXT): emu/$(am__dirstamp) \
 	emu/$(DEPDIR)/$(am__dirstamp)
 emu/strlcc.$(OBJEXT): emu/$(am__dirstamp) \
 	emu/$(DEPDIR)/$(am__dirstamp)
+emu/qsort.$(OBJEXT): emu/$(am__dirstamp) emu/$(DEPDIR)/$(am__dirstamp)
 libs/$(am__dirstamp):
 	@$(MKDIR_P) libs
 	@: > libs/$(am__dirstamp)
@@ -1200,7 +1203,7 @@ ld64/src/ld/passes/tools_ld-got.$(OBJEXT):  \
 ld64/src/ld/passes/tools_ld-tlvp.$(OBJEXT):  \
 	ld64/src/ld/passes/$(am__dirstamp) \
 	ld64/src/ld/passes/$(DEPDIR)/$(am__dirstamp)
-ld64/src/ld/passes/tools_ld-order_file.$(OBJEXT):  \
+ld64/src/ld/passes/tools_ld-order.$(OBJEXT):  \
 	ld64/src/ld/passes/$(am__dirstamp) \
 	ld64/src/ld/passes/$(DEPDIR)/$(am__dirstamp)
 ld64/src/ld/passes/tools_ld-branch_shim.$(OBJEXT):  \
@@ -1473,6 +1476,7 @@ mostlyclean-compile:
 	-rm -f emu/log.$(OBJEXT)
 	-rm -f emu/mach.$(OBJEXT)
 	-rm -f emu/ns.$(OBJEXT)
+	-rm -f emu/qsort.$(OBJEXT)
 	-rm -f emu/strlcc.$(OBJEXT)
 	-rm -f emu/strmode.$(OBJEXT)
 	-rm -f emu/version.$(OBJEXT)
@@ -1492,7 +1496,7 @@ mostlyclean-compile:
 	-rm -f ld64/src/ld/passes/tools_ld-got.$(OBJEXT)
 	-rm -f ld64/src/ld/passes/tools_ld-huge.$(OBJEXT)
 	-rm -f ld64/src/ld/passes/tools_ld-objc.$(OBJEXT)
-	-rm -f ld64/src/ld/passes/tools_ld-order_file.$(OBJEXT)
+	-rm -f ld64/src/ld/passes/tools_ld-order.$(OBJEXT)
 	-rm -f ld64/src/ld/passes/tools_ld-tlvp.$(OBJEXT)
 	-rm -f ld64/src/ld/tools_ld-InputFiles.$(OBJEXT)
 	-rm -f ld64/src/ld/tools_ld-Options.$(OBJEXT)
@@ -1615,6 +1619,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@emu/$(DEPDIR)/log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@emu/$(DEPDIR)/mach.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@emu/$(DEPDIR)/ns.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@emu/$(DEPDIR)/qsort.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@emu/$(DEPDIR)/strlcc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@emu/$(DEPDIR)/strmode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@emu/$(DEPDIR)/version.Po@am__quote@
@@ -1640,7 +1645,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/passes/$(DEPDIR)/tools_ld-got.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/passes/$(DEPDIR)/tools_ld-huge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/passes/$(DEPDIR)/tools_ld-objc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/passes/$(DEPDIR)/tools_ld-order_file.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/passes/$(DEPDIR)/tools_ld-order.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/passes/$(DEPDIR)/tools_ld-tlvp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ld64/src/ld/passes/stubs/$(DEPDIR)/tools_ld-stubs.Po@am__quote@
 
@@ -2194,19 +2199,19 @@ ld64/src/ld/passes/tools_ld-tlvp.obj: ld64/src/ld/passes/tlvp.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/passes/tools_ld-tlvp.obj `if test -f 'ld64/src/ld/passes/tlvp.cpp'; then $(CYGPATH_W) 'ld64/src/ld/passes/tlvp.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/passes/tlvp.cpp'; fi`
 
-ld64/src/ld/passes/tools_ld-order_file.o: ld64/src/ld/passes/order_file.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/passes/tools_ld-order_file.o -MD -MP -MF ld64/src/ld/passes/$(DEPDIR)/tools_ld-order_file.Tpo -c -o ld64/src/ld/passes/tools_ld-order_file.o `test -f 'ld64/src/ld/passes/order_file.cpp' || echo '$(srcdir)/'`ld64/src/ld/passes/order_file.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/passes/$(DEPDIR)/tools_ld-order_file.Tpo ld64/src/ld/passes/$(DEPDIR)/tools_ld-order_file.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ld64/src/ld/passes/order_file.cpp' object='ld64/src/ld/passes/tools_ld-order_file.o' libtool=no @AMDEPBACKSLASH@
+ld64/src/ld/passes/tools_ld-order.o: ld64/src/ld/passes/order.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/passes/tools_ld-order.o -MD -MP -MF ld64/src/ld/passes/$(DEPDIR)/tools_ld-order.Tpo -c -o ld64/src/ld/passes/tools_ld-order.o `test -f 'ld64/src/ld/passes/order.cpp' || echo '$(srcdir)/'`ld64/src/ld/passes/order.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/passes/$(DEPDIR)/tools_ld-order.Tpo ld64/src/ld/passes/$(DEPDIR)/tools_ld-order.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ld64/src/ld/passes/order.cpp' object='ld64/src/ld/passes/tools_ld-order.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/passes/tools_ld-order_file.o `test -f 'ld64/src/ld/passes/order_file.cpp' || echo '$(srcdir)/'`ld64/src/ld/passes/order_file.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/passes/tools_ld-order.o `test -f 'ld64/src/ld/passes/order.cpp' || echo '$(srcdir)/'`ld64/src/ld/passes/order.cpp
 
-ld64/src/ld/passes/tools_ld-order_file.obj: ld64/src/ld/passes/order_file.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/passes/tools_ld-order_file.obj -MD -MP -MF ld64/src/ld/passes/$(DEPDIR)/tools_ld-order_file.Tpo -c -o ld64/src/ld/passes/tools_ld-order_file.obj `if test -f 'ld64/src/ld/passes/order_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/passes/order_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/passes/order_file.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/passes/$(DEPDIR)/tools_ld-order_file.Tpo ld64/src/ld/passes/$(DEPDIR)/tools_ld-order_file.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ld64/src/ld/passes/order_file.cpp' object='ld64/src/ld/passes/tools_ld-order_file.obj' libtool=no @AMDEPBACKSLASH@
+ld64/src/ld/passes/tools_ld-order.obj: ld64/src/ld/passes/order.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/passes/tools_ld-order.obj -MD -MP -MF ld64/src/ld/passes/$(DEPDIR)/tools_ld-order.Tpo -c -o ld64/src/ld/passes/tools_ld-order.obj `if test -f 'ld64/src/ld/passes/order.cpp'; then $(CYGPATH_W) 'ld64/src/ld/passes/order.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/passes/order.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ld64/src/ld/passes/$(DEPDIR)/tools_ld-order.Tpo ld64/src/ld/passes/$(DEPDIR)/tools_ld-order.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ld64/src/ld/passes/order.cpp' object='ld64/src/ld/passes/tools_ld-order.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/passes/tools_ld-order_file.obj `if test -f 'ld64/src/ld/passes/order_file.cpp'; then $(CYGPATH_W) 'ld64/src/ld/passes/order_file.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/passes/order_file.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ld64/src/ld/passes/tools_ld-order.obj `if test -f 'ld64/src/ld/passes/order.cpp'; then $(CYGPATH_W) 'ld64/src/ld/passes/order.cpp'; else $(CYGPATH_W) '$(srcdir)/ld64/src/ld/passes/order.cpp'; fi`
 
 ld64/src/ld/passes/tools_ld-branch_shim.o: ld64/src/ld/passes/branch_shim.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tools_ld_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ld64/src/ld/passes/tools_ld-branch_shim.o -MD -MP -MF ld64/src/ld/passes/$(DEPDIR)/tools_ld-branch_shim.Tpo -c -o ld64/src/ld/passes/tools_ld-branch_shim.o `test -f 'ld64/src/ld/passes/branch_shim.cpp' || echo '$(srcdir)/'`ld64/src/ld/passes/branch_shim.cpp

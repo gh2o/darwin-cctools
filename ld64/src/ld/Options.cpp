@@ -2109,7 +2109,8 @@ void Options::parse(int argc, const char* argv[])
 				seg.address = parseAddress(argv[++i]);
 				uint64_t temp = ((seg.address+fSegmentAlignment-1) & (-fSegmentAlignment)); 
 				if ( seg.address != temp )
-					warning("-segaddr %s not %lld byte aligned", seg.name, fSegmentAlignment);
+					warning("-segaddr %s not %llu byte aligned", seg.name,
+						(long long unsigned int) fSegmentAlignment);
 				fCustomSegmentAddresses.push_back(seg);
 			}
 			// ??? Deprecate when we deprecate split-seg.
