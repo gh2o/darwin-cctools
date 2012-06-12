@@ -267,7 +267,7 @@ inline bool LocalAddressSpace::findUnwindSections(pint_t addr, pint_t& mh, pint_
 	return false;
 }
 
-
+#if 0
 inline bool	LocalAddressSpace::findFunctionName(pint_t addr, char* buf, size_t bufLen, unw_word_t* offset)
 {
 	dl_info dyldInfo;
@@ -280,7 +280,7 @@ inline bool	LocalAddressSpace::findFunctionName(pint_t addr, char* buf, size_t b
 	}
 	return false;
 }
-
+#endif
 
 
 #if UNW_REMOTE
