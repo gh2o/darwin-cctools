@@ -1098,7 +1098,7 @@ char *arch_name,
 enum bool verbose)
 {
     enum byte_sex host_byte_sex;
-    uint32_t ran_size, nranlibs, str_size, i, toc_offset, member_name_size;
+    uint32_t ran_size, nranlibs, str_size = 0, i, toc_offset, member_name_size;
     struct ranlib *ranlibs;
     char *strings, *member_name;
     struct ar_hdr *ar_hdr;
@@ -1202,7 +1202,7 @@ enum bool verbose)
 			     (library_addr + ranlibs[i].ran_off);
 		    if(strncmp(ar_hdr->ar_name, AR_EFMT1,
 			       sizeof(AR_EFMT1) - 1) == 0){
-			member_name = ar_hdr->ar_name + sizeof(struct ar_hdr);
+			member_name = ar_hdr[1].ar_name;
 			member_name_size = strtoul(ar_hdr->ar_name +
 				sizeof(AR_EFMT1) - 1, NULL, 10);
 			while(member_name_size > 0 &&
@@ -7487,7 +7487,7 @@ enum bool print_addresses)
     char *p;
     uint32_t nliteral_sections;
     float f;
-    double d;
+    double d = 0;
     struct relocation_info *reloc;
     uint32_t n_strx;
     uint64_t big_load_end, big_size;
