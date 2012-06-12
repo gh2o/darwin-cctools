@@ -2445,6 +2445,11 @@ See \`config.log' for more details" "$LINENO" 5; }
 		;;
 esac
 
+
+cat >>confdefs.h <<_ACEOF
+#define TARGET_TRIPLET "$target"
+_ACEOF
+
  if test $target_cpu = arm; then
   TARGET_ARM_TRUE=
   TARGET_ARM_FALSE='#'

@@ -41,6 +41,7 @@ case "$target_cpu" in
 		;;
 esac
 
+AC_DEFINE_UNQUOTED([TARGET_TRIPLET], ["$target"], [Triplet for target host.])
 AM_CONDITIONAL([TARGET_ARM], [test $target_cpu = arm])
 
 # Automake

@@ -78,6 +78,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Triplet for target host. */
+#undef TARGET_TRIPLET
+
 /* Version number of package */
 #undef VERSION
 

@@ -166,7 +166,7 @@ char *str)
 	if(p != NULL)
 	    p[1] = '\0';
 
-	return(makestr(prefix, str, NULL));
+	return(makestr(prefix, TARGET_TRIPLET, "-", str, NULL));
 }
 
 /*
