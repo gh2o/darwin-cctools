@@ -116,14 +116,14 @@ main(argc, argv)
 	run_ranlib = 1;
 	print_version = 0;
 
-	if (argc < 3 && (argc != 2 && strcmp(argv[1], "-e") != 0))
+	if (argc < 3 && (argc > 1 && strcmp(argv[1], "-e") != 0))
 		usage();
 
 	/*
 	 * Historic versions didn't require a '-' in front of the options.
 	 * Fix it, if necessary.
 	*/
-	if (*argv[1] != '-') {
+	if (argc > 1 && *argv[1] != '-') {
 		if (!(p = malloc((u_int)(strlen(argv[1]) + 2))))
 			err(1, NULL);
 		*p = '-';
