@@ -41,6 +41,9 @@
 #include "macho_relocatable_file.h"
 #include "lto_file.h"
 
+// #defines are a work around for <rdar://problem/8760268>
+#define __STDC_LIMIT_MACROS 1
+#define __STDC_CONSTANT_MACROS 1
 #include "llvm-c/lto.h"
 
 
@@ -144,7 +147,7 @@ class Atom : public ld::Atom
 {
 public:
 										Atom(File& f, const char* name, ld::Atom::Scope s, 
-												ld::Atom::Definition d, ld::Atom::Combine c, ld::Atom::Alignment a);
+												ld::Atom::Definition d, ld::Atom::Combine c, ld::Atom::Alignment a, bool ah);
 
 	// overrides of ld::Atom
 	virtual ld::File*					file() const		{ return &_file; }
@@ -249,15 +252,11 @@ bool Parser::validFile(const uint8_t* fileContent, uint64_t fileLength, cpu_type
 		case CPU_TYPE_X86_64:
 			return ::lto_module_is_object_file_in_memory_for_target(fileContent, fileLength, "x86_64-");
 		case CPU_TYPE_ARM:
-			switch ( subarch ) {
-				case CPU_SUBTYPE_ARM_V6:
-					return ::lto_module_is_object_file_in_memory_for_target(fileContent, fileLength, "armv6-");
-				case CPU_SUBTYPE_ARM_V7:
-					return ::lto_module_is_object_file_in_memory_for_target(fileContent, fileLength, "thumbv7-");
+			for (const ARMSubType* t=ARMSubTypes; t->subTypeName != NULL; ++t) {
+				if ( subarch == t->subType )
+					return ::lto_module_is_object_file_in_memory_for_target(fileContent, fileLength, t->llvmTriplePrefix);
 			}
 			break;
-		case CPU_TYPE_POWERPC:
-			return ::lto_module_is_object_file_in_memory_for_target(fileContent, fileLength, "powerpc-");
 	}
 	return false;
 }
@@ -267,17 +266,15 @@ const char* Parser::fileKind(const uint8_t* p, uint64_t fileLength)
 	if ( (p[0] == 0xDE) && (p[1] == 0xC0) && (p[2] == 0x17) && (p[3] == 0x0B) ) {
 		uint32_t arch = LittleEndian::get32(*((uint32_t*)(&p[16])));
 		switch (arch) {
-			case CPU_TYPE_POWERPC:
-				return "ppc";
 			case CPU_TYPE_I386:
 				return "i386";
 			case CPU_TYPE_X86_64:
 				return "x86_64";
 			case CPU_TYPE_ARM:
-				if ( ::lto_module_is_object_file_in_memory_for_target(p, fileLength, "armv6-") )
-					return "armv6";
-				if ( ::lto_module_is_object_file_in_memory_for_target(p, fileLength, "thumbv7-") )
-					return "armv7";
+				for (const ARMSubType* t=ARMSubTypes; t->subTypeName != NULL; ++t) {
+					if ( ::lto_module_is_object_file_in_memory_for_target(p, fileLength, t->llvmTriplePrefix) )
+						return t->subTypeName;
+				}
 				return "arm";
 		}
 		return "unknown bitcode architecture";
@@ -376,6 +373,7 @@ File::File(const char* pth, time_t mTime, const uint8_t* content, uint32_t conte
 		// make LLVM atoms for definitions and a reference for undefines
 		if ( def != ld::Atom::definitionProxy ) {
 			ld::Atom::Scope scope;
+			bool autohide = false;
 			switch ( attr & LTO_SYMBOL_SCOPE_MASK) {
 				case LTO_SYMBOL_SCOPE_INTERNAL:
 					scope = ld::Atom::scopeTranslationUnit;
@@ -386,6 +384,12 @@ File::File(const char* pth, time_t mTime, const uint8_t* content, uint32_t conte
 				case LTO_SYMBOL_SCOPE_DEFAULT:
 					scope = ld::Atom::scopeGlobal;
 					break;
+#if LTO_API_VERSION >= 4
+				case LTO_SYMBOL_SCOPE_DEFAULT_CAN_BE_HIDDEN:
+					scope = ld::Atom::scopeGlobal;
+					autohide = true;
+					break;
+#endif
 				default:
 					throwf("unknown scope for symbol %s in bitcode file %s", name, pth);
 			}
@@ -394,7 +398,7 @@ File::File(const char* pth, time_t mTime, const uint8_t* content, uint32_t conte
 				continue;
 			uint8_t alignment = (attr & LTO_SYMBOL_ALIGNMENT_MASK);
 			// make Atom using placement new operator
-			new (&_atomArray[_atomArrayCount++]) Atom(*this, name, scope, def, combine, alignment);
+			new (&_atomArray[_atomArrayCount++]) Atom(*this, name, scope, def, combine, alignment, autohide);
 			if ( scope == ld::Atom::scopeLinkageUnit )
 				_internalAtom.addReference(name);
 			if ( log ) fprintf(stderr, "\t0x%08X %s\n", attr, name);
@@ -429,11 +433,14 @@ InternalAtom::InternalAtom(File& f)
 {
 }
 
-Atom::Atom(File& f, const char* nm, ld::Atom::Scope s, ld::Atom::Definition d, ld::Atom::Combine c, ld::Atom::Alignment a)
+Atom::Atom(File& f, const char* nm, ld::Atom::Scope s, ld::Atom::Definition d, ld::Atom::Combine c, 
+			ld::Atom::Alignment a, bool ah)
 	: ld::Atom(f._section, d, c, s, ld::Atom::typeLTOtemporary, 
 				ld::Atom::symbolTableIn, false, false, false, a),
 		_file(f), _name(nm), _compiledAtom(NULL)
 {
+	if ( ah )
+		this->setAutoHide();
 }
 
 void Atom::setCompiledAtom(const ld::Atom& atom)

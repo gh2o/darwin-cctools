@@ -89,7 +89,6 @@ private:
 #include "stub_x86_classic.hpp"
 #include "stub_arm.hpp"
 #include "stub_arm_classic.hpp"
-#include "stub_ppc_classic.hpp"
 
 
 
@@ -116,7 +115,6 @@ const ld::Atom* Pass::stubableFixup(const ld::Fixup* fixup, ld::Internal& state)
 	if ( fixup->binding == ld::Fixup::bindingsIndirectlyBound ) {
 		const ld::Atom* target = state.indirectBindingTable[fixup->u.bindingIndex];
 		switch ( fixup->kind ) {
-			case ld::Fixup::kindStoreTargetAddressPPCBranch24:
 			case ld::Fixup::kindStoreTargetAddressX86BranchPCRel32:
 			case ld::Fixup::kindStoreTargetAddressARMBranch24:
 			case ld::Fixup::kindStoreTargetAddressThumbBranch22:
@@ -171,16 +169,12 @@ ld::Atom* Pass::makeStub(const ld::Atom& target, bool weakImport)
 		forLazyDylib = true;
 	bool stubToResolver = (target.contentType() == ld::Atom::typeResolver);
 	
+	if ( usingCompressedLINKEDIT() && !forLazyDylib ) {
+		if ( _internal->compressedFastBinderProxy == NULL )
+			throwf("symbol dyld_stub_binder not found (normally in libSystem.dylib).  Needed to perform lazy binding to function %s", target.name());
+	}
+
 	switch ( _architecture ) {
-		case CPU_TYPE_POWERPC: 
-			if ( _pic )
-				return new ld::passes::stubs::ppc::classic::StubPICAtom(*this, target, forLazyDylib, false, weakImport);
-			else
-				return new ld::passes::stubs::ppc::classic::StubNoPICAtom(*this, target, forLazyDylib, false, weakImport);
-			break;
-		case CPU_TYPE_POWERPC64: 
-			return new ld::passes::stubs::ppc::classic::StubPICAtom(*this, target, forLazyDylib, true, weakImport);
-			break;
 		case CPU_TYPE_I386:
 			if ( usingCompressedLINKEDIT() && !forLazyDylib )
 				return new ld::passes::stubs::x86::StubAtom(*this, target, stubToGlobalWeakDef, stubToResolver, weakImport);
@@ -275,14 +269,6 @@ void Pass::process(ld::Internal& state)
 					if ( pos == weakImportMap.end() ) {
 						// target not in weakImportMap, so add
 						weakImportMap[stubableTargetOfFixup] = fit->weakImport;
-						// <rdar://problem/5529626> If only weak_import symbols are used, linker should use LD_LOAD_WEAK_DYLIB
-						const ld::dylib::File* dylib = dynamic_cast<const ld::dylib::File*>(stubableTargetOfFixup->file());
-						if ( dylib != NULL ) {
-							if ( fit->weakImport )
-								(const_cast<ld::dylib::File*>(dylib))->setUsingWeakImportedSymbols();
-							else
-								(const_cast<ld::dylib::File*>(dylib))->setUsingNonWeakImportedSymbols();
-						}
 					}
 					else {
 						// target in weakImportMap, check for weakness mismatch
@@ -307,9 +293,7 @@ void Pass::process(ld::Internal& state)
 				if ( _options.outputKind() != Options::kDynamicLibrary ) 
 					throwf("resolver functions (%s) can only be used in dylibs", atom->name());
 				if ( !_options.makeCompressedDyldInfo() ) {
-					if ( _options.architecture() == CPU_TYPE_POWERPC )
-						throwf("resolver functions (%s) not supported for PowerPC", atom->name());
-					else if ( _options.architecture() == CPU_TYPE_ARM )
+					if ( _options.architecture() == CPU_TYPE_ARM )
 						throwf("resolver functions (%s) can only be used when targeting iOS 4.2 or later", atom->name());
 					else
 						throwf("resolver functions (%s) can only be used when targeting Mac OS X 10.6 or later", atom->name());
@@ -329,9 +313,30 @@ void Pass::process(ld::Internal& state)
 	if ( !_options.makeCompressedDyldInfo() && (state.classicBindingHelper == NULL) ) 
 		throw "symbol dyld_stub_binding_helper not found, normally in crt1.o/dylib1.o/bundle1.o";
 
-	// disable close stubs when branch islands might be needed
-	if ( (_architecture == CPU_TYPE_ARM) && (codeSize > 4*1024*1024) )
-		_largeText = true;
+	// disable arm close stubs in some cases
+	if ( _architecture == CPU_TYPE_ARM ) {
+        if ( codeSize > 4*1024*1024 )
+            _largeText = true;
+        else {
+            for (std::vector<ld::Internal::FinalSection*>::iterator sit=state.sections.begin(); sit != state.sections.end(); ++sit) {
+                ld::Internal::FinalSection* sect = *sit;
+                if ( sect->type() == ld::Section::typeMachHeader )
+                    continue;
+                if ( strcmp(sect->segmentName(), "__TEXT") == 0) {
+                    for (std::vector<const ld::Atom*>::iterator ait=sect->atoms.begin();  ait != sect->atoms.end(); ++ait) {
+                        const ld::Atom* atom = *ait;
+                        if ( atom->alignment().powerOf2 > 10 ) {
+                            // overaligned section means might not be able to keep closestubs sect pushed to end of __TEXT
+                            //warning("alignment 1<<%d in atom %s in section %s disables close stubs optimization", 
+                            //        atom->alignment().powerOf2, atom->name(), sect->segmentName());
+                            _largeText = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 	
 	// make stub atoms 
 	for (std::map<const ld::Atom*,ld::Atom*>::iterator it = stubFor.begin(); it != stubFor.end(); ++it) {

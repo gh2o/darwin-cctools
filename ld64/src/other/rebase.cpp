@@ -650,13 +650,7 @@ void Rebaser<ppc>::doLocalRelocation(const macho_relocation_info<P>* reloc)
 		}
 	}
 	else {
-		macho_scattered_relocation_info<P>* sreloc = (macho_scattered_relocation_info<P>*)reloc;
-		if ( sreloc->r_type() == PPC_RELOC_PB_LA_PTR ) {
-			sreloc->set_r_value( sreloc->r_value() + fSlide );
-		}
-		else {
-			throw "cannot rebase final linked image with scattered relocations";
-		}
+		throw "cannot rebase final linked image with scattered relocations";
 	}
 }
 
@@ -1023,12 +1017,18 @@ int main(int argc, const char* argv[])
 						onlyArchs.insert(CPU_TYPE_I386);
 					else if ( strcmp(arch, "x86_64") == 0 )
 						onlyArchs.insert(CPU_TYPE_X86_64);
-					else if ( strcmp(arch, "arm") == 0 )
-						onlyArchs.insert(CPU_TYPE_ARM);
-					else if ( strcmp(arch, "armv6") == 0 )
-						onlyArchs.insert(CPU_TYPE_ARM);
-					else 
-						throwf("unknown architecture %s", arch);
+					else {
+						bool found = false;
+						for (const ARMSubType* t=ARMSubTypes; t->subTypeName != NULL; ++t) {
+							if ( strcmp(t->subTypeName,arch) == 0 ) {
+								onlyArchs.insert(CPU_TYPE_ARM);
+								found = true;
+								break;
+							}
+						}
+						if ( !found )
+							throwf("unknown architecture %s", arch);
+					}
 				}
 				else {
 					usage();

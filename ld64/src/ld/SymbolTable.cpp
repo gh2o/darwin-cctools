@@ -137,25 +137,33 @@ bool SymbolTable::addByName(const ld::Atom& newAtom, bool ignoreDuplicates)
 					case ld::Atom::definitionRegular:
 						if ( existingAtom->combine() == ld::Atom::combineByName ) {
 							if ( newAtom.combine() == ld::Atom::combineByName ) {
-								// both weak, prefer non-auto-hide one
-								if ( newAtom.autoHide() != existingAtom->autoHide() ) {
-									// <rdar://problem/6783167> support auto hidden weak symbols: .weak_def_can_be_hidden
-									useNew = existingAtom->autoHide();
-									// don't check for visibility mismatch
-								}
-								else if ( newAtom.autoHide() && existingAtom->autoHide() ) {
-									// both have auto-hide, so use one with greater alignment
-									useNew = ( newAtom.alignment().trailingZeros() > existingAtom->alignment().trailingZeros() );
+								// <rdar://problem/9183821> always choose mach-o over llvm bit code, otherwise LTO may eliminate the llvm atom
+								const bool existingIsLTO = (existingAtom->contentType() == ld::Atom::typeLTOtemporary);
+								const bool newIsLTO = (newAtom.contentType() == ld::Atom::typeLTOtemporary);
+								if ( existingIsLTO != newIsLTO ) {
+									useNew = existingIsLTO;
 								}
 								else {
-									// neither auto-hide, check visibility
-									if ( newAtom.scope() != existingAtom->scope() ) {
-										// <rdar://problem/8304984> use more visible weak def symbol
-										useNew = (newAtom.scope() == ld::Atom::scopeGlobal);
+									// both weak, prefer non-auto-hide one
+									if ( newAtom.autoHide() != existingAtom->autoHide() ) {
+										// <rdar://problem/6783167> support auto hidden weak symbols: .weak_def_can_be_hidden
+										useNew = existingAtom->autoHide();
+										// don't check for visibility mismatch
+									}
+									else if ( newAtom.autoHide() && existingAtom->autoHide() ) {
+										// both have auto-hide, so use one with greater alignment
+										useNew = ( newAtom.alignment().trailingZeros() > existingAtom->alignment().trailingZeros() );
 									}
 									else {
-										// both have same visibility, use one with greater alignment
-										useNew = ( newAtom.alignment().trailingZeros() > existingAtom->alignment().trailingZeros() );
+										// neither auto-hide, check visibility
+										if ( newAtom.scope() != existingAtom->scope() ) {
+											// <rdar://problem/8304984> use more visible weak def symbol
+											useNew = (newAtom.scope() == ld::Atom::scopeGlobal);
+										}
+										else {
+											// both have same visibility, use one with greater alignment
+											useNew = ( newAtom.alignment().trailingZeros() > existingAtom->alignment().trailingZeros() );
+										}
 									}
 								}
 							}
@@ -171,22 +179,32 @@ bool SymbolTable::addByName(const ld::Atom& newAtom, bool ignoreDuplicates)
 							}
 							else {
 								// existing not-weak, new is not-weak
-								if ( ignoreDuplicates ) {
+								if ( newAtom.section().type() == ld::Section::typeMachHeader ) {
+									warning("ignoring override of built-in symbol %s from %s", newAtom.name(), existingAtom->file()->path());
+									useNew = true;
+								} 
+								else if ( existingAtom->section().type() == ld::Section::typeMachHeader ) {
+									warning("ignoring override of built-in symbol %s from %s", newAtom.name(), newAtom.file()->path());
 									useNew = false;
-									static bool fullWarning = false;
-									if ( ! fullWarning ) {
-										warning("-dead_strip with lazy loaded static (library) archives "
-												"has resulted in a duplicate symbol.  You can change your "
-												"source code to rename symbols to avoid the collision.  "
-												"This will be an error in a future linker.");
-										fullWarning = true;
-									}
-									warning("duplicate symbol %s originally in %s now lazily loaded from %s",
-											SymbolTable::demangle(name), existingAtom->file()->path(), newAtom.file()->path());
-								}
+								} 
 								else {
-									throwf("duplicate symbol %s in %s and %s", 
-											SymbolTable::demangle(name), newAtom.file()->path(), existingAtom->file()->path());
+									if ( ignoreDuplicates ) {
+										useNew = false;
+										static bool fullWarning = false;
+										if ( ! fullWarning ) {
+											warning("-dead_strip with lazy loaded static (library) archives "
+													"has resulted in a duplicate symbol.  You can change your "
+													"source code to rename symbols to avoid the collision.  "
+													"This will be an error in a future linker.");
+											fullWarning = true;
+										}
+										warning("duplicate symbol %s originally in %s now lazily loaded from %s",
+												SymbolTable::demangle(name), existingAtom->file()->path(), newAtom.file()->path());
+									}
+									else {
+										throwf("duplicate symbol %s in %s and %s", 
+												SymbolTable::demangle(name), newAtom.file()->path(), existingAtom->file()->path());
+									}
 								}
 							}
 						}
@@ -214,12 +232,27 @@ bool SymbolTable::addByName(const ld::Atom& newAtom, bool ignoreDuplicates)
 				switch ( newAtom.definition() ) {
 					case ld::Atom::definitionRegular:
 						// replace existing tentative atom with regular one
-						checkVisibilityMismatch = true;
-						if ( newAtom.size() < existingAtom->size() ) {
-							warning("for symbol %s tentative definition of size %llu from %s is "
-											"being replaced by a real definition of size %llu from %s",
-											newAtom.name(), existingAtom->size(), existingAtom->file()->path(),
-											newAtom.size(), newAtom.file()->path());
+						if ( newAtom.section().type() == ld::Section::typeMachHeader ) {
+							// silently replace tentative __dso_handle with real linker created symbol
+							useNew = true;
+						}
+						else if ( existingAtom->section().type() == ld::Section::typeMachHeader ) {
+							// silently replace tentative __dso_handle with real linker created symbol
+							useNew = false;
+						}
+						else {
+							checkVisibilityMismatch = true;
+							if ( newAtom.size() < existingAtom->size() ) {
+								warning("for symbol %s tentative definition of size %llu from %s is "
+												"being replaced by a real definition of size %llu from %s",
+												newAtom.name(), existingAtom->size(), existingAtom->file()->path(),
+												newAtom.size(), newAtom.file()->path());
+							}
+							if ( newAtom.section().type() == ld::Section::typeCode ) {
+								warning("for symbol %s tentative (data) defintion from %s is "
+										"being replaced by code from %s", newAtom.name(), existingAtom->file()->path(),
+										newAtom.file()->path());
+							}
 						}
 						break;
 					case ld::Atom::definitionTentative:
