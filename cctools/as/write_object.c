@@ -141,6 +141,8 @@ char *out_file_name)
     segment_command_t		reloc_segment;
     struct symtab_command	symbol_table;
     struct dysymtab_command	dynamic_symbol_table;
+    // gcc is fussy, offset will be assigned to this later
+    memset (&dynamic_symbol_table, 0, sizeof (dynamic_symbol_table));
     uint32_t			section_type;
     uint32_t			*indirect_symbols;
     isymbolS			*isymbolP;
@@ -1318,7 +1320,7 @@ uint32_t debug_section)
 			     riP->r_address);
 		sri.r_type      = sectdiff;
 		sri.r_value     = symbolP->sy_value;
-		*riP = *((struct relocation_info *)&sri);
+		memcpy (riP, &sri, sizeof (*riP));
 		riP++;
 
 		sri.r_type      = RELOC_PAIR;
@@ -1376,7 +1378,7 @@ uint32_t debug_section)
 					  fixP->fx_offset) >> 16) & 0xffff;
 		}
 #endif
-		*riP = *((struct relocation_info *)&sri);
+		memcpy (riP, &sri, sizeof (*riP));
 		return(2 * sizeof(struct relocation_info));
 	    }
 	    /*
@@ -1428,7 +1430,7 @@ uint32_t debug_section)
 			     riP->r_address);
 		sri.r_type      = riP->r_type;
 		sri.r_value     = symbolP->sy_value;
-		*riP = *((struct relocation_info *)&sri);
+		memcpy (riP, &sri, sizeof (*riP));
 	    }
 #endif /* !defined(I860) && !(defined(I386) && defined(ARCH64)) */
 	}
