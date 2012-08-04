@@ -4585,7 +4585,7 @@ void *TagBuf)
     uint32_t sect_offset, i;
     const char *strings, *name;
     struct relocation_info *relocs;
-    uint32_t nrelocs, strings_size, n_strx;
+    uint32_t nrelocs, strings_size, n_strx = 0;
     struct nlist_64 *symbols;
 
 	info = (struct disassemble_info *)DisInfo;
