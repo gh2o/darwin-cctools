@@ -1093,12 +1093,13 @@ uint32_t toc_size,
 enum byte_sex toc_byte_sex,
 char *library_name,
 char *library_addr,
-uint32_t library_size,
+uint64_t library_size,
 char *arch_name,
 enum bool verbose)
 {
     enum byte_sex host_byte_sex;
-    uint32_t ran_size, nranlibs, str_size = 0, i, toc_offset, member_name_size;
+    uint32_t ran_size, nranlibs, str_size, i, member_name_size;
+    uint64_t toc_offset;
     struct ranlib *ranlibs;
     char *strings, *member_name;
     struct ar_hdr *ar_hdr;
@@ -1202,7 +1203,7 @@ enum bool verbose)
 			     (library_addr + ranlibs[i].ran_off);
 		    if(strncmp(ar_hdr->ar_name, AR_EFMT1,
 			       sizeof(AR_EFMT1) - 1) == 0){
-			member_name = ar_hdr[1].ar_name;
+			member_name = ar_hdr->ar_name + sizeof(struct ar_hdr);
 			member_name_size = strtoul(ar_hdr->ar_name +
 				sizeof(AR_EFMT1) - 1, NULL, 10);
 			while(member_name_size > 0 &&
@@ -2387,19 +2388,19 @@ enum bool verbose)
 	    printf("\n");
 	printf("  segname %.16s\n", segname);
 	if(cmd == LC_SEGMENT_64){
-	    printf("   vmaddr 0x%016llx\n", (unsigned long long) vmaddr);
-	    printf("   vmsize 0x%016llx\n", (unsigned long long) vmsize);
+	    printf("   vmaddr 0x%016llx\n", vmaddr);
+	    printf("   vmsize 0x%016llx\n", vmsize);
 	}
 	else{
 	    printf("   vmaddr 0x%08x\n", (uint32_t)vmaddr);
 	    printf("   vmsize 0x%08x\n", (uint32_t)vmsize);
 	}
-	printf("  fileoff %llu", (unsigned long long) fileoff);
+	printf("  fileoff %llu", fileoff);
 	if(fileoff > object_size)
 	    printf(" (past end of file)\n");
 	else
 	    printf("\n");
-	printf(" filesize %llu", (unsigned long long) filesize);
+	printf(" filesize %llu", filesize);
 	if(fileoff + filesize > object_size)
 	    printf(" (past end of file)\n");
 	else
@@ -2510,8 +2511,8 @@ enum bool verbose)
 	else
 	    printf("\n");
 	if(cmd == LC_SEGMENT_64){
-	    printf("      addr 0x%016llx\n", (unsigned long long) addr);
-	    printf("      size 0x%016llx", (unsigned long long) size);
+	    printf("      addr 0x%016llx\n", addr);
+	    printf("      size 0x%016llx", size);
 	}
 	else{
 	    printf("      addr 0x%08x\n", (uint32_t)addr);
@@ -3218,14 +3219,14 @@ struct routines_command_64 *rc64)
 	    printf(" Incorrect size\n");
 	else
 	    printf("\n");
-	printf(" init_address 0x%016llx\n", (unsigned long long) rc64->init_address);
-	printf("  init_module %llu\n", (unsigned long long) rc64->init_module);
-	printf("    reserved1 %llu\n", (unsigned long long) rc64->reserved1);
-	printf("    reserved2 %llu\n", (unsigned long long) rc64->reserved2);
-	printf("    reserved3 %llu\n", (unsigned long long) rc64->reserved3);
-	printf("    reserved4 %llu\n", (unsigned long long) rc64->reserved4);
-	printf("    reserved5 %llu\n", (unsigned long long) rc64->reserved5);
-	printf("    reserved6 %llu\n", (unsigned long long) rc64->reserved6);
+	printf(" init_address 0x%016llx\n", rc64->init_address);
+	printf("  init_module %llu\n", rc64->init_module);
+	printf("    reserved1 %llu\n", rc64->reserved1);
+	printf("    reserved2 %llu\n", rc64->reserved2);
+	printf("    reserved3 %llu\n", rc64->reserved3);
+	printf("    reserved4 %llu\n", rc64->reserved4);
+	printf("    reserved5 %llu\n", rc64->reserved5);
+	printf("    reserved6 %llu\n", rc64->reserved6);
 }
 
 /*
@@ -3396,7 +3397,7 @@ void
 print_source_version_command(
 struct source_version_command *sv)
 {
-    long long unsigned int a, b, c, d, e;
+    uint64_t a, b, c, d, e;
 
 	printf("      cmd LC_SOURCE_VERSION\n");
 	printf("  cmdsize %u", sv->cmdsize);
@@ -3433,8 +3434,8 @@ struct entry_point_command *ep)
 	    printf(" Incorrect size\n");
 	else
 	    printf("\n");
-	printf("  entryoff %llu\n", (long long unsigned int) ep->entryoff);
-	printf(" stacksize %llu\n", (long long unsigned int) ep->stacksize);
+	printf("  entryoff %llu\n", ep->entryoff);
+	printf(" stacksize %llu\n", ep->stacksize);
 }
 
 /*
@@ -4191,45 +4192,14 @@ enum byte_sex thread_states_byte_sex)
 			   "   xer  0x%016llx lr  0x%016llx ctr  0x%016llx\n"
 			   "vrsave  0x%08x        srr0 0x%016llx srr1 "
 			   "0x%016llx\n",
-			   (unsigned long long) cpu64.r0,
-			   (unsigned long long) cpu64.r1,
-			   (unsigned long long) cpu64.r2,
-			   (unsigned long long) cpu64.r3,
-			   (unsigned long long) cpu64.r4,
-			   (unsigned long long) cpu64.r5,
-			   (unsigned long long) cpu64.r6,
-			   (unsigned long long) cpu64.r7,
-			   (unsigned long long) cpu64.r8,
-			   (unsigned long long) cpu64.r9,
-			   (unsigned long long) cpu64.r10,
-			   (unsigned long long) cpu64.r11,
-			   (unsigned long long) cpu64.r12,
-			   (unsigned long long) cpu64.r13,
-			   (unsigned long long) cpu64.r14,
-			   (unsigned long long) cpu64.r15,
-			   (unsigned long long) cpu64.r16,
-			   (unsigned long long) cpu64.r17,
-			   (unsigned long long) cpu64.r18,
-			   (unsigned long long) cpu64.r19,
-			   (unsigned long long) cpu64.r20,
-			   (unsigned long long) cpu64.r21,
-			   (unsigned long long) cpu64.r22,
-			   (unsigned long long) cpu64.r23,
-			   (unsigned long long) cpu64.r24,
-			   (unsigned long long) cpu64.r25,
-			   (unsigned long long) cpu64.r26,
-			   (unsigned long long) cpu64.r27,
-			   (unsigned long long) cpu64.r28,
-			   (unsigned long long) cpu64.r29,
-			   (unsigned long long) cpu64.r30,
-			   (unsigned long long) cpu64.r31,
-			   cpu64.cr,
-			   (unsigned long long) cpu64.xer,
-			   (unsigned long long) cpu64.lr,
-			   (unsigned long long) cpu64.ctr,
-			   cpu64.vrsave,
-			   (unsigned long long) cpu64.srr0,
-			   (unsigned long long) cpu64.srr1);
+			   cpu64.r0, cpu64.r1, cpu64.r2, cpu64.r3, cpu64.r4,
+			   cpu64.r5, cpu64.r6, cpu64.r7, cpu64.r8, cpu64.r9,
+			   cpu64.r10, cpu64.r11, cpu64.r12, cpu64.r13,cpu64.r14,
+			   cpu64.r15, cpu64.r16, cpu64.r17, cpu64.r18,cpu64.r19,
+			   cpu64.r20, cpu64.r21, cpu64.r22, cpu64.r23,cpu64.r24,
+			   cpu64.r25, cpu64.r26, cpu64.r27, cpu64.r28,cpu64.r29,
+			   cpu64.r30, cpu64.r31, cpu64.cr,  cpu64.xer, cpu64.lr,
+			   cpu64.ctr, cpu64.vrsave, cpu64.srr0, cpu64.srr1);
 		    break;
 		default:
 		    printf("     flavor %u (unknown)\n", flavor);
@@ -4972,27 +4942,11 @@ print_x86_thread_state64:
 			   "   r15  0x%016llx rip 0x%016llx\n"
 			   "rflags  0x%016llx cs  0x%016llx fs   0x%016llx\n"
 			   "    gs  0x%016llx\n",
-            	(unsigned long long) cpu64.rax,
-            	(unsigned long long) cpu64.rbx,
-            	(unsigned long long) cpu64.rcx,
-            	(unsigned long long) cpu64.rdx,
-            	(unsigned long long) cpu64.rdi,
-            	(unsigned long long) cpu64.rsi,
-            	(unsigned long long) cpu64.rbp,
-            	(unsigned long long) cpu64.rsp,
-            	(unsigned long long) cpu64.r8,
-            	(unsigned long long) cpu64.r9,
-            	(unsigned long long) cpu64.r10,
-            	(unsigned long long) cpu64.r11,
-            	(unsigned long long) cpu64.r12,
-            	(unsigned long long) cpu64.r13,
-            	(unsigned long long) cpu64.r14,
-            	(unsigned long long) cpu64.r15,
-            	(unsigned long long) cpu64.rip,
-            	(unsigned long long) cpu64.rflags,
-            	(unsigned long long) cpu64.cs,
-            	(unsigned long long) cpu64.fs,
-            	(unsigned long long) cpu64.gs);
+                        cpu64.rax, cpu64.rbx, cpu64.rcx, cpu64.rdx, cpu64.rdi,
+			cpu64.rsi, cpu64.rbp, cpu64.rsp, cpu64.r8, cpu64.r9,
+			cpu64.r10, cpu64.r11, cpu64.r12, cpu64.r13, cpu64.r14,
+			cpu64.r15, cpu64.rip, cpu64.rflags, cpu64.cs, cpu64.fs,
+			cpu64.gs);
 		    break;
 
 		case x86_FLOAT_STATE64:
@@ -5178,7 +5132,7 @@ print_x86_exception_state64:
 			swap_x86_exception_state64(&exc64, host_byte_sex);
 		    printf("\t    trapno 0x%08x err 0x%08x faultvaddr "
 			   "0x%016llx\n", exc64.trapno, exc64.err,
-			   (unsigned long long) exc64.faultvaddr);
+			   exc64.faultvaddr);
 		    break;
 
 		case x86_DEBUG_STATE64:
@@ -5204,17 +5158,11 @@ print_x86_debug_state64:
 		    if(swapped)
 			swap_x86_debug_state64(&debug64, host_byte_sex);
 		    printf("\t    dr0 0x%016llx dr1 0x%016llx dr2 0x%016llx "
-			   "dr3 0x%016llx\n",
-			   (unsigned long long) debug64.dr0,
-			   (unsigned long long) debug64.dr1,
-			   (unsigned long long) debug64.dr2,
-			   (unsigned long long) debug64.dr3);
+			   "dr3 0x%016llx\n", debug64.dr0, debug64.dr1,
+			   debug64.dr2, debug64.dr3);
 		    printf("\t    dr4 0x%016llx dr5 0x%016llx dr6 0x%016llx "
-			   "dr7 0x%016llx\n",
-			   (unsigned long long) debug64.dr4,
-			   (unsigned long long) debug64.dr5,
-			   (unsigned long long) debug64.dr6,
-			   (unsigned long long) debug64.dr7);
+			   "dr7 0x%016llx\n", debug64.dr4, debug64.dr5,
+			   debug64.dr6, debug64.dr7);
 		    break;
 
 		case x86_THREAD_STATE:
@@ -6711,7 +6659,7 @@ enum bool verbose)
 		mods64[i].ninit_nterm & 0xffff,
 		(mods64[i].ninit_nterm >> 16) & 0xffff);
 	    printf("      objc_addr = 0x%016llx\n",
-		(unsigned long long) mods64[i].objc_module_info_addr);
+		mods64[i].objc_module_info_addr);
 	    printf("      objc_size = %u\n", mods64[i].objc_module_info_size);
 	}
 }
@@ -7041,7 +6989,7 @@ enum bool verbose)
 
 	    for(j = 0 ; j < count && n + j < nindirect_symbols; j++){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("0x%016llx ", (unsigned long long)(sect_ind[i].addr + j * stride));
+		    printf("0x%016llx ", sect_ind[i].addr + j * stride);
 		else
 		    printf("0x%08x ",(uint32_t)
 				     (sect_ind[i].addr + j * stride));
@@ -7243,7 +7191,7 @@ enum bool print_addresses)
 	for(i = 0; i < sect_size ; i++){
 	    if(print_addresses == TRUE){
 	        if(cputype & CPU_ARCH_ABI64)
-		    printf("0x%016llx  ", (long long unsigned int)(sect_addr + i));
+		    printf("0x%016llx  ", sect_addr + i);
 		else
 		    printf("%08x  ", (unsigned int)(sect_addr + i));
 	    }
@@ -7450,6 +7398,7 @@ uint32_t l3)
 
 void
 print_literal_pointer_section(
+cpu_type_t cputype,
 struct load_command *load_commands,
 uint32_t ncmds,
 uint32_t sizeofcmds,
@@ -7458,7 +7407,7 @@ char *object_addr,
 uint32_t object_size,
 char *sect,
 uint32_t sect_size,
-uint32_t sect_addr,
+uint64_t sect_addr,
 struct nlist *symbols,
 struct nlist_64 *symbols64,
 uint32_t nsymbols,
@@ -7470,7 +7419,8 @@ enum bool print_addresses)
 {
     enum byte_sex host_byte_sex;
     enum bool swapped, found;
-    uint32_t i, j, k, l, l0, l1, l2, l3, left, size;
+    uint32_t i, j, k, li, l0, l1, l2, l3, left, size, lp_size;
+    uint64_t lp;
     struct load_command lcmd, *lc;
     struct segment_command sg;
     struct section s;
@@ -7487,7 +7437,7 @@ enum bool print_addresses)
     char *p;
     uint32_t nliteral_sections;
     float f;
-    double d = 0;
+    double d;
     struct relocation_info *reloc;
     uint32_t n_strx;
     uint64_t big_load_end, big_size;
@@ -7652,13 +7602,30 @@ enum bool print_addresses)
 	}
 
 	/* loop through the literal pointer section and print the pointers */
-	for(i = 0; i < sect_size ; i += sizeof(int32_t)){
-	    if(print_addresses == TRUE)
-		printf("%08x  ", (unsigned int)(sect_addr + i));
-	    l = (int32_t)*((int32_t *)(sect + i));
-	    memcpy((char *)&l, sect + i, sizeof(uint32_t));
-	    if(swapped)
-		l = SWAP_INT(l);
+	if(cputype & CPU_ARCH_ABI64)
+	    lp_size = 8;
+	else
+	    lp_size = 4;
+	for(i = 0; i < sect_size ; i += lp_size){
+	    if(print_addresses == TRUE){
+	        if(cputype & CPU_ARCH_ABI64)
+		    printf("0x%016llx  ", sect_addr + i);
+		else
+		    printf("%08x  ", (unsigned int)(sect_addr + i));
+	    }
+	    if(cputype & CPU_ARCH_ABI64){
+		lp = (uint64_t)*((uint64_t *)(sect + i));
+		memcpy((char *)&lp, sect + i, sizeof(uint64_t));
+		if(swapped)
+		    lp = SWAP_LONG_LONG(lp);
+	    }
+	    else{
+		li = (int32_t)*((int32_t *)(sect + i));
+		memcpy((char *)&li, sect + i, sizeof(uint32_t));
+		if(swapped)
+		    li = SWAP_INT(li);
+		lp = li;
+	    }
 	    /*
 	     * If there is an external relocation entry for this pointer then
 	     * print the symbol and any offset.
@@ -7674,9 +7641,8 @@ enum bool print_addresses)
 		    else
 			n_strx = symbols64[reloc->r_symbolnum].n_un.n_strx;
 		    if(n_strx < strings_size){
-			if(l != 0)
-			    printf("%s+0x%x\n", strings + n_strx,
-				    (unsigned int)l);
+			if(lp != 0)
+			    printf("%s+0x%llx\n", strings + n_strx, lp);
 			else
 			    printf("%s\n", strings + n_strx);
 		    }
@@ -7692,14 +7658,14 @@ enum bool print_addresses)
 	    }
 	    found = FALSE;
 	    for(j = 0; j < nliteral_sections; j++){
-		if(l >= literal_sections[j].addr &&
-		   l < literal_sections[j].addr +
-		       literal_sections[j].size){
+		if(lp >= literal_sections[j].addr &&
+		   lp < literal_sections[j].addr +
+		        literal_sections[j].size){
 		    printf("%.16s:%.16s:", literal_sections[j].segname,
 			   literal_sections[j].sectname);
 		    switch(literal_sections[j].flags){
 		    case S_CSTRING_LITERALS:
-			for(k = l - literal_sections[j].addr;
+			for(k = lp - literal_sections[j].addr;
 			    k < literal_sections[j].size &&
 					literal_sections[j].contents[k] != '\0';
 			    k++)
@@ -7709,11 +7675,11 @@ enum bool print_addresses)
 		    case S_4BYTE_LITERALS:
 			memcpy((char *)&f,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr),
+					lp - literal_sections[j].addr),
 				sizeof(float));
 			memcpy((char *)&l0,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr),
+					lp - literal_sections[j].addr),
 				sizeof(uint32_t));
 			if(swapped){
 			    d = SWAP_DOUBLE(d);
@@ -7724,15 +7690,15 @@ enum bool print_addresses)
 		    case S_8BYTE_LITERALS:
 			memcpy((char *)&d,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr),
+					lp - literal_sections[j].addr),
 				sizeof(double));
 			memcpy((char *)&l0,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr),
+					lp - literal_sections[j].addr),
 				sizeof(uint32_t));
 			memcpy((char *)&l1,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr +
+					lp - literal_sections[j].addr +
 					sizeof(uint32_t)),
 			       sizeof(uint32_t));
 			if(swapped){
@@ -7745,21 +7711,21 @@ enum bool print_addresses)
 		    case S_16BYTE_LITERALS:
 			memcpy((char *)&l0,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr),
+					lp - literal_sections[j].addr),
 				sizeof(uint32_t));
 			memcpy((char *)&l1,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr +
+					lp - literal_sections[j].addr +
 					sizeof(uint32_t)),
 			       sizeof(uint32_t));
 			memcpy((char *)&l2,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr +
+					lp - literal_sections[j].addr +
 					2 * sizeof(uint32_t)),
 			       sizeof(uint32_t));
 			memcpy((char *)&l3,
 			       (char *)(literal_sections[j].contents +
-					l - literal_sections[j].addr +
+					lp - literal_sections[j].addr +
 					3 * sizeof(uint32_t)),
 			       sizeof(uint32_t));
 			if(swapped){
@@ -7776,7 +7742,7 @@ enum bool print_addresses)
 		}
 	    }
 	    if(found == FALSE)
-		printf("0x%x (not in a literal section)\n", (unsigned int)l);
+		printf("0x%llx (not in a literal section)\n", lp);
 	}
 
 	if(literal_sections != NULL)
@@ -7812,7 +7778,7 @@ enum bool verbose)
 
 	for(i = 0 ; i < sect_size; i += stride){
 	    if(cputype & CPU_ARCH_ABI64)
-		printf("0x%016llx ", (unsigned long long)(sect_addr + i * stride));
+		printf("0x%016llx ", sect_addr + i * stride);
 	    else
 		printf("0x%08x ",(uint32_t)(sect_addr + i * stride));
 
@@ -7828,7 +7794,7 @@ enum bool verbose)
 		     p = SWAP_INT(p);
 	    }
 	    if(cputype & CPU_ARCH_ABI64)
-		printf("0x%016llx", (unsigned long long) q);
+		printf("0x%016llx", q);
 	    else
 		printf("0x%08x", p);
 
@@ -8240,7 +8206,7 @@ uint64_t addr)
 	   cputype == CPU_TYPE_X86_64){
 	    for(i = 0 ; i < size ; i += j , addr += j){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("%016llx\t", (unsigned long long) addr);
+		    printf("%016llx\t", addr);
 		else
 		    printf("%08x\t", (uint32_t)addr);
 		for(j = 0;
@@ -8269,7 +8235,7 @@ uint64_t addr)
 	else{
 	    for(i = 0 ; i < size ; i += j , addr += j){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("%016llx\t", (unsigned long long) addr);
+		    printf("%016llx\t", addr);
 		else
 		    printf("%08x\t", (uint32_t)addr);
 		for(j = 0;
