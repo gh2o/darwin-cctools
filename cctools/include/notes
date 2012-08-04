@@ -1,3 +1,12 @@
+Changes for the 5.31 release (the cctools-827 release):
+- Change the second parameter of _NSGetExecutablePath() in "mach-o/dyld.h" to
+  uint32_t * .  Radar bug #11274640.
+
+Changes for the 5.31 release (the cctools-824 release):
+- Changed the file_size field in the ofile struct in "stuff/ofile.h" and the
+  size parameter in ofile_map_from_memory() from a uint32_t type to a uint64_t
+  type.  Radar bug #10645295.
+
 Changes for the 5.30 release (the cctools-822 release):
 - The "low risk fix to strip(1)" below in cctools-821 for Radar bug #10718585
   breaks striping .o files with dwarf debug info.  Because the input file has
@@ -478,7 +487,7 @@ Changes for the 5.17 release (the cctools-572 release):
 Changes for the 5.17 release (the cctools-568 release):
 - Added the constant S_INTERPOSING to <mach-o/loader.h> . Radar bug #3965794.
 - Changed "stuff/bytesex.h" and "stuff/arch.h" to remove multiply defined
-  warnings by changing all #include's to #include's.
+  warnings by changing all #import's to #include's.
 
 Changes for the 5.17 release (the cctools-564 release):
 - Changed the Makefile so that it only installs /usr/include/mach-o/dyld_debug.h
@@ -929,7 +938,7 @@ Changes for the 5.10 release (the cctools-404 release):
 
 Changes for the 5.10 release (the cctools-403 release):
 - Changed mach-o/ppc/swap.h and mach-o/i386/swap.h to use #include and not
-  #include.  Radar bug #2778821.
+  #import.  Radar bug #2778821.
 
 Changes for the 5.10 release (the cctools-400 release):
 - Added a new throttle parameter to redo_prebinding() in
@@ -971,7 +980,7 @@ Changes for the 5.10 release (the cctools-392 release):
   in <stuff/ofile.h>.  Radar bug #2730127.
 
 Changes for the 5.10 release (the cctools-388 release):
-- Changed the use of #include to #include in the mach-o directory files and
+- Changed the use of #import to #include in the mach-o directory files and
   added guards to each header to prevent multiple includes.  Radar bug #2778821.
 
 Changes for the 5.10 release (the cctools-387 release):
@@ -1215,7 +1224,7 @@ Changes for the 5.3 release (the cctools-285 release):
 	PPC_THREAD_MACHINE_STATE_MAX
   So that mach/{ppc,i386,etc}/thread_status.h can all be included in the same
   file without warnings about redefined macros.
-- Changed #include <sys/types.h> in ranlib.h to #include <sys/types.h>
+- Changed #import <sys/types.h> in ranlib.h to #include <sys/types.h>
   Radar Bug #2303937.
 
 Changes for the MacOS X bring up (the cctools-282 release):
@@ -1470,7 +1479,7 @@ Changes for the Warp ?? release (the -25 compiler release):
 - Added the scattered_relocation_info struct to reloc.h
 
 Changes for the Warp ?? release (the -24 compiler release):
-- Added #include <sys/loader.h> to ldsyms.h (bug 6031).
+- Added #import <sys/loader.h> to ldsyms.h (bug 6031).
 - Added rld.h to be installed in /usr/include.
 
 Changes for the 2.0 impulse X.X release (the -19 compiler release):
