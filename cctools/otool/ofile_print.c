@@ -204,6 +204,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <inttypes.h>
 #include <ctype.h>
 #include <math.h>
 #include <limits.h>
@@ -2388,19 +2389,19 @@ enum bool verbose)
 	    printf("\n");
 	printf("  segname %.16s\n", segname);
 	if(cmd == LC_SEGMENT_64){
-	    printf("   vmaddr 0x%016llx\n", vmaddr);
-	    printf("   vmsize 0x%016llx\n", vmsize);
+	    printf("   vmaddr 0x%016"PRIx64"\n", vmaddr);
+	    printf("   vmsize 0x%016"PRIx64"\n", vmsize);
 	}
 	else{
-	    printf("   vmaddr 0x%08x\n", (uint32_t)vmaddr);
-	    printf("   vmsize 0x%08x\n", (uint32_t)vmsize);
+	    printf("   vmaddr 0x%08"PRIx32"\n", (uint32_t)vmaddr);
+	    printf("   vmsize 0x%08"PRIx32"\n", (uint32_t)vmsize);
 	}
-	printf("  fileoff %llu", fileoff);
+	printf("  fileoff %"PRIu64"", fileoff);
 	if(fileoff > object_size)
 	    printf(" (past end of file)\n");
 	else
 	    printf("\n");
-	printf(" filesize %llu", filesize);
+	printf(" filesize %"PRIu64"", filesize);
 	if(fileoff + filesize > object_size)
 	    printf(" (past end of file)\n");
 	else
@@ -2511,8 +2512,8 @@ enum bool verbose)
 	else
 	    printf("\n");
 	if(cmd == LC_SEGMENT_64){
-	    printf("      addr 0x%016llx\n", addr);
-	    printf("      size 0x%016llx", size);
+	    printf("      addr 0x%016"PRIx64"\n", addr);
+	    printf("      size 0x%016"PRIx64"", size);
 	}
 	else{
 	    printf("      addr 0x%08x\n", (uint32_t)addr);
@@ -3219,14 +3220,14 @@ struct routines_command_64 *rc64)
 	    printf(" Incorrect size\n");
 	else
 	    printf("\n");
-	printf(" init_address 0x%016llx\n", rc64->init_address);
-	printf("  init_module %llu\n", rc64->init_module);
-	printf("    reserved1 %llu\n", rc64->reserved1);
-	printf("    reserved2 %llu\n", rc64->reserved2);
-	printf("    reserved3 %llu\n", rc64->reserved3);
-	printf("    reserved4 %llu\n", rc64->reserved4);
-	printf("    reserved5 %llu\n", rc64->reserved5);
-	printf("    reserved6 %llu\n", rc64->reserved6);
+	printf(" init_address 0x%016"PRIx64"\n", rc64->init_address);
+	printf("  init_module %"PRIu64"\n", rc64->init_module);
+	printf("    reserved1 %"PRIu64"\n", rc64->reserved1);
+	printf("    reserved2 %"PRIu64"\n", rc64->reserved2);
+	printf("    reserved3 %"PRIu64"\n", rc64->reserved3);
+	printf("    reserved4 %"PRIu64"\n", rc64->reserved4);
+	printf("    reserved5 %"PRIu64"\n", rc64->reserved5);
+	printf("    reserved6 %"PRIu64"\n", rc64->reserved6);
 }
 
 /*
@@ -3411,13 +3412,13 @@ struct source_version_command *sv)
 	d = (sv->version >> 10) & 0x3ff;
 	e = sv->version & 0x3ff;
 	if(e != 0)
-	    printf("  version %llu.%llu.%llu.%llu.%llu\n", a, b, c, d, e);
+	    printf("  version %"PRIu64".%"PRIu64".%"PRIu64".%"PRIu64".%"PRIu64"\n", a, b, c, d, e);
 	else if(d != 0)
-	    printf("  version %llu.%llu.%llu.%llu\n", a, b, c, d);
+	    printf("  version %"PRIu64".%"PRIu64".%"PRIu64".%"PRIu64"\n", a, b, c, d);
 	else if(c != 0)
-	    printf("  version %llu.%llu.%llu\n", a, b, c);
+	    printf("  version %"PRIu64".%"PRIu64".%"PRIu64"\n", a, b, c);
 	else
-	    printf("  version %llu.%llu\n", a, b);
+	    printf("  version %"PRIu64".%"PRIu64"\n", a, b);
 }
 
 /*
@@ -3434,8 +3435,8 @@ struct entry_point_command *ep)
 	    printf(" Incorrect size\n");
 	else
 	    printf("\n");
-	printf("  entryoff %llu\n", ep->entryoff);
-	printf(" stacksize %llu\n", ep->stacksize);
+	printf("  entryoff %"PRIu64"\n", ep->entryoff);
+	printf(" stacksize %"PRIu64"\n", ep->stacksize);
 }
 
 /*
@@ -4934,14 +4935,14 @@ print_x86_thread_state64:
 		    if(swapped)
 			swap_x86_thread_state64(&cpu64, host_byte_sex);
 
-		    printf("   rax  0x%016llx rbx 0x%016llx rcx  0x%016llx\n"
-			   "   rdx  0x%016llx rdi 0x%016llx rsi  0x%016llx\n"
-			   "   rbp  0x%016llx rsp 0x%016llx r8   0x%016llx\n"
-			   "    r9  0x%016llx r10 0x%016llx r11  0x%016llx\n"
-			   "   r12  0x%016llx r13 0x%016llx r14  0x%016llx\n"
-			   "   r15  0x%016llx rip 0x%016llx\n"
-			   "rflags  0x%016llx cs  0x%016llx fs   0x%016llx\n"
-			   "    gs  0x%016llx\n",
+		    printf("   rax  0x%016"PRIx64" rbx 0x%016"PRIx64" rcx  0x%016"PRIx64"\n"
+			   "   rdx  0x%016"PRIx64" rdi 0x%016"PRIx64" rsi  0x%016"PRIx64"\n"
+			   "   rbp  0x%016"PRIx64" rsp 0x%016"PRIx64" r8   0x%016"PRIx64"\n"
+			   "    r9  0x%016"PRIx64" r10 0x%016"PRIx64" r11  0x%016"PRIx64"\n"
+			   "   r12  0x%016"PRIx64" r13 0x%016"PRIx64" r14  0x%016"PRIx64"\n"
+			   "   r15  0x%016"PRIx64" rip 0x%016"PRIx64"\n"
+			   "rflags  0x%016"PRIx64" cs  0x%016"PRIx64" fs   0x%016"PRIx64"\n"
+			   "    gs  0x%016"PRIx64"\n",
                         cpu64.rax, cpu64.rbx, cpu64.rcx, cpu64.rdx, cpu64.rdi,
 			cpu64.rsi, cpu64.rbp, cpu64.rsp, cpu64.r8, cpu64.r9,
 			cpu64.r10, cpu64.r11, cpu64.r12, cpu64.r13, cpu64.r14,
@@ -5131,7 +5132,7 @@ print_x86_exception_state64:
 		    if(swapped)
 			swap_x86_exception_state64(&exc64, host_byte_sex);
 		    printf("\t    trapno 0x%08x err 0x%08x faultvaddr "
-			   "0x%016llx\n", exc64.trapno, exc64.err,
+			   "0x%016"PRIx64"\n", exc64.trapno, exc64.err,
 			   exc64.faultvaddr);
 		    break;
 
@@ -5157,11 +5158,11 @@ print_x86_exception_state64:
 print_x86_debug_state64:
 		    if(swapped)
 			swap_x86_debug_state64(&debug64, host_byte_sex);
-		    printf("\t    dr0 0x%016llx dr1 0x%016llx dr2 0x%016llx "
-			   "dr3 0x%016llx\n", debug64.dr0, debug64.dr1,
+		    printf("\t    dr0 0x%016"PRIx64" dr1 0x%016"PRIx64" dr2 0x%016"PRIx64" "
+			   "dr3 0x%016"PRIx64"\n", debug64.dr0, debug64.dr1,
 			   debug64.dr2, debug64.dr3);
-		    printf("\t    dr4 0x%016llx dr5 0x%016llx dr6 0x%016llx "
-			   "dr7 0x%016llx\n", debug64.dr4, debug64.dr5,
+		    printf("\t    dr4 0x%016"PRIx64" dr5 0x%016"PRIx64" dr6 0x%016"PRIx64" "
+			   "dr7 0x%016"PRIx64"\n", debug64.dr4, debug64.dr5,
 			   debug64.dr6, debug64.dr7);
 		    break;
 
@@ -6658,7 +6659,7 @@ enum bool verbose)
 	    printf("    ninit_nterm = %u %u\n",
 		mods64[i].ninit_nterm & 0xffff,
 		(mods64[i].ninit_nterm >> 16) & 0xffff);
-	    printf("      objc_addr = 0x%016llx\n",
+	    printf("      objc_addr = 0x%016"PRIx64"\n",
 		mods64[i].objc_module_info_addr);
 	    printf("      objc_size = %u\n", mods64[i].objc_module_info_size);
 	}
@@ -6989,7 +6990,7 @@ enum bool verbose)
 
 	    for(j = 0 ; j < count && n + j < nindirect_symbols; j++){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("0x%016llx ", sect_ind[i].addr + j * stride);
+		    printf("0x%016"PRIx64" ", sect_ind[i].addr + j * stride);
 		else
 		    printf("0x%08x ",(uint32_t)
 				     (sect_ind[i].addr + j * stride));
@@ -7191,7 +7192,7 @@ enum bool print_addresses)
 	for(i = 0; i < sect_size ; i++){
 	    if(print_addresses == TRUE){
 	        if(cputype & CPU_ARCH_ABI64)
-		    printf("0x%016llx  ", sect_addr + i);
+		    printf("0x%016"PRIx64"  ", sect_addr + i);
 		else
 		    printf("%08x  ", (unsigned int)(sect_addr + i));
 	    }
@@ -7609,7 +7610,7 @@ enum bool print_addresses)
 	for(i = 0; i < sect_size ; i += lp_size){
 	    if(print_addresses == TRUE){
 	        if(cputype & CPU_ARCH_ABI64)
-		    printf("0x%016llx  ", sect_addr + i);
+		    printf("0x%016"PRIx64"  ", sect_addr + i);
 		else
 		    printf("%08x  ", (unsigned int)(sect_addr + i));
 	    }
@@ -7642,7 +7643,7 @@ enum bool print_addresses)
 			n_strx = symbols64[reloc->r_symbolnum].n_un.n_strx;
 		    if(n_strx < strings_size){
 			if(lp != 0)
-			    printf("%s+0x%llx\n", strings + n_strx, lp);
+			    printf("%s+0x%"PRIx64"\n", strings + n_strx, lp);
 			else
 			    printf("%s\n", strings + n_strx);
 		    }
@@ -7742,7 +7743,7 @@ enum bool print_addresses)
 		}
 	    }
 	    if(found == FALSE)
-		printf("0x%llx (not in a literal section)\n", lp);
+		printf("0x%"PRIx64" (not in a literal section)\n", lp);
 	}
 
 	if(literal_sections != NULL)
@@ -7778,7 +7779,7 @@ enum bool verbose)
 
 	for(i = 0 ; i < sect_size; i += stride){
 	    if(cputype & CPU_ARCH_ABI64)
-		printf("0x%016llx ", sect_addr + i * stride);
+		printf("0x%016"PRIx64" ", sect_addr + i * stride);
 	    else
 		printf("0x%08x ",(uint32_t)(sect_addr + i * stride));
 
@@ -7794,7 +7795,7 @@ enum bool verbose)
 		     p = SWAP_INT(p);
 	    }
 	    if(cputype & CPU_ARCH_ABI64)
-		printf("0x%016llx", q);
+		printf("0x%016"PRIx64"", q);
 	    else
 		printf("0x%08x", p);
 
@@ -8206,7 +8207,7 @@ uint64_t addr)
 	   cputype == CPU_TYPE_X86_64){
 	    for(i = 0 ; i < size ; i += j , addr += j){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("%016llx\t", addr);
+		    printf("%016"PRIx64"\t", addr);
 		else
 		    printf("%08x\t", (uint32_t)addr);
 		for(j = 0;
@@ -8235,7 +8236,7 @@ uint64_t addr)
 	else{
 	    for(i = 0 ; i < size ; i += j , addr += j){
 		if(cputype & CPU_ARCH_ABI64)
-		    printf("%016llx\t", addr);
+		    printf("%016"PRIx64"\t", addr);
 		else
 		    printf("%08x\t", (uint32_t)addr);
 		for(j = 0;

@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <inttypes.h>
 #include <ar.h>
 #include <mach-o/ranlib.h>
 #include <sys/types.h>
@@ -2355,7 +2356,7 @@ struct ofile *ofile)
 	    if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
 				library_size, TRUE)) != KERN_SUCCESS)
 		mach_fatal(r, "can't vm_allocate() buffer for output file: %s "
-			   "of size %llu", output, library_size);
+			   "of size %"PRIu64"", output, library_size);
 
 
 	    /* put in the archive magic string in the buffer */
@@ -2391,7 +2392,7 @@ fail_to_update_toc_in_place:
 	if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
 			    library_size, TRUE)) != KERN_SUCCESS)
 	    mach_fatal(r, "can't vm_allocate() buffer for output file: %s of "
-		       "size %llu", output, library_size);
+		       "size %"PRIu64"", output, library_size);
 
 	/*
 	 * Create the output file.  The unlink() is done to handle the problem
@@ -2426,13 +2427,13 @@ fail_to_update_toc_in_place:
 		if(offset > UINT32_MAX)
 		    error("file too large to create as a fat file because "
 			  "offset field in struct fat_arch is only 32-bits and "
-			  "offset (%llu) to architecture %s exceeds that",
+			  "offset (%"PRIu64") to architecture %s exceeds that",
 			  offset, archs[i].arch_flag.name);
 		fat_arch[i].offset = offset;
 		if(archs[i].size > UINT32_MAX)
 		    error("file too large to create as a fat file because "
 			  "size field in struct fat_arch is only 32-bits and "
-			  "size (%llu) of architecture %s exceeds that",
+			  "size (%"PRIu64") of architecture %s exceeds that",
 			  archs[i].size, archs[i].arch_flag.name);
 		fat_arch[i].size = archs[i].size;
 		fat_arch[i].align = 2;
@@ -2764,15 +2765,15 @@ uint64_t size)
 	    return;
 
 	if(offset + size > library_size)
-	    fatal("internal error: output_flush(offset = %llu, size = %llu) "
-		  "out of range for library_size = %llu", offset, size,
+	    fatal("internal error: output_flush(offset = %"PRIu64", size = %"PRIu64") "
+		  "out of range for library_size = %"PRIu64"", offset, size,
 		  library_size);
 
 #ifdef DEBUG
 	if(cmd_flags.debug & (1 << 2))
 	    print_block_list();
 	if(cmd_flags.debug & (1 << 1))
-	    printf("output_flush(offset = %llu, size %llu)", offset, size);
+	    printf("output_flush(offset = %"PRIu64", size %"PRIu64")", offset, size);
 #endif /* DEBUG */
 
 	if(size == 0){
@@ -2808,9 +2809,9 @@ uint64_t size)
 	 */
 	if(before != NULL){
 	    if(before->offset + before->size > offset){
-		warning("internal error: output_flush(offset = %llu, size = "
-			"%llu) overlaps with flushed block(offset = %llu, "
-			"size = %llu)", offset, size, before->offset,
+		warning("internal error: output_flush(offset = %"PRIu64", size = "
+			"%"PRIu64") overlaps with flushed block(offset = %"PRIu64", "
+			"size = %"PRIu64")", offset, size, before->offset,
 			before->size);
 		printf("calling abort()\n");	
 		abort();
@@ -2818,9 +2819,9 @@ uint64_t size)
 	}
 	if(after != NULL){
 	    if(offset + size > after->offset){
-		warning("internal error: output_flush(offset = %llu, size = "
-			"%llu) overlaps with flushed block(offset = %llu, "
-			"size = %llu)", offset, size, after->offset,
+		warning("internal error: output_flush(offset = %"PRIu64", size = "
+			"%"PRIu64") overlaps with flushed block(offset = %"PRIu64", "
+			"size = %"PRIu64")", offset, size, after->offset,
 			after->size);
 		printf("calling abort()\n");	
 		abort();
@@ -2952,7 +2953,7 @@ uint64_t size)
 	if(write_size != 0){
 #ifdef DEBUG
 	if((cmd_flags.debug & (1 << 1)) || (cmd_flags.debug & (1 << 0)))
-	    printf(" writing (write_offset = %llu write_size = %llu)\n",
+	    printf(" writing (write_offset = %"PRIu64" write_size = %"PRIu64")\n",
 		   write_offset, write_size);
 #endif /* DEBUG */
 	    lseek(fd, write_offset, L_SET);
@@ -3016,7 +3017,7 @@ int fd)
 	if(write_size != 0){
 #ifdef DEBUG
 	    if((cmd_flags.debug & (1 << 1)) || (cmd_flags.debug & (1 << 1)))
-		printf(" writing (write_offset = %llu write_size = %llu)\n",
+		printf(" writing (write_offset = %"PRIu64" write_size = %"PRIu64")\n",
 		       write_offset, write_size);
 #endif /* DEBUG */
 	    lseek(fd, write_offset, L_SET);
@@ -3046,10 +3047,10 @@ print_block_list(void)
 	while(*p){
 	    block = *p;
 	    printf("block 0x%x\n", (unsigned int)block);
-	    printf("    offset %llu\n", block->offset);
-	    printf("    size %llu\n", block->size);
-	    printf("    written_offset %llu\n", block->written_offset);
-	    printf("    written_size %llu\n", block->written_size);
+	    printf("    offset %"PRIu64"\n", block->offset);
+	    printf("    size %"PRIu64"\n", block->size);
+	    printf("    written_offset %"PRIu64"\n", block->written_offset);
+	    printf("    written_size %"PRIu64"\n", block->written_size);
 	    printf("    next 0x%x\n", (unsigned int)(block->next));
 	    p = &(block->next);
 	}
