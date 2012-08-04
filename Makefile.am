@@ -42,7 +42,6 @@ man_MANS = \
 	cctools/man/gprof.1 \
 	cctools/man/indr.1 \
 	cctools/man/install_name_tool.1 \
-	cctools/man/ld_classic.1 \
 	cctools/man/libtool.1 \
 	cctools/man/lipo.1 \
 	cctools/man/mtoc.1 \
